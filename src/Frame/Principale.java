@@ -1,7 +1,10 @@
 package Frame;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class Principale extends JFrame{
     private JPanel PanelMain;
@@ -45,6 +48,12 @@ public class Principale extends JFrame{
     private JLabel lblCP;
     private JLabel lblVille;
     private JLabel lblTable;
+    private JButton ajouterButton;
+    private JPanel PanelRecap;
+    private JTable TableMed;
+    private JComboBox cBoxCat;
+    private JLabel lblCat;
+    private JButton rtnRechercher;
 
 
     public Principale(){
@@ -67,6 +76,68 @@ public class Principale extends JFrame{
         setSize(d);
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        btnAchat.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setContentPane(PanelAchat);
+                PanelAchat.setVisible(true);
+            }
+        });
+        btnRecherche.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setContentPane(PanelRecherche);
+                PanelRecherche.setVisible(true);
+            }
+        });
+
+        ordonnanceRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PanelMed.setVisible(true);
+                PanelRecap.setVisible(true);
+            }
+        });
+        sansOrdonnanceRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                PanelMed.setVisible(true);
+                PanelRecap.setVisible(true);
+            }
+        });
+
+        //table Recap Medicament
+        DefaultTableModel modelRecapMed = new DefaultTableModel();
+
+        modelRecapMed.addColumn("Libéllé");
+        modelRecapMed.addColumn("catégorie");
+        modelRecapMed.addColumn("quantité");
+        modelRecapMed.addColumn("Prix/u");
+        modelRecapMed.addColumn("date mise en service");
+        TableMed.setModel(modelRecapMed);
+        TableMed.setEnabled(false);
+        ajouterButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                //en fonction du medicament choisit l'ajoute avec toutes ses informations dans la table recap
+                modelRecapMed.addRow(new Object[]{});
+            }
+        });
+
+        DefaultTableModel modelRecherche = new DefaultTableModel();
+        String colonne1="";
+        String colonne2="";
+        String colonne3="";
+        String colonne4="";
+        modelRecherche.addColumn(colonne1);
+        modelRecherche.addColumn(colonne2);
+        modelRecherche.addColumn(colonne3);
+        modelRecherche.addColumn(colonne4);
+
+        labelTable.setModel(modelRecherche);
+
+
     }
 
 }

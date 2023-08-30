@@ -1,30 +1,25 @@
-package classMetier.sante;
+package classMetier.Util;
 
 import classMetier.personne.Client;
-import classMetier.personne.Medecin;
+import classMetier.sante.Medicament;
 
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Ordonnance {
-    private Medecin medecin;
+public class Achat {
     private Client client;
     private ArrayList<Medicament> listMed;
+    private double prix;
     private Date date;
 
-    public Ordonnance(Medecin medecin, Client client, ArrayList<Medicament> listMed, Date date) {
-        setMedecin(medecin);
+    private boolean ordonnance;
+
+    public Achat(Client client, ArrayList<Medicament> listMed, double prix, Date date, boolean ordonnance) {
         setClient(client);
         setListMed(listMed);
+        setPrix(prix);
         setDate(date);
-    }
-
-    public Medecin getMedecin() {
-        return medecin;
-    }
-
-    public void setMedecin(Medecin medecin) {
-        this.medecin = medecin;
+        setOrdonnance(ordonnance);
     }
 
     public Client getClient() {
@@ -43,6 +38,14 @@ public class Ordonnance {
         this.listMed = listMed;
     }
 
+    public double getPrix() {
+        return prix;
+    }
+
+    public void setPrix(double prix) {
+        this.prix = prix;
+    }
+
     public Date getDate() {
         return date;
     }
@@ -51,7 +54,11 @@ public class Ordonnance {
         this.date = date;
     }
 
-    public String getListMedToString() {
-        return null;
+    public boolean isOrdonnance() {
+        return ordonnance;
+    }
+
+    public void setOrdonnance(boolean ordonnance) {
+        this.ordonnance = ordonnance;
     }
 }

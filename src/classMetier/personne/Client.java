@@ -7,17 +7,17 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class Client extends Personne{
-    private Date dateNaiss;
+    private String dateNaiss;
     private String numSecu;
     private Mutuelle mutuelle;
     private Medecin medecin;
     private ArrayList<Specialiste> listSpecialiste;
 
-    public Date getDateNaiss() {
+    public String getDateNaiss() {
         return dateNaiss;
     }
 
-    public void setDateNaiss(Date dateNaiss) {
+    public void setDateNaiss(String dateNaiss) {
         this.dateNaiss = dateNaiss;
     }
 
@@ -53,7 +53,7 @@ public class Client extends Personne{
         this.listSpecialiste = listSpecialiste;
     }
 
-    public Client(String nom, String prenom, String mail, String tel, Adresse adresse,Date dateNaiss,Medecin medecin,Mutuelle mutuelle,String numSecu) {
+    public Client(String nom, String prenom, String mail, String tel, Adresse adresse, String dateNaiss, Medecin medecin, Mutuelle mutuelle, String numSecu) {
         super(nom, prenom, mail, tel, adresse);
         setDateNaiss(dateNaiss);
         setMedecin(medecin);

@@ -14,10 +14,7 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Objects;
 
 public class Principale extends JFrame {
@@ -79,9 +76,11 @@ public class Principale extends JFrame {
     private JLabel lblPrenomClient;
     private JTextField QteTextField;
     private JTextField Prixtot;
+    private JTextField textFieldRecherche;
+    private JButton informationsClientButton;
     private JButton validerAchatButton;
 
-    private ButtonGroup buttonGroup = new ButtonGroup();
+    private final ButtonGroup buttonGroup = new ButtonGroup();
 
     public Principale() {
         final double[] sommeTot = {0.00f};
@@ -100,33 +99,33 @@ public class Principale extends JFrame {
         listMedecin.add(medecin1);
         listMedecin.add(medecin2);
 
-        ArrayList<Client> listClient = new ArrayList<Client>();
+        ArrayList<Client> listClient = new ArrayList<>();
         //creation jeux de données pour test
         Client client1 = new Client("Dupont", "Marie", "dupont.marie@mail.com", "0612345678",
                 new Adresse(123, "rue de la République", 75001, "Paris"),
-                new Date("20/07/1995"), medecin1, new Mutuelle(), "123 456 789 012 345"
+                "20/07/1995", medecin1, new Mutuelle(), "123 456 789 012 345"
         );
 
         Client client2 = new Client("Martin", "Jean", "martin.jean@mail.com", "0789101112",
                 new Adresse(456, "avenue de la libération", 69007, "Lyon"),
-                new Date("10/05/1975"), medecin2, new Mutuelle(), "123 456 789 012 346"
+                "10/05/1975", medecin2, new Mutuelle(), "123 456 789 012 346"
         );
 
         listClient.add(client1);
         listClient.add(client2);
 
-        ArrayList<Medicament> listMed = new ArrayList<Medicament>();
-        Medicament paracetamol = new Medicament("Paracétamol", 5.99, new Date("15/02/98"), 1,
+        ArrayList<Medicament> listMed = new ArrayList<>();
+        Medicament paracetamol = new Medicament("Paracétamol", 5.99, "15/02/98", 1,
                 CategorieMedicament.ANTALGIQUE);
         listMed.add(paracetamol);
 
 
         ArrayList<Ordonnance> listOrdonnance = new ArrayList<>();
-        Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, new ArrayList<>(), new Date("30/08/2023"));
+        Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, new ArrayList<>(), "30/08/2023");
         listOrdonnance.add(ordonnance1);
 
-        ArrayList<Achat> listAchat = new ArrayList<Achat>();
-        Achat achat1 = new Achat(client1, new ArrayList<Medicament>(), 25.37, new Date("30/08/2023"),
+        ArrayList<Achat> listAchat = new ArrayList<>();
+        Achat achat1 = new Achat(client1, new ArrayList<>(), 25.37, "30/08/2023",
                 true);
 
         listAchat.add(achat1);
@@ -160,98 +159,79 @@ public class Principale extends JFrame {
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        btnAchat.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                sommeTot[0]=0;
-                Prixtot.setText("");
-                QteTextField.setText("");
-                setContentPane(PanelAchat);
-                buttonGroup.clearSelection();
-                PanelClient.setVisible(false);
-                PanelAchat.setVisible(true);
-                PanelMed.setVisible(false);
-                PanelRecap.setVisible(false);
-                cBoxCat.setVisible(false);
-                lblCat.setVisible(false);
-                ajouterButton.setVisible(false);
-                DefaultTableModel mdl = (DefaultTableModel) TableMed.getModel();
-                mdl.setRowCount(0);
-                cBoxCat.removeAllItems();
-                for (CategorieMedicament c : CategorieMedicament.values()) {
-                    cBoxCat.addItem(c.toString().toLowerCase());
-                }
-                cBoxCat.setSelectedIndex(-1);
-
-                for (Client client : listClient) {
-                    cBoxNom.addItem(client.getNom());
-                }
-                cBoxNom.setSelectedIndex(-1);
+        btnAchat.addActionListener(e -> {
+            sommeTot[0]=0;
+            Prixtot.setText("");
+            QteTextField.setText("");
+            setContentPane(PanelAchat);
+            buttonGroup.clearSelection();
+            PanelClient.setVisible(false);
+            PanelAchat.setVisible(true);
+            PanelMed.setVisible(false);
+            PanelRecap.setVisible(false);
+            cBoxCat.setVisible(false);
+            lblCat.setVisible(false);
+            ajouterButton.setVisible(false);
+            DefaultTableModel mdl = (DefaultTableModel) TableMed.getModel();
+            mdl.setRowCount(0);
+            cBoxCat.removeAllItems();
+            cBoxNom.removeAllItems();
+            for (CategorieMedicament c : CategorieMedicament.values()) {
+                cBoxCat.addItem(c.toString().toLowerCase());
             }
+            cBoxCat.setSelectedIndex(-1);
+
+            for (Client client : listClient) {
+                cBoxNom.addItem(client.getNom());
+            }
+            cBoxNom.setSelectedIndex(-1);
         });
-        btnRecherche.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setContentPane(PanelRecherche);
-                PanelRecherche.setVisible(true);
-                lblRsh.setVisible(true);
-                historiqueOrdonnanceButton.setVisible(true);
-                historiqueDAchatButton.setVisible(true);
-                lblRecherche.setVisible(false);
-                rechercheComboBox.setSelectedIndex(-1);
-                rechercheComboBox.setVisible(false);
+        btnRecherche.addActionListener(e -> {
+            textFieldRecherche.setVisible(false);
+            setContentPane(PanelRecherche);
+            PanelRecherche.setVisible(true);
+            lblRsh.setVisible(true);
+            historiqueOrdonnanceButton.setVisible(true);
+            historiqueDAchatButton.setVisible(true);
+            lblRecherche.setVisible(false);
+            rechercheComboBox.setSelectedIndex(-1);
+            rechercheComboBox.setVisible(false);
 
-                DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
-                x.setRowCount(0);
+            DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+            x.setRowCount(0);
 
-                DefaultTableModel model = new DefaultTableModel();
-                labelTable.setModel(model);
-            }
+            DefaultTableModel model = new DefaultTableModel();
+            labelTable.setModel(model);
         });
 
-        ordonnanceRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PanelMed.setVisible(true);
-                PanelRecap.setVisible(true);
-                PanelClient.setVisible(true);
-                lblCat.setVisible(true);
-                cBoxCat.setVisible(true);
-                ajouterButton.setVisible(true);
-            }
+        ordonnanceRadioButton.addActionListener(e -> {
+            PanelMed.setVisible(true);
+            PanelRecap.setVisible(true);
+            PanelClient.setVisible(true);
+            lblCat.setVisible(true);
+            cBoxCat.setVisible(true);
+            ajouterButton.setVisible(true);
         });
-        sansOrdonnanceRadioButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                PanelMed.setVisible(true);
-                PanelRecap.setVisible(true);
-                PanelClient.setVisible(true);
-                lblCat.setVisible(true);
-                cBoxCat.setVisible(true);
-                ajouterButton.setVisible(true);
-            }
+        sansOrdonnanceRadioButton.addActionListener(e -> {
+            PanelMed.setVisible(true);
+            PanelRecap.setVisible(true);
+            PanelClient.setVisible(true);
+            lblCat.setVisible(true);
+            cBoxCat.setVisible(true);
+            ajouterButton.setVisible(true);
         });
 
-        cBoxNom.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                cBoxPrenom.removeAllItems();
-                for (Client client : listClient) {
-                    if (client.getNom().equals(cBoxNom.getSelectedItem())) {
-                        cBoxPrenom.addItem(client.getPrenom());
-                    }
+        cBoxNom.addActionListener(e -> {
+            cBoxPrenom.removeAllItems();
+            for (Client client : listClient) {
+                if (client.getNom().equals(cBoxNom.getSelectedItem())) {
+                    cBoxPrenom.addItem(client.getPrenom());
                 }
             }
         });
 
 
-        Retour.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setContentPane(PanelAcceuil);
-            }
-        });
+        Retour.addActionListener(e -> setContentPane(PanelAcceuil));
 
         //table Recap Medicament
         DefaultTableModel modelRecapMed = new DefaultTableModel();
@@ -267,164 +247,197 @@ public class Principale extends JFrame {
 
 
         ArrayList<Medicament> listMedAchat = new ArrayList<>();
-        ajouterButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Medicament m = null;
+        ajouterButton.addActionListener(e -> {
+            Medicament m = null;
 
-                //en fonction du medicament choisit l'ajoute avec toutes ses informations dans la table recap
-                for (Medicament med : listMed) {
-                    if (med.getNom().equals(libelleComboBox.getSelectedItem()) &&
-                            med.getCategorie().toString().toLowerCase().equals(cBoxCat.getSelectedItem())) {
-                        m = med;
-                    }
+            //en fonction du medicament choisit l'ajoute avec toutes ses informations dans la table recap
+            for (Medicament med : listMed) {
+                if (med.getNom().equals(libelleComboBox.getSelectedItem()) &&
+                        med.getCategorie().toString().toLowerCase().equals(cBoxCat.getSelectedItem())) {
+                    m = med;
                 }
-                if (m != null) {
-                    modelRecapMed.addRow(new Object[]{m.getNom(), m.getCategorie(), QteTextField.getText(),
-                            m.getPrix(), m.getDateMES()});
-                    sommeTot[0] = sommeTot[0] + (m.getPrix() * Integer.parseInt(QteTextField.getText()));
-                }
-
-                listMedAchat.add(m);
-                Prixtot.setText(""+sommeTot[0]);
-                Achat achat = new Achat(client1, listMedAchat, sommeTot[0], new Date("30/08/2020"), true);
             }
+            if (m != null) {
+                modelRecapMed.addRow(new Object[]{m.getNom(), m.getCategorie(), QteTextField.getText(),
+                        m.getPrix(), m.getDateMES()});
+                sommeTot[0] = sommeTot[0] + (m.getPrix() * Double.parseDouble(QteTextField.getText()));
+                listMedAchat.add(m);
+            }
+
+            Prixtot.setText(""+sommeTot[0]);
+
         });
 
 
-        cBoxCat.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (Objects.equals(cBoxCat.getSelectedItem(), "") || cBoxCat.getSelectedItem() == null) {
-                    libelleComboBox.removeAllItems();
-                    for (Medicament med : listMed) {
+        cBoxCat.addItemListener(e -> {
+            if (Objects.equals(cBoxCat.getSelectedItem(), "") || cBoxCat.getSelectedItem() == null) {
+                libelleComboBox.removeAllItems();
+                for (Medicament med : listMed) {
+                    libelleComboBox.addItem(med.getNom());
+                }
+                libelleComboBox.setSelectedIndex(-1);
+            } else {
+                libelleComboBox.removeAllItems();
+                for (Medicament med : listMed) {
+                    if (med.getCategorie().toString().toLowerCase().equals(cBoxCat.getSelectedItem())) {
                         libelleComboBox.addItem(med.getNom());
                     }
-                    libelleComboBox.setSelectedIndex(-1);
-                } else {
-                    libelleComboBox.removeAllItems();
-                    for (Medicament med : listMed) {
-                        if (med.getCategorie().toString().toLowerCase().equals(cBoxCat.getSelectedItem())) {
-                            libelleComboBox.addItem(med.getNom());
-                        }
-                    }
                 }
             }
         });
-        libelleComboBox.addItemListener(new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if (Objects.equals(cBoxCat.getSelectedItem(), "") || cBoxCat.getSelectedItem() == null) {
-                    for (Medicament med : listMed) {
-                        if (med.getNom().equals(libelleComboBox.getSelectedItem())) {
-                            cBoxCat.setSelectedItem(med.getCategorie().toString().toLowerCase());
-                        }
+        libelleComboBox.addItemListener(e -> {
+            if (Objects.equals(cBoxCat.getSelectedItem(), "") || cBoxCat.getSelectedItem() == null) {
+                for (Medicament med : listMed) {
+                    if (med.getNom().equals(libelleComboBox.getSelectedItem())) {
+                        cBoxCat.setSelectedItem(med.getCategorie().toString().toLowerCase());
                     }
-                } else {
-                    for (Medicament m : listMed) {
-                        if (m.getNom().equals(libelleComboBox.getSelectedItem())) {
-                            prixTextField.setText("" + m.getPrix());
-                        }
+                }
+            } else {
+                for (Medicament m : listMed) {
+                    if (m.getNom().equals(libelleComboBox.getSelectedItem())) {
+                        prixTextField.setText("" + m.getPrix());
                     }
                 }
             }
         });
 
-        historiqueDAchatButton.addActionListener(new ActionListener() {
+        historiqueDAchatButton.addActionListener(e -> {
+            textFieldRecherche.setVisible(true);
+            textFieldRecherche.setText("");
+            lblRsh.setVisible(false);
+            historiqueDAchatButton.setVisible(false);
+            PanelRecherche.setVisible(true);
+            lblRecherche.setVisible(true);
+            historiqueOrdonnanceButton.setVisible(false);
+
+            DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+            x.setRowCount(0);
+
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Date");
+            model.addColumn("Client");
+            model.addColumn("Ordonnance");
+            model.addColumn("Prix");
+
+            for (Achat achat : listAchat) {
+                String a=achat.getClient().getNom()+" "+achat.getClient().getPrenom();
+                model.addRow(new Object[]{achat.getDate(), a, achat.isOrdonnance(),
+                        achat.getPrix()});
+
+            }
+
+            labelTable.setModel(model);
+
+
+        });
+        historiqueOrdonnanceButton.addActionListener(e -> {
+
+            lblRsh.setVisible(false);
+            historiqueDAchatButton.setVisible(false);
+            PanelRecherche.setVisible(true);
+            lblRecherche.setVisible(true);
+            rechercheComboBox.setVisible(true);
+            historiqueOrdonnanceButton.setVisible(false);
+            rechercheComboBox.removeAllItems();
+
+
+            DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+            x.setRowCount(0);
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Medecin");
+            model.addColumn("Client");
+            model.addColumn("Date");
+            model.addColumn("Medicament");
+
+
+            for (Medecin medecin : listMedecin) {
+                rechercheComboBox.addItem(medecin.getNom());
+            }
+            rechercheComboBox.setSelectedIndex(-1);
+
+
+            for (Ordonnance ordonnance : listOrdonnance) {
+                String a=ordonnance.getClient().getNom()+" "+ordonnance.getClient().getPrenom();
+                model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
+                        a, ordonnance.getDate(),
+                        ordonnance.getListMedToString()});
+            }
+            labelTable.setModel(model);
+
+        });
+
+
+        rechercheComboBox.addActionListener(e -> {
+            DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+            x.setRowCount(0);
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Medecin");
+            model.addColumn("Client");
+            model.addColumn("Date");
+            model.addColumn("Medicament");
+            for (Medecin medecin : listMedecin) {
+                if (medecin.getNom().equals(rechercheComboBox.getSelectedItem())) {
+                    for (Ordonnance ordonnance : listOrdonnance) {
+                        if (ordonnance.getMedecin().getNom().equals(medecin.getNom())) {
+                            String a=ordonnance.getClient().getNom()+" "+ordonnance.getClient().getPrenom();
+                            model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
+                                    a, ordonnance.getDate(),ordonnance.getListMedToString()});
+                        }
+                    }
+                }
+            }
+            labelTable.setModel(model);
+        });
+
+
+        validerButton.addActionListener(e -> {
+
+            Client c = null;
+            for (Client client:listClient){
+                if(cBoxPrenom.getSelectedItem()==null){
+                    if (client.getNom().equals(cBoxNom.getSelectedItem())){
+                        c=client;
+                    }
+                }
+                else if (client.getNom().equals(cBoxNom.getSelectedItem())
+                        && client.getPrenom().equals(cBoxPrenom.getSelectedItem())){
+                    c=client;
+                }
+            }
+            Boolean b=false;
+            if(ordonnanceRadioButton.isSelected()){
+                b=true;
+            }
+            else if (sansOrdonnanceRadioButton.isSelected()){
+                b=false;
+            }
+
+            Achat achat = new Achat(c, listMedAchat, sommeTot[0], classMetier.Util.Date.newDate(), b);
+            listAchat.add(achat);
+
+            setContentPane(PanelAcceuil);
+
+        });
+        textFieldRecherche.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                lblRsh.setVisible(false);
-                historiqueDAchatButton.setVisible(false);
-                PanelRecherche.setVisible(true);
-                lblRecherche.setVisible(true);
-                rechercheComboBox.setVisible(true);
-                historiqueOrdonnanceButton.setVisible(false);
-
                 DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
                 x.setRowCount(0);
-
                 DefaultTableModel model = new DefaultTableModel();
                 model.addColumn("Date");
                 model.addColumn("Client");
                 model.addColumn("Ordonnance");
                 model.addColumn("Prix");
 
-                for (Achat achat : listAchat) {
-                    model.addRow(new Object[]{achat.getDate(), achat.getClient().getNom(), achat.isOrdonnance(),
-                            achat.getPrix()});
-                }
-
-                labelTable.setModel(model);
-
-
-            }
-        });
-        historiqueOrdonnanceButton.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-
-                lblRsh.setVisible(false);
-                historiqueDAchatButton.setVisible(false);
-                PanelRecherche.setVisible(true);
-                lblRecherche.setVisible(true);
-                rechercheComboBox.setVisible(true);
-                historiqueOrdonnanceButton.setVisible(false);
-                rechercheComboBox.removeAllItems();
-
-
-                DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
-                x.setRowCount(0);
-                DefaultTableModel model = new DefaultTableModel();
-                model.addColumn("Medecin");
-                model.addColumn("Client");
-                model.addColumn("Date");
-                model.addColumn("Medicament");
-
-
-                for (Medecin medecin : listMedecin) {
-                    rechercheComboBox.addItem(medecin.getNom());
-                }
-                rechercheComboBox.setSelectedIndex(-1);
-
-
-                for (Ordonnance ordonnance : listOrdonnance) {
-
-                    model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
-                            ordonnance.getClient().getNom(), ordonnance.getDate().toString(),
-                            ordonnance.getListMedToString()});
-                }
-                labelTable.setModel(model);
-
-            }
-        });
-
-
-        rechercheComboBox.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
-                x.setRowCount(0);
-                DefaultTableModel model = new DefaultTableModel();
-                model.addColumn("Medecin");
-                model.addColumn("Client");
-                model.addColumn("Date");
-                model.addColumn("Medicament");
-                for (Medecin medecin : listMedecin) {
-                    if (medecin.getNom().equals(rechercheComboBox.getSelectedItem())) {
-                        for (Ordonnance ordonnance : listOrdonnance) {
-                            if (ordonnance.getMedecin().getNom().equals(medecin.getNom())) {
-                                model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
-                                        ordonnance.getClient().getNom(), ordonnance.getDate().toString(),
-                                        ordonnance.getListMedToString()});
-                            }
-                        }
+                for (classMetier.Util.Achat achat:listAchat){
+                    if (textFieldRecherche.getText().equals(achat.getDate())){
+                        String a=achat.getClient().getNom()+" "+achat.getClient().getPrenom();
+                        model.addRow(new Object[]{achat.getDate(),a,achat.isOrdonnance(),achat.getPrix()});
                     }
                 }
                 labelTable.setModel(model);
             }
         });
-
-
     }
 
 }

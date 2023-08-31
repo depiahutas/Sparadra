@@ -7,11 +7,11 @@ import java.util.Date;
 public class Medicament {
     private String nom;
     private double prix;
-    private Date dateMES;
+    private String dateMES;
     private int quantite;
     private CategorieMedicament categorie;
 
-    public Medicament(String nom, double prix, Date dateMES, int quantite, CategorieMedicament categorie) {
+    public Medicament(String nom, double prix, String dateMES, int quantite, CategorieMedicament categorie) {
         setNom(nom);
         setPrix(prix);
         setDateMES(dateMES);
@@ -35,11 +35,11 @@ public class Medicament {
         this.prix = prix;
     }
 
-    public Date getDateMES() {
+    public String getDateMES() {
         return dateMES;
     }
 
-    public void setDateMES(Date dateMES) {
+    public void setDateMES(String dateMES) {
         this.dateMES = dateMES;
     }
 

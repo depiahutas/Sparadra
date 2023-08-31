@@ -10,9 +10,9 @@ public class Ordonnance {
     private Medecin medecin;
     private Client client;
     private ArrayList<Medicament> listMed;
-    private Date date;
+    private String date;
 
-    public Ordonnance(Medecin medecin, Client client, ArrayList<Medicament> listMed, Date date) {
+    public Ordonnance(Medecin medecin, Client client, ArrayList<Medicament> listMed, String date) {
         setMedecin(medecin);
         setClient(client);
         setListMed(listMed);
@@ -43,11 +43,11 @@ public class Ordonnance {
         this.listMed = listMed;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

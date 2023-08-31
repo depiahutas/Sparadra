@@ -10,11 +10,11 @@ public class Achat {
     private Client client;
     private ArrayList<Medicament> listMed;
     private double prix;
-    private Date date;
+    private String date;
 
     private boolean ordonnance;
 
-    public Achat(Client client, ArrayList<Medicament> listMed, double prix, Date date, boolean ordonnance) {
+    public Achat(Client client, ArrayList<Medicament> listMed, double prix, String date, boolean ordonnance) {
         setClient(client);
         setListMed(listMed);
         setPrix(prix);
@@ -46,11 +46,11 @@ public class Achat {
         this.prix = prix;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 

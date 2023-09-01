@@ -14,6 +14,8 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -78,6 +80,8 @@ public class Principale extends JFrame {
     private JTextField Prixtot;
     private JTextField textFieldRecherche;
     private JButton informationsClientButton;
+    private JTextField NomTextField;
+    private JTextField PrenomTextField;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -85,6 +89,7 @@ public class Principale extends JFrame {
     public Principale() {
         final double[] sommeTot = {0.00f};
 
+        // button group pour achat-> radio boutton ordonnance choix unique
         buttonGroup.add(ordonnanceRadioButton);
         buttonGroup.add(sansOrdonnanceRadioButton);
 
@@ -159,10 +164,12 @@ public class Principale extends JFrame {
         setVisible(true);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
+
+        //Affichage panel Achat et réinitialise les données du form
         btnAchat.addActionListener(e -> {
             sommeTot[0]=0;
             Prixtot.setText("");
-            QteTextField.setText("");
+            QteTextField.setText("1");
             setContentPane(PanelAchat);
             buttonGroup.clearSelection();
             PanelClient.setVisible(false);
@@ -186,6 +193,8 @@ public class Principale extends JFrame {
             }
             cBoxNom.setSelectedIndex(-1);
         });
+
+        //Affichage panel recherche et réinitialise les données de la JTable
         btnRecherche.addActionListener(e -> {
             textFieldRecherche.setVisible(false);
             setContentPane(PanelRecherche);
@@ -201,9 +210,13 @@ public class Principale extends JFrame {
             x.setRowCount(0);
 
             DefaultTableModel model = new DefaultTableModel();
+
+            labelTable.setDefaultEditor(Object.class,null);
             labelTable.setModel(model);
         });
 
+
+        // radioBoutton pour choix achat par ordonnance ou direct
         ordonnanceRadioButton.addActionListener(e -> {
             PanelMed.setVisible(true);
             PanelRecap.setVisible(true);
@@ -212,6 +225,7 @@ public class Principale extends JFrame {
             cBoxCat.setVisible(true);
             ajouterButton.setVisible(true);
         });
+
         sansOrdonnanceRadioButton.addActionListener(e -> {
             PanelMed.setVisible(true);
             PanelRecap.setVisible(true);
@@ -230,11 +244,13 @@ public class Principale extends JFrame {
             }
         });
 
-
+        // retour a l'accueil
         Retour.addActionListener(e -> setContentPane(PanelAcceuil));
 
         //table Recap Medicament
         DefaultTableModel modelRecapMed = new DefaultTableModel();
+
+        TableMed.setDefaultEditor(Object.class,null);
 
         modelRecapMed.addColumn("Libéllé");
         modelRecapMed.addColumn("catégorie");
@@ -247,6 +263,9 @@ public class Principale extends JFrame {
 
 
         ArrayList<Medicament> listMedAchat = new ArrayList<>();
+
+        // ajout du medicament selectionné au recapMed
+        // liste de medicament stocké pour validation afin d'etre ajouter a l'historique achat
         ajouterButton.addActionListener(e -> {
             Medicament m = null;
 
@@ -269,6 +288,7 @@ public class Principale extends JFrame {
         });
 
 
+        // action de tri sur les medicament en fonction de la categorie choisit
         cBoxCat.addItemListener(e -> {
             if (Objects.equals(cBoxCat.getSelectedItem(), "") || cBoxCat.getSelectedItem() == null) {
                 libelleComboBox.removeAllItems();
@@ -285,6 +305,8 @@ public class Principale extends JFrame {
                 }
             }
         });
+
+        // action pour afficher le prix en fonction du médicament choisit
         libelleComboBox.addItemListener(e -> {
             if (Objects.equals(cBoxCat.getSelectedItem(), "") || cBoxCat.getSelectedItem() == null) {
                 for (Medicament med : listMed) {
@@ -301,6 +323,7 @@ public class Principale extends JFrame {
             }
         });
 
+        //affiche et réinitialise la JTable recherche pour afficher que les achats
         historiqueDAchatButton.addActionListener(e -> {
             textFieldRecherche.setVisible(true);
             textFieldRecherche.setText("");
@@ -327,9 +350,12 @@ public class Principale extends JFrame {
             }
 
             labelTable.setModel(model);
+            labelTable.setDefaultEditor(Object.class,null);
 
 
         });
+
+        //affiche et réinitialise la JTable recherche pour afficher que les ordonnances
         historiqueOrdonnanceButton.addActionListener(e -> {
 
             lblRsh.setVisible(false);
@@ -363,10 +389,12 @@ public class Principale extends JFrame {
                         ordonnance.getListMedToString()});
             }
             labelTable.setModel(model);
+            labelTable.setAutoCreateRowSorter(true);
+            labelTable.setDefaultEditor(Object.class,null);
 
         });
 
-
+        // recherche par medecin dans historique ordonnance
         rechercheComboBox.addActionListener(e -> {
             DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
             x.setRowCount(0);
@@ -387,9 +415,13 @@ public class Principale extends JFrame {
                 }
             }
             labelTable.setModel(model);
+            labelTable.setAutoCreateRowSorter(true);
+            labelTable.setDefaultEditor(Object.class,null);
         });
 
 
+        // bouton valider -> valide un achat si tous les champs son rempli
+        // archive en meme temps
         validerButton.addActionListener(e -> {
 
             Client c = null;
@@ -418,16 +450,20 @@ public class Principale extends JFrame {
             setContentPane(PanelAcceuil);
 
         });
+
+        //action de recherche par date
         textFieldRecherche.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
                 x.setRowCount(0);
                 DefaultTableModel model = new DefaultTableModel();
+
                 model.addColumn("Date");
                 model.addColumn("Client");
                 model.addColumn("Ordonnance");
                 model.addColumn("Prix");
+
 
                 for (classMetier.Util.Achat achat:listAchat){
                     if (textFieldRecherche.getText().equals(achat.getDate())){
@@ -435,7 +471,54 @@ public class Principale extends JFrame {
                         model.addRow(new Object[]{achat.getDate(),a,achat.isOrdonnance(),achat.getPrix()});
                     }
                 }
+
+
                 labelTable.setModel(model);
+                labelTable.setAutoCreateRowSorter(true);
+                labelTable.setDefaultEditor(Object.class,null);
+
+            }
+        });
+
+        //action selon case double cliqué dans la Jtable des recherche
+        labelTable.addMouseListener(new MouseAdapter() {
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) {
+                    JTable target = (JTable)e.getSource();
+                    int row = target.getSelectedRow();
+                    int column = target.getSelectedColumn();
+                    switch (column){
+                        case 0:{
+
+                        }
+                        case 1:{
+                            if(target.getColumnName(column).equals("Client")){
+                                JFrame info = new JFrame();
+                                info.setBounds(100,100,750,500);
+                                info.setContentPane(PanelInfoClient);
+                                info.setVisible(true);
+                                nomComboBox.setVisible(false);
+                                NomTextField.setText("");
+                                NomTextField.setVisible(true);
+                                NomTextField.setEditable(false);
+
+                                prenomComboBox.setVisible(false);
+                                PrenomTextField.setText("");
+                                PrenomTextField.setVisible(true);
+                                PrenomTextField.setEditable(false);
+                                for (Client client :listClient){
+                                    if ((client.getNom()+" "+client.getPrenom()).equals(target.getValueAt(row,column))){
+                                        NomTextField.setText(client.getNom());
+                                        PrenomTextField.setText(client.getPrenom());
+                                    }
+                                }
+                            }
+                        }
+                        default:{
+                        }
+                    }
+
+                }
             }
         });
     }

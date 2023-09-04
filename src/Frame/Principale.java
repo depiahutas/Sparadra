@@ -12,10 +12,7 @@ import classMetier.sante.Ordonnance;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Objects;
 
@@ -82,6 +79,25 @@ public class Principale extends JFrame {
     private JButton informationsClientButton;
     private JTextField NomTextField;
     private JTextField PrenomTextField;
+    private JPanel PanelinfoSante;
+    private JTextField dateDeNaissanceTextField;
+    private JTextField mutuelleTextField;
+    private JLabel lblDateNaiss;
+    private JLabel lblMutuelle;
+    private JTextField numéroDeSécuritéSocialeTextField;
+    private JTextField médecinTraitantTextField;
+    private JLabel lblNumSecu;
+    private JLabel lblMedecin;
+    private JPanel PanelInfoOrdonannce;
+    private JPanel PanelInfoPatient;
+    private JPanel PanelListMed;
+    private JTextField textField1;
+    private JTextField textField2;
+    private JTable tableMed;
+    private JLabel lblNomPatient;
+    private JLabel lblPrenomPatient;
+    private JTextField textField3;
+    private JLabel lblDate;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -96,24 +112,29 @@ public class Principale extends JFrame {
 
         ArrayList<Medecin> listMedecin = new ArrayList<>();
         Medecin medecin1 = new Medecin("A", "B", "A.B@mail@.com", "0123456789",
-                new Adresse(1, "a", 75001, "Paris"), 1);
+                new Adresse(1, "a", "75001", "Paris"), 1);
 
         Medecin medecin2 = new Medecin("C", "D", "C.D@mail@.com", "0234567891",
-                new Adresse(2, "b", 69007, "Lyon"), 2);
+                new Adresse(2, "b", "69007", "Lyon"), 2);
 
         listMedecin.add(medecin1);
         listMedecin.add(medecin2);
 
+        ArrayList<Mutuelle> listMutuelle = new ArrayList<>();
+
+        Mutuelle mutuelle1 = new Mutuelle(new Adresse(77, "rue des mutuelles", "75423", "ici"),
+                "Mut", "0954642318", "mut@mail.fr", 75, 2);
+
         ArrayList<Client> listClient = new ArrayList<>();
         //creation jeux de données pour test
         Client client1 = new Client("Dupont", "Marie", "dupont.marie@mail.com", "0612345678",
-                new Adresse(123, "rue de la République", 75001, "Paris"),
-                "20/07/1995", medecin1, new Mutuelle(), "123 456 789 012 345"
+                new Adresse(123, "rue de la République", "75001", "Paris"),
+                "20/07/1995", medecin1, mutuelle1, "123 456 789 012 345"
         );
 
         Client client2 = new Client("Martin", "Jean", "martin.jean@mail.com", "0789101112",
-                new Adresse(456, "avenue de la libération", 69007, "Lyon"),
-                "10/05/1975", medecin2, new Mutuelle(), "123 456 789 012 346"
+                new Adresse(456, "avenue de la libération", "69007", "Lyon"),
+                "10/05/1975", medecin2, mutuelle1, "123 456 789 012 346"
         );
 
         listClient.add(client1);
@@ -126,12 +147,15 @@ public class Principale extends JFrame {
 
 
         ArrayList<Ordonnance> listOrdonnance = new ArrayList<>();
-        Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, new ArrayList<>(), "30/08/2023");
+        Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, new ArrayList<>(), "30/01/2023", 1);
         listOrdonnance.add(ordonnance1);
+
+        Ordonnance ordonnance2 = new Ordonnance(medecin1, client1, new ArrayList<>(), "15/08/2023", 2);
+        listOrdonnance.add(ordonnance2);
 
         ArrayList<Achat> listAchat = new ArrayList<>();
         Achat achat1 = new Achat(client1, new ArrayList<>(), 25.37, "30/08/2023",
-                true);
+                ordonnance1);
 
         listAchat.add(achat1);
 
@@ -145,11 +169,13 @@ public class Principale extends JFrame {
         JMenuItem Effectuer = new JMenuItem("Effectuer achat");
         JMenuItem RechercherOrd = new JMenuItem("Ordonnance");
         JMenuItem RechercherAch = new JMenuItem("Achat");
+        JMenuItem RechercherClient = new JMenuItem("Client");
 
         Accueil.add(Retour);
         Achat.add(Effectuer);
         recherche.add(RechercherOrd);
         recherche.add(RechercherAch);
+        recherche.add(RechercherClient);
 
         mbar.add(Accueil);
         mbar.add(Achat);
@@ -167,7 +193,7 @@ public class Principale extends JFrame {
 
         //Affichage panel Achat et réinitialise les données du form
         btnAchat.addActionListener(e -> {
-            sommeTot[0]=0;
+            sommeTot[0] = 0;
             Prixtot.setText("");
             QteTextField.setText("1");
             setContentPane(PanelAchat);
@@ -211,7 +237,7 @@ public class Principale extends JFrame {
 
             DefaultTableModel model = new DefaultTableModel();
 
-            labelTable.setDefaultEditor(Object.class,null);
+            labelTable.setDefaultEditor(Object.class, null);
             labelTable.setModel(model);
         });
 
@@ -247,10 +273,129 @@ public class Principale extends JFrame {
         // retour a l'accueil
         Retour.addActionListener(e -> setContentPane(PanelAcceuil));
 
+        Effectuer.addActionListener(e -> {
+                  sommeTot[0] = 0;
+          Prixtot.setText("");
+          QteTextField.setText("1");
+          setContentPane(PanelAchat);
+          buttonGroup.clearSelection();
+          PanelClient.setVisible(false);
+          PanelAchat.setVisible(true);
+          PanelMed.setVisible(false);
+          PanelRecap.setVisible(false);
+          cBoxCat.setVisible(false);
+          lblCat.setVisible(false);
+          ajouterButton.setVisible(false);
+          DefaultTableModel mdl = (DefaultTableModel) TableMed.getModel();
+          mdl.setRowCount(0);
+          cBoxCat.removeAllItems();
+          cBoxNom.removeAllItems();
+          for (CategorieMedicament c : CategorieMedicament.values()) {
+              cBoxCat.addItem(c.toString().toLowerCase());
+          }
+          cBoxCat.setSelectedIndex(-1);
+           for (Client client : listClient) {
+              cBoxNom.addItem(client.getNom());
+          }
+          cBoxNom.setSelectedIndex(-1);
+        });
+
+        RechercherOrd.addActionListener(e -> {
+            setContentPane(PanelRecherche);
+            lblRsh.setVisible(false);
+            historiqueDAchatButton.setVisible(false);
+            PanelRecherche.setVisible(true);
+            lblRecherche.setVisible(true);
+            rechercheComboBox.setVisible(true);
+            historiqueOrdonnanceButton.setVisible(false);
+            rechercheComboBox.removeAllItems();
+
+
+            DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+            x.setRowCount(0);
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Medecin");
+            model.addColumn("Client");
+            model.addColumn("Date");
+            model.addColumn("Medicament");
+
+
+            for (Medecin medecin : listMedecin) {
+                rechercheComboBox.addItem(medecin.getNom());
+            }
+            rechercheComboBox.setSelectedIndex(-1);
+
+
+            for (Ordonnance ordonnance : listOrdonnance) {
+                String a = ordonnance.getClient().getNom() + " " + ordonnance.getClient().getPrenom();
+                model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
+                        a, ordonnance.getDate(),
+                        ordonnance.getListMedToString()});
+            }
+            labelTable.setModel(model);
+            labelTable.setAutoCreateRowSorter(true);
+            labelTable.setDefaultEditor(Object.class, null);
+        });
+
+        RechercherAch.addActionListener(e -> {
+            setContentPane(PanelRecherche);
+            textFieldRecherche.setVisible(true);
+            textFieldRecherche.setText("");
+            lblRsh.setVisible(false);
+            historiqueDAchatButton.setVisible(false);
+            PanelRecherche.setVisible(true);
+            lblRecherche.setVisible(true);
+            historiqueOrdonnanceButton.setVisible(false);
+
+            DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+            x.setRowCount(0);
+
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Date");
+            model.addColumn("Client");
+            model.addColumn("Ordonnance");
+            model.addColumn("Prix");
+
+            for (Achat achat : listAchat) {
+                String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(),
+                        achat.getPrix()});
+
+            }
+
+            labelTable.setModel(model);
+            labelTable.setDefaultEditor(Object.class, null);
+        });
+
+        RechercherClient.addActionListener(e -> {
+            setContentPane(PanelInfoClient);
+            nomComboBox.setVisible(true);
+            nomComboBox.removeAllItems();
+            prenomComboBox.removeAllItems();
+            NomTextField.setText("");
+            NomTextField.setVisible(false);
+            NomTextField.setEditable(false);
+
+            for (Client client : listClient) {
+                nomComboBox.addItem(client.getNom());
+                prenomComboBox.addItem(client.getPrenom());
+            }
+
+
+            prenomComboBox.setVisible(true);
+            PrenomTextField.setText("");
+            PrenomTextField.setVisible(false);
+            PrenomTextField.setEditable(false);
+
+            nomComboBox.setSelectedIndex(-1);
+            prenomComboBox.setSelectedIndex(-1);
+        });
+
+
         //table Recap Medicament
         DefaultTableModel modelRecapMed = new DefaultTableModel();
 
-        TableMed.setDefaultEditor(Object.class,null);
+        TableMed.setDefaultEditor(Object.class, null);
 
         modelRecapMed.addColumn("Libéllé");
         modelRecapMed.addColumn("catégorie");
@@ -283,7 +428,7 @@ public class Principale extends JFrame {
                 listMedAchat.add(m);
             }
 
-            Prixtot.setText(""+sommeTot[0]);
+            Prixtot.setText("" + sommeTot[0]);
 
         });
 
@@ -339,18 +484,18 @@ public class Principale extends JFrame {
             DefaultTableModel model = new DefaultTableModel();
             model.addColumn("Date");
             model.addColumn("Client");
-            model.addColumn("Ordonnance");
+            model.addColumn("ID ordonnance");
             model.addColumn("Prix");
 
             for (Achat achat : listAchat) {
-                String a=achat.getClient().getNom()+" "+achat.getClient().getPrenom();
-                model.addRow(new Object[]{achat.getDate(), a, achat.isOrdonnance(),
+                String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(),
                         achat.getPrix()});
 
             }
 
             labelTable.setModel(model);
-            labelTable.setDefaultEditor(Object.class,null);
+            labelTable.setDefaultEditor(Object.class, null);
 
 
         });
@@ -372,6 +517,7 @@ public class Principale extends JFrame {
             DefaultTableModel model = new DefaultTableModel();
             model.addColumn("Medecin");
             model.addColumn("Client");
+            model.addColumn("ID ordonnance");
             model.addColumn("Date");
             model.addColumn("Medicament");
 
@@ -383,14 +529,14 @@ public class Principale extends JFrame {
 
 
             for (Ordonnance ordonnance : listOrdonnance) {
-                String a=ordonnance.getClient().getNom()+" "+ordonnance.getClient().getPrenom();
+                String a = ordonnance.getClient().getNom() + " " + ordonnance.getClient().getPrenom();
                 model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
-                        a, ordonnance.getDate(),
+                        a, ordonnance.getId(),ordonnance.getDate(),
                         ordonnance.getListMedToString()});
             }
             labelTable.setModel(model);
             labelTable.setAutoCreateRowSorter(true);
-            labelTable.setDefaultEditor(Object.class,null);
+            labelTable.setDefaultEditor(Object.class, null);
 
         });
 
@@ -407,16 +553,16 @@ public class Principale extends JFrame {
                 if (medecin.getNom().equals(rechercheComboBox.getSelectedItem())) {
                     for (Ordonnance ordonnance : listOrdonnance) {
                         if (ordonnance.getMedecin().getNom().equals(medecin.getNom())) {
-                            String a=ordonnance.getClient().getNom()+" "+ordonnance.getClient().getPrenom();
+                            String a = ordonnance.getClient().getNom() + " " + ordonnance.getClient().getPrenom();
                             model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
-                                    a, ordonnance.getDate(),ordonnance.getListMedToString()});
+                                    a, ordonnance.getDate(), ordonnance.getListMedToString()});
                         }
                     }
                 }
             }
             labelTable.setModel(model);
             labelTable.setAutoCreateRowSorter(true);
-            labelTable.setDefaultEditor(Object.class,null);
+            labelTable.setDefaultEditor(Object.class, null);
         });
 
 
@@ -425,26 +571,19 @@ public class Principale extends JFrame {
         validerButton.addActionListener(e -> {
 
             Client c = null;
-            for (Client client:listClient){
-                if(cBoxPrenom.getSelectedItem()==null){
-                    if (client.getNom().equals(cBoxNom.getSelectedItem())){
-                        c=client;
+            for (Client client : listClient) {
+                if (cBoxPrenom.getSelectedItem() == null) {
+                    if (client.getNom().equals(cBoxNom.getSelectedItem())) {
+                        c = client;
                     }
+                } else if (client.getNom().equals(cBoxNom.getSelectedItem())
+                        && client.getPrenom().equals(cBoxPrenom.getSelectedItem())) {
+                    c = client;
                 }
-                else if (client.getNom().equals(cBoxNom.getSelectedItem())
-                        && client.getPrenom().equals(cBoxPrenom.getSelectedItem())){
-                    c=client;
-                }
-            }
-            Boolean b=false;
-            if(ordonnanceRadioButton.isSelected()){
-                b=true;
-            }
-            else if (sansOrdonnanceRadioButton.isSelected()){
-                b=false;
             }
 
-            Achat achat = new Achat(c, listMedAchat, sommeTot[0], classMetier.Util.Date.newDate(), b);
+
+            Achat achat = new Achat(c, listMedAchat, sommeTot[0], classMetier.Util.Date.newDate(), null);
             listAchat.add(achat);
 
             setContentPane(PanelAcceuil);
@@ -465,17 +604,17 @@ public class Principale extends JFrame {
                 model.addColumn("Prix");
 
 
-                for (classMetier.Util.Achat achat:listAchat){
-                    if (textFieldRecherche.getText().equals(achat.getDate())){
-                        String a=achat.getClient().getNom()+" "+achat.getClient().getPrenom();
-                        model.addRow(new Object[]{achat.getDate(),a,achat.isOrdonnance(),achat.getPrix()});
+                for (classMetier.Util.Achat achat : listAchat) {
+                    if (textFieldRecherche.getText().equals(achat.getDate())) {
+                        String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                        model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
                     }
                 }
 
 
                 labelTable.setModel(model);
                 labelTable.setAutoCreateRowSorter(true);
-                labelTable.setDefaultEditor(Object.class,null);
+                labelTable.setDefaultEditor(Object.class, null);
 
             }
         });
@@ -484,17 +623,17 @@ public class Principale extends JFrame {
         labelTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    JTable target = (JTable)e.getSource();
+                    JTable target = (JTable) e.getSource();
                     int row = target.getSelectedRow();
                     int column = target.getSelectedColumn();
-                    switch (column){
-                        case 0:{
+                    switch (column) {
+                        case 0: {
 
                         }
-                        case 1:{
-                            if(target.getColumnName(column).equals("Client")){
+                        case 1: {
+                            if (target.getColumnName(column).equals("Client")) {
                                 JFrame info = new JFrame();
-                                info.setBounds(100,100,750,500);
+                                info.setBounds(100, 100, 750, 500);
                                 info.setContentPane(PanelInfoClient);
                                 info.setVisible(true);
                                 nomComboBox.setVisible(false);
@@ -506,21 +645,127 @@ public class Principale extends JFrame {
                                 PrenomTextField.setText("");
                                 PrenomTextField.setVisible(true);
                                 PrenomTextField.setEditable(false);
-                                for (Client client :listClient){
-                                    if ((client.getNom()+" "+client.getPrenom()).equals(target.getValueAt(row,column))){
+                                for (Client client : listClient) {
+                                    if ((client.getNom() + " " + client.getPrenom()).equals(target.getValueAt(row, column))) {
                                         NomTextField.setText(client.getNom());
                                         PrenomTextField.setText(client.getPrenom());
+                                        numéroTextField.setText(client.getTel());
+                                        rueTextField.setText(client.getAdresse().getRue());
+                                        codePostalTextField.setText(client.getAdresse().getCodePostal());
+                                        villeTextField.setText(client.getAdresse().getVille());
+                                        dateDeNaissanceTextField.setText(client.getDateNaiss());
+                                        mutuelleTextField.setText(client.getMutuelle().getNom());
+                                        numéroDeSécuritéSocialeTextField.setText(client.getNumSecu());
+                                        médecinTraitantTextField.setText(client.getMedecin().getNom());
                                     }
                                 }
                             }
                         }
-                        default:{
+                        case 2:{
+                            if (target.getColumnName(column).equals("ID ordonnance")){
+                                //if (target.getValueAt(row,column)!=null) {
+                                    JFrame info = new JFrame();
+                                    info.setBounds(100, 100, 750, 500);
+                                    info.setContentPane(PanelInfoOrdonannce);
+
+                                    for (Ordonnance ordonnance:listOrdonnance){
+                                        if (ordonnance.getId() == Integer.parseInt(target.getValueAt(row,column).toString())){
+                                            lblDate.setText(ordonnance.getDate());
+                                        }
+                                    }
+                                    info.setVisible(true);
+                                //}
+                                //else {
+                                //    JOptionPane.showMessageDialog(null,"Il n'y a pas d'ordonnance");
+                                //}
+                            }
+                        }
+                        default: {
                         }
                     }
 
                 }
             }
         });
+        informationsClientButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                setContentPane(PanelInfoClient);
+                nomComboBox.setVisible(true);
+                nomComboBox.removeAllItems();
+                prenomComboBox.removeAllItems();
+                NomTextField.setText("");
+                NomTextField.setVisible(false);
+                NomTextField.setEditable(false);
+
+                for (Client client : listClient) {
+                    nomComboBox.addItem(client.getNom());
+                    prenomComboBox.addItem(client.getPrenom());
+                }
+
+
+                prenomComboBox.setVisible(true);
+                PrenomTextField.setText("");
+                PrenomTextField.setVisible(false);
+                PrenomTextField.setEditable(false);
+
+                nomComboBox.setSelectedIndex(-1);
+                prenomComboBox.setSelectedIndex(-1);
+            }
+        });
+        nomComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                Client c = null;
+                prenomComboBox.removeAllItems();
+                for (Client client : listClient) {
+                    if (client.getNom().equals(nomComboBox.getSelectedItem())) {
+
+                        prenomComboBox.addItem(client.getPrenom());
+                        c = client;
+
+                    }
+                }
+                if (prenomComboBox.getItemCount() == 1 && c != null) {
+                    NomTextField.setText(c.getNom());
+                    PrenomTextField.setText(c.getPrenom());
+                    numéroTextField.setText(c.getTel());
+                    rueTextField.setText(c.getAdresse().getRue());
+                    codePostalTextField.setText(c.getAdresse().getCodePostal());
+                    villeTextField.setText(c.getAdresse().getVille());
+                    dateDeNaissanceTextField.setText(c.getDateNaiss());
+                    mutuelleTextField.setText(c.getMutuelle().getNom());
+                    numéroDeSécuritéSocialeTextField.setText(c.getNumSecu());
+                    médecinTraitantTextField.setText(c.getMedecin().getNom());
+                }
+            }
+        });
+
+
+        prenomComboBox.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                for (Client client : listClient) {
+                    if (client.getNom().equals(nomComboBox.getSelectedItem())
+                            && client.getPrenom().equals(prenomComboBox.getSelectedItem())) {
+
+                        NomTextField.setText(client.getNom());
+                        PrenomTextField.setText(client.getPrenom());
+                        numéroTextField.setText(client.getTel());
+                        rueTextField.setText(client.getAdresse().getRue());
+                        codePostalTextField.setText(client.getAdresse().getCodePostal());
+                        villeTextField.setText(client.getAdresse().getVille());
+                        dateDeNaissanceTextField.setText(client.getDateNaiss());
+                        mutuelleTextField.setText(client.getMutuelle().getNom());
+                        numéroDeSécuritéSocialeTextField.setText(client.getNumSecu());
+                        médecinTraitantTextField.setText(client.getMedecin().getNom());
+                    }
+                }
+            }
+        });
+
+
     }
 
 }

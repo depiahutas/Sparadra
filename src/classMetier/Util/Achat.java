@@ -2,6 +2,7 @@ package classMetier.Util;
 
 import classMetier.personne.Client;
 import classMetier.sante.Medicament;
+import classMetier.sante.Ordonnance;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,9 +13,9 @@ public class Achat {
     private double prix;
     private String date;
 
-    private boolean ordonnance;
+    private Ordonnance ordonnance;
 
-    public Achat(Client client, ArrayList<Medicament> listMed, double prix, String date, boolean ordonnance) {
+    public Achat(Client client, ArrayList<Medicament> listMed, double prix, String date, Ordonnance ordonnance) {
         setClient(client);
         setListMed(listMed);
         setPrix(prix);
@@ -54,11 +55,11 @@ public class Achat {
         this.date = date;
     }
 
-    public boolean isOrdonnance() {
+    public Ordonnance getOrdonnance() {
         return ordonnance;
     }
 
-    public void setOrdonnance(boolean ordonnance) {
+    public void setOrdonnance(Ordonnance ordonnance) {
         this.ordonnance = ordonnance;
     }
 }

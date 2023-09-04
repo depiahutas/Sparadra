@@ -4,15 +4,16 @@ import classMetier.personne.Client;
 import classMetier.personne.Medecin;
 
 import java.util.ArrayList;
-import java.util.Date;
 
 public class Ordonnance {
+    private int id;
     private Medecin medecin;
     private Client client;
     private ArrayList<Medicament> listMed;
     private String date;
 
-    public Ordonnance(Medecin medecin, Client client, ArrayList<Medicament> listMed, String date) {
+    public Ordonnance(Medecin medecin, Client client, ArrayList<Medicament> listMed, String date, int id) {
+        this.id = id;
         setMedecin(medecin);
         setClient(client);
         setListMed(listMed);
@@ -53,5 +54,13 @@ public class Ordonnance {
 
     public String getListMedToString() {
         return null;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 }

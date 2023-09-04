@@ -3,10 +3,10 @@ package classMetier.Util;
 public class Adresse {
     private int numero;
     private String rue;
-    private int codePostal;
+    private String codePostal;
     private String ville;
 
-    public Adresse(int numero, String rue, int codePostal, String ville) {
+    public Adresse(int numero, String rue, String codePostal, String ville) {
         setNumero(numero);
         setRue(rue);
         setVille(ville);
@@ -29,11 +29,11 @@ public class Adresse {
         this.rue = rue;
     }
 
-    public int getCodePostal() {
+    public String getCodePostal() {
         return codePostal;
     }
 
-    public void setCodePostal(int codePostal) {
+    public void setCodePostal(String codePostal) {
         this.codePostal = codePostal;
     }
 

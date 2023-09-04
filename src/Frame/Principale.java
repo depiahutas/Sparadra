@@ -91,13 +91,15 @@ public class Principale extends JFrame {
     private JPanel PanelInfoOrdonannce;
     private JPanel PanelInfoPatient;
     private JPanel PanelListMed;
-    private JTextField textField1;
-    private JTextField textField2;
+    private JTextField nomDuPatientTextField;
+    private JTextField prenomTextField;
     private JTable tableMed;
     private JLabel lblNomPatient;
     private JLabel lblPrenomPatient;
-    private JTextField textField3;
+    private JTextField nomMédecinTextField;
     private JLabel lblDate;
+    private JTextField nOrdonannceTextField;
+    private JLabel lblNumOrdonannce;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -110,6 +112,7 @@ public class Principale extends JFrame {
         buttonGroup.add(sansOrdonnanceRadioButton);
 
 
+        //jeu de données pour test application
         ArrayList<Medecin> listMedecin = new ArrayList<>();
         Medecin medecin1 = new Medecin("A", "B", "A.B@mail@.com", "0123456789",
                 new Adresse(1, "a", "75001", "Paris"), 1);
@@ -123,7 +126,7 @@ public class Principale extends JFrame {
         ArrayList<Mutuelle> listMutuelle = new ArrayList<>();
 
         Mutuelle mutuelle1 = new Mutuelle(new Adresse(77, "rue des mutuelles", "75423", "ici"),
-                "Mut", "0954642318", "mut@mail.fr", 75, 2);
+                "Mut", "0954642318", "mut@mail.fr", 2);
 
         ArrayList<Client> listClient = new ArrayList<>();
         //creation jeux de données pour test
@@ -145,9 +148,11 @@ public class Principale extends JFrame {
                 CategorieMedicament.ANTALGIQUE);
         listMed.add(paracetamol);
 
+        ArrayList<Medicament> medic = new ArrayList<>();
+        medic.add(paracetamol);
 
         ArrayList<Ordonnance> listOrdonnance = new ArrayList<>();
-        Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, new ArrayList<>(), "30/01/2023", 1);
+        Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, medic, "30/01/2023", 1);
         listOrdonnance.add(ordonnance1);
 
         Ordonnance ordonnance2 = new Ordonnance(medecin1, client1, new ArrayList<>(), "15/08/2023", 2);
@@ -250,6 +255,9 @@ public class Principale extends JFrame {
             lblCat.setVisible(true);
             cBoxCat.setVisible(true);
             ajouterButton.setVisible(true);
+            lblNumOrdonannce.setVisible(true);
+            nOrdonannceTextField.setVisible(true);
+            nOrdonannceTextField.setText("");
         });
 
         sansOrdonnanceRadioButton.addActionListener(e -> {
@@ -259,8 +267,11 @@ public class Principale extends JFrame {
             lblCat.setVisible(true);
             cBoxCat.setVisible(true);
             ajouterButton.setVisible(true);
+            lblNumOrdonannce.setVisible(false);
+            nOrdonannceTextField.setVisible(false);
         });
 
+        //tri list client en fonctio nom sélectionner
         cBoxNom.addActionListener(e -> {
             cBoxPrenom.removeAllItems();
             for (Client client : listClient) {
@@ -270,9 +281,12 @@ public class Principale extends JFrame {
             }
         });
 
+        //action menubar
+
         // retour a l'accueil
         Retour.addActionListener(e -> setContentPane(PanelAcceuil));
 
+        //page d'achat
         Effectuer.addActionListener(e -> {
                   sommeTot[0] = 0;
           Prixtot.setText("");
@@ -300,9 +314,11 @@ public class Principale extends JFrame {
           cBoxNom.setSelectedIndex(-1);
         });
 
+        //panel recherche ordonnance
         RechercherOrd.addActionListener(e -> {
             setContentPane(PanelRecherche);
             lblRsh.setVisible(false);
+            textFieldRecherche.setVisible(false);
             historiqueDAchatButton.setVisible(false);
             PanelRecherche.setVisible(true);
             lblRecherche.setVisible(true);
@@ -316,6 +332,7 @@ public class Principale extends JFrame {
             DefaultTableModel model = new DefaultTableModel();
             model.addColumn("Medecin");
             model.addColumn("Client");
+            model.addColumn("ID ordonnance");
             model.addColumn("Date");
             model.addColumn("Medicament");
 
@@ -329,7 +346,7 @@ public class Principale extends JFrame {
             for (Ordonnance ordonnance : listOrdonnance) {
                 String a = ordonnance.getClient().getNom() + " " + ordonnance.getClient().getPrenom();
                 model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
-                        a, ordonnance.getDate(),
+                        a, ordonnance.getId(),ordonnance.getDate(),
                         ordonnance.getListMedToString()});
             }
             labelTable.setModel(model);
@@ -337,11 +354,13 @@ public class Principale extends JFrame {
             labelTable.setDefaultEditor(Object.class, null);
         });
 
+        //panel recherche achat par date
         RechercherAch.addActionListener(e -> {
             setContentPane(PanelRecherche);
             textFieldRecherche.setVisible(true);
             textFieldRecherche.setText("");
             lblRsh.setVisible(false);
+            rechercheComboBox.setVisible(false);
             historiqueDAchatButton.setVisible(false);
             PanelRecherche.setVisible(true);
             lblRecherche.setVisible(true);
@@ -358,15 +377,21 @@ public class Principale extends JFrame {
 
             for (Achat achat : listAchat) {
                 String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
-                model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(),
-                        achat.getPrix()});
-
+                if (achat.getOrdonnance()!=null) {
+                    model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(),
+                            achat.getPrix()});
+                }
+                else {
+                    model.addRow(new Object[]{achat.getDate(), a, "",
+                            achat.getPrix()});
+                }
             }
 
             labelTable.setModel(model);
             labelTable.setDefaultEditor(Object.class, null);
         });
 
+        //panel info client
         RechercherClient.addActionListener(e -> {
             setContentPane(PanelInfoClient);
             nomComboBox.setVisible(true);
@@ -392,6 +417,7 @@ public class Principale extends JFrame {
         });
 
 
+
         //table Recap Medicament
         DefaultTableModel modelRecapMed = new DefaultTableModel();
 
@@ -407,6 +433,7 @@ public class Principale extends JFrame {
         TableMed.setAutoCreateRowSorter(true);
 
 
+        //liste medicament pour achat
         ArrayList<Medicament> listMedAchat = new ArrayList<>();
 
         // ajout du medicament selectionné au recapMed
@@ -489,9 +516,14 @@ public class Principale extends JFrame {
 
             for (Achat achat : listAchat) {
                 String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
-                model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(),
-                        achat.getPrix()});
-
+                if (achat.getOrdonnance()!=null) {
+                    model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(),
+                            achat.getPrix()});
+                }
+                else {
+                    model.addRow(new Object[]{achat.getDate(), a, "",
+                            achat.getPrix()});
+                }
             }
 
             labelTable.setModel(model);
@@ -547,6 +579,7 @@ public class Principale extends JFrame {
             DefaultTableModel model = new DefaultTableModel();
             model.addColumn("Medecin");
             model.addColumn("Client");
+            model.addColumn("ID ordonnance");
             model.addColumn("Date");
             model.addColumn("Medicament");
             for (Medecin medecin : listMedecin) {
@@ -555,7 +588,7 @@ public class Principale extends JFrame {
                         if (ordonnance.getMedecin().getNom().equals(medecin.getNom())) {
                             String a = ordonnance.getClient().getNom() + " " + ordonnance.getClient().getPrenom();
                             model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
-                                    a, ordonnance.getDate(), ordonnance.getListMedToString()});
+                                    a, ordonnance.getId(),ordonnance.getDate(), ordonnance.getListMedToString()});
                         }
                     }
                 }
@@ -566,7 +599,7 @@ public class Principale extends JFrame {
         });
 
 
-        // bouton valider -> valide un achat si tous les champs son rempli
+        // bouton valider -> a faire : valide un achat si tous les champs son rempli
         // archive en meme temps
         validerButton.addActionListener(e -> {
 
@@ -607,7 +640,12 @@ public class Principale extends JFrame {
                 for (classMetier.Util.Achat achat : listAchat) {
                     if (textFieldRecherche.getText().equals(achat.getDate())) {
                         String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
-                        model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
+                        if (achat.getOrdonnance()!=null){
+                            model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
+                        }
+                        else {
+                            model.addRow(new Object[]{achat.getDate(), a,"", achat.getPrix()});
+                        }
                     }
                 }
 
@@ -620,6 +658,8 @@ public class Principale extends JFrame {
         });
 
         //action selon case double cliqué dans la Jtable des recherche
+        //colonne client affiche données client dans nouvelle fenetre
+        //colonne ID ordonnance affiche détails ordonnance dans nouvelle fenetre
         labelTable.addMouseListener(new MouseAdapter() {
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
@@ -627,9 +667,6 @@ public class Principale extends JFrame {
                     int row = target.getSelectedRow();
                     int column = target.getSelectedColumn();
                     switch (column) {
-                        case 0: {
-
-                        }
                         case 1: {
                             if (target.getColumnName(column).equals("Client")) {
                                 JFrame info = new JFrame();
@@ -668,16 +705,42 @@ public class Principale extends JFrame {
                                     info.setBounds(100, 100, 750, 500);
                                     info.setContentPane(PanelInfoOrdonannce);
 
-                                    for (Ordonnance ordonnance:listOrdonnance){
-                                        if (ordonnance.getId() == Integer.parseInt(target.getValueAt(row,column).toString())){
-                                            lblDate.setText(ordonnance.getDate());
+                                    if (target.getValueAt(row,column).equals("")){
+                                        JOptionPane.showMessageDialog(null,"Il n'y a pas d'ordonnance");
+                                    } else if (!target.getValueAt(row,column).equals("")) {
+
+
+                                        for (Ordonnance ordonnance : listOrdonnance) {
+                                            if (ordonnance.getId() ==
+                                                    Integer.parseInt(target.getValueAt(row, column).toString())) {
+                                                lblDate.setText(ordonnance.getDate());
+                                                nomMédecinTextField.setText(ordonnance.getMedecin().getNom());
+                                                nomDuPatientTextField.setText(ordonnance.getClient().getNom());
+                                                prenomTextField.setText(ordonnance.getClient().getPrenom());
+                                                DefaultTableModel x = new DefaultTableModel();
+
+                                                x.addColumn("Categorie");
+                                                x.addColumn("Libéllé");
+                                                x.addColumn("date mise en service");
+                                                x.addColumn("Prix / u");
+                                                tableMed.setModel(x);
+
+                                                DefaultTableModel model = (DefaultTableModel) tableMed.getModel();
+                                                model.setRowCount(0);
+
+                                                tableMed.setDefaultEditor(Object.class, null);
+                                                tableMed.setAutoCreateRowSorter(true);
+
+
+                                                for (Medicament med : ordonnance.getListMed()) {
+                                                    model.addRow(new Object[]{med.getCategorie(), med.getNom(), med.getDateMES(), med.getPrix()});
+                                                }
+                                                tableMed.setModel(model);
+
+                                            }
                                         }
+                                        info.setVisible(true);
                                     }
-                                    info.setVisible(true);
-                                //}
-                                //else {
-                                //    JOptionPane.showMessageDialog(null,"Il n'y a pas d'ordonnance");
-                                //}
                             }
                         }
                         default: {
@@ -687,6 +750,7 @@ public class Principale extends JFrame {
                 }
             }
         });
+        //affichge données client
         informationsClientButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -714,6 +778,8 @@ public class Principale extends JFrame {
                 prenomComboBox.setSelectedIndex(-1);
             }
         });
+        // tri prénom client si plusieurs
+        //sinon affiche détails client
         nomComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -743,6 +809,7 @@ public class Principale extends JFrame {
         });
 
 
+        //affichage données client
         prenomComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

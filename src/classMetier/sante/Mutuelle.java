@@ -7,15 +7,13 @@ public class Mutuelle {
     private String nom;
     private String tel;
     private String mail;
-    private int departement;
     private int txPECR;
 
-    public Mutuelle(Adresse adresse, String nom, String tel, String mail, int departement, int txPECR) {
+    public Mutuelle(Adresse adresse, String nom, String tel, String mail, int txPECR) {
         this.adresse = adresse;
         this.nom = nom;
         this.tel = tel;
         this.mail = mail;
-        this.departement = departement;
         this.txPECR = txPECR;
     }
 
@@ -51,13 +49,6 @@ public class Mutuelle {
         this.mail = mail;
     }
 
-    public int getDepartement() {
-        return departement;
-    }
-
-    public void setDepartement(int departement) {
-        this.departement = departement;
-    }
 
     public int getTxPECR() {
         return txPECR;

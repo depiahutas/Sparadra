@@ -53,7 +53,12 @@ public class Ordonnance {
     }
 
     public String getListMedToString() {
-        return null;
+        String b="";
+        for (Medicament medicament:getListMed()){
+            b=b+" | "+medicament.getNom();
+        }
+
+        return b;
     }
 
     public int getId() {

@@ -3,6 +3,7 @@ package Frame;
 import classMetier.Util.Achat;
 import classMetier.Util.Adresse;
 import classMetier.Util.CategorieMedicament;
+import classMetier.Util.Regex;
 import classMetier.personne.Client;
 import classMetier.personne.Medecin;
 import classMetier.sante.Medicament;
@@ -15,6 +16,7 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.Objects;
+import java.util.regex.Pattern;
 
 public class Principale extends JFrame {
     private JPanel PanelMain;
@@ -100,6 +102,10 @@ public class Principale extends JFrame {
     private JLabel lblDate;
     private JTextField nOrdonannceTextField;
     private JLabel lblNumOrdonannce;
+    private JLabel lblErreurAchat;
+    private JLabel lblErreurClient;
+    private JLabel lblErreurOdronnance;
+    private JLabel lblErreurRecherche;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -160,10 +166,10 @@ public class Principale extends JFrame {
 
         //jeu de données pour test application
         Medecin medecin1 = new Medecin("A", "B", "A.B@mail@.com", "0123456789",
-                new Adresse(1, "a", "75001", "Paris"), 1);
+                new Adresse(1, "a", "75001", "Paris"), "A123456789");
 
         Medecin medecin2 = new Medecin("C", "D", "C.D@mail@.com", "0234567891",
-                new Adresse(2, "b", "69007", "Lyon"), 2);
+                new Adresse(2, "b", "69007", "Lyon"), "C098765432");
 
         listMedecin.add(medecin1);
         listMedecin.add(medecin2);
@@ -192,7 +198,24 @@ public class Principale extends JFrame {
         Medicament paracetamol = new Medicament("Paracétamol", 5.99, "15/02/98", 1,
                 CategorieMedicament.ANTALGIQUE);
         listMed.add(paracetamol);
-
+        Medicament Antispasmodiques = new Medicament("Antispasmodiques",2.66,"15/09/2020",1,
+                CategorieMedicament.ANTISPAMODIQUES);
+        Medicament Corticoides = new Medicament("Corticoïdes",15.00,"28/07/2021",1,
+                CategorieMedicament.CORTICOIDES);
+        Medicament antibacteriens = new Medicament("antibactériens",12.50,"08/02/2023",1,
+                CategorieMedicament.ANTIBACTERIENS);
+        Medicament Polymyxines = new Medicament("Polymyxines",24.33,"12/06/2022",1,
+                CategorieMedicament.POLYMIXINES);
+        Medicament Tetracyclines = new Medicament("Tétracyclines",30.48,"01/01/2021",1,
+                CategorieMedicament.TETRECYCLINES);
+        Medicament Antituberculeux = new Medicament("Antituberculeux",36,"12/2022",1,
+                CategorieMedicament.ANTITUBERCULEUX);
+        listMed.add(Antispasmodiques);
+        listMed.add(Corticoides);
+        listMed.add(antibacteriens);
+        listMed.add(Polymyxines);
+        listMed.add(Tetracyclines);
+        listMed.add(Antituberculeux);
 
         medic.add(paracetamol);
 
@@ -330,7 +353,7 @@ public class Principale extends JFrame {
             DefaultTableModel model = new DefaultTableModel();
             model.addColumn("Date");
             model.addColumn("Client");
-            model.addColumn("Ordonnance");
+            model.addColumn("ID ordonnance");
             model.addColumn("Prix");
 
             for (Achat achat : listAchat) {
@@ -524,24 +547,37 @@ public class Principale extends JFrame {
     private void ajoutAchat(){
         // ajout du medicament selectionné au recapMed
         // liste de medicament stocké pour validation afin d'etre ajouter a l'historique achat
+
         ajouterButton.addActionListener(e -> {
-            Medicament m = null;
+                    Medicament m = null;
+            try{
+                    //en fonction du medicament choisit l'ajoute avec toutes ses informations dans la table recap
+                    for (Medicament med : listMed) {
+                        if (med.getNom().equals(libelleComboBox.getSelectedItem()) &&
+                                med.getCategorie().toString().toLowerCase().equals(cBoxCat.getSelectedItem())) {
+                            m = med;
+                        }
+                    }
+                    if (m != null) {
+                        modelRecapMed.addRow(new Object[]{m.getNom(), m.getCategorie(), QteTextField.getText(),
+                                m.getPrix(), m.getDateMES()});
+                        sommeTot[0] = sommeTot[0] + (m.getPrix() * Double.parseDouble(QteTextField.getText()));
+                        listMedAchat.add(m);
+                    }
 
-            //en fonction du medicament choisit l'ajoute avec toutes ses informations dans la table recap
-            for (Medicament med : listMed) {
-                if (med.getNom().equals(libelleComboBox.getSelectedItem()) &&
-                        med.getCategorie().toString().toLowerCase().equals(cBoxCat.getSelectedItem())) {
-                    m = med;
-                }
-            }
-            if (m != null) {
-                modelRecapMed.addRow(new Object[]{m.getNom(), m.getCategorie(), QteTextField.getText(),
-                        m.getPrix(), m.getDateMES()});
-                sommeTot[0] = sommeTot[0] + (m.getPrix() * Double.parseDouble(QteTextField.getText()));
-                listMedAchat.add(m);
-            }
+                    if (libelleComboBox.getSelectedItem()==null || libelleComboBox.getSelectedItem().equals("")){
+                        throw new NullPointerException("Médicament nécessaire");
+                    }else {
+                        lblErreurAchat.setVisible(false);
+                    }
 
-            Prixtot.setText("" + sommeTot[0]);
+
+            }catch(Exception erreur) {
+                lblErreurAchat.setVisible(true);
+                lblErreurAchat.setText(erreur.getMessage());
+                lblErreurAchat.setForeground(Color.red);
+            }
+                Prixtot.setText("" + sommeTot[0]);
 
         });
 
@@ -600,29 +636,73 @@ public class Principale extends JFrame {
         });
     }
 
+    // bouton valider -> verif condition achat avant archivage
     private  void validerAchat(){
-        // bouton valider -> a faire : valide un achat si tous les champs son rempli
-        // archive en meme temps
+
         validerButton.addActionListener(e -> {
 
             Client c = null;
-            for (Client client : listClient) {
-                if (cBoxPrenom.getSelectedItem() == null) {
-                    if (client.getNom().equals(cBoxNom.getSelectedItem())) {
+
+            String regexIDOrd = "[0-9]";
+            Ordonnance ord = null;
+            try {
+                for (Client client : listClient) {
+                    if (cBoxPrenom.getSelectedItem() == null) {
+                        if (client.getNom().equals(cBoxNom.getSelectedItem())) {
+                            c = client;
+                        }
+                    } else if (client.getNom().equals(cBoxNom.getSelectedItem())
+                            && client.getPrenom().equals(cBoxPrenom.getSelectedItem())) {
                         c = client;
                     }
-                } else if (client.getNom().equals(cBoxNom.getSelectedItem())
-                        && client.getPrenom().equals(cBoxPrenom.getSelectedItem())) {
-                    c = client;
+                }
+                if (ordonnanceRadioButton.isSelected()) {
+                    if (nOrdonannceTextField.getText().isEmpty()){
+                        throw new NullPointerException("Numéro Ordonnance nécéssaire");
+                    }
+                    if (Pattern.matches(regexIDOrd,nOrdonannceTextField.getText())) {
+                        for (Ordonnance ordonnance:listOrdonnance){
+                            if (ordonnance.getId()==Integer.parseInt(nOrdonannceTextField.getText())){
+                                ord=ordonnance;
+                            }
+                        }
+                    }
+                    else {
+                        throw new IllegalArgumentException("Numéro Ordonnance incorrect");
+                    }
+                }
+
+
+                if (Objects.equals(cBoxPrenom.getSelectedItem(), "") || cBoxPrenom.getSelectedItem()==null){
+                    throw new NullPointerException("Sélectionnez un client");
+                } else if (listMedAchat.isEmpty()) {
+                    throw new NullPointerException("Médicament nécéssaire");
+                } else {
+                    lblErreurClient.setVisible(false);
+                    Achat achat = new Achat(c, listMedAchat, sommeTot[0], classMetier.Util.Date.newDate(),ord );
+                    listAchat.add(achat);
+                    setContentPane(PanelAcceuil);
+                }
+            }catch (Exception exception){
+                System.out.println(exception.getMessage());
+                if(exception.getMessage().equals("Sélectionnez un client")){
+                    lblErreurOdronnance.setVisible(false);
+                    lblErreurClient.setVisible(true);
+                    lblErreurClient.setText(exception.getMessage());
+                    lblErreurClient.setForeground(Color.red);
+                }
+                if (exception.getMessage().equals("Médicament nécéssaire")) {
+                    lblErreurClient.setVisible(false);
+                    lblErreurAchat.setVisible(true);
+                    lblErreurAchat.setText(exception.getMessage());
+                    lblErreurAchat.setForeground(Color.red);
+                }
+                if (exception.getMessage().equals("Numéro Ordonnance nécéssaire") || exception.getMessage().equals("Numéro Ordonnance incorrect")){
+                    lblErreurOdronnance.setVisible(true);
+                    lblErreurOdronnance.setText(exception.getMessage());
+                    lblErreurOdronnance.setForeground(Color.red);
                 }
             }
-
-
-            Achat achat = new Achat(c, listMedAchat, sommeTot[0], classMetier.Util.Date.newDate(), null);
-            listAchat.add(achat);
-
-            setContentPane(PanelAcceuil);
-
         });
     }
 
@@ -646,6 +726,7 @@ public class Principale extends JFrame {
     private  void RechercheAchat(){
         //affiche et réinitialise la JTable recherche pour afficher que les achats
         historiqueDAchatButton.addActionListener(e -> {
+
             textFieldRecherche.setVisible(true);
             textFieldRecherche.setText("");
             lblRsh.setVisible(false);
@@ -661,17 +742,23 @@ public class Principale extends JFrame {
             model.addColumn("Date");
             model.addColumn("Client");
             model.addColumn("ID ordonnance");
+            model.addColumn("Liste medicament");
             model.addColumn("Prix");
+
 
             for (Achat achat : listAchat) {
                 String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                String b="";
+                for (Medicament medicament:achat.getListMed()){
+                    b=b+" | "+medicament.getNom();
+                }
                 if (achat.getOrdonnance()!=null) {
                     model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(),
-                            achat.getPrix()});
+                            b,achat.getPrix()});
                 }
                 else {
                     model.addRow(new Object[]{achat.getDate(), a, "",
-                            achat.getPrix()});
+                            b,achat.getPrix()});
                 }
             }
 
@@ -757,33 +844,48 @@ public class Principale extends JFrame {
         textFieldRecherche.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
-                x.setRowCount(0);
-                DefaultTableModel model = new DefaultTableModel();
+                String recherche = null;
 
-                model.addColumn("Date");
-                model.addColumn("Client");
-                model.addColumn("Ordonnance");
-                model.addColumn("Prix");
-
-
-                for (classMetier.Util.Achat achat : listAchat) {
-                    if (textFieldRecherche.getText().equals(achat.getDate())) {
-                        String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
-                        if (achat.getOrdonnance()!=null){
-                            model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
-                        }
-                        else {
-                            model.addRow(new Object[]{achat.getDate(), a,"", achat.getPrix()});
-                        }
+                try {
+                    if (Pattern.matches(Regex.getRegexDate(), textFieldRecherche.getText())) {
+                        recherche = textFieldRecherche.getText();
+                        lblErreurRecherche.setVisible(false);
                     }
+                    else {
+                        throw new IllegalArgumentException("Date incorrecte");
+                    }
+
+                    DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+                    x.setRowCount(0);
+                    DefaultTableModel model = new DefaultTableModel();
+
+                    model.addColumn("Date");
+                    model.addColumn("Client");
+                    model.addColumn("ID ordonnance");
+                    model.addColumn("Prix");
+
+
+                        for (classMetier.Util.Achat achat : listAchat) {
+                            if (recherche.equals(achat.getDate())) {
+                                String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                                if (achat.getOrdonnance() != null) {
+                                    model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
+                                } else {
+                                    model.addRow(new Object[]{achat.getDate(), a, "", achat.getPrix()});
+                                }
+                            }
+                        }
+
+
+                        labelTable.setModel(model);
+                    labelTable.setAutoCreateRowSorter(true);
+                    labelTable.setDefaultEditor(Object.class, null);
                 }
-
-
-                labelTable.setModel(model);
-                labelTable.setAutoCreateRowSorter(true);
-                labelTable.setDefaultEditor(Object.class, null);
-
+                catch (Exception exception){
+                    lblErreurRecherche.setVisible(true);
+                    lblErreurRecherche.setText(exception.getMessage());
+                    lblErreurRecherche.setForeground(Color.red);
+                }
             }
         });
     }

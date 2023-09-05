@@ -5,7 +5,7 @@ import classMetier.sante.Medicament;
 import classMetier.sante.Ordonnance;
 
 import java.util.ArrayList;
-import java.util.Date;
+import java.util.regex.Pattern;
 
 public class Achat {
     private Client client;
@@ -51,8 +51,13 @@ public class Achat {
         return date;
     }
 
-    public void setDate(String date) {
-        this.date = date;
+    public void setDate(String date)throws IllegalArgumentException {
+        if (Pattern.matches(Regex.getRegexDate(),date)){
+            this.date = date;
+        }
+        else {
+            throw new IllegalArgumentException("date incorrecte");
+        }
     }
 
     public Ordonnance getOrdonnance() {

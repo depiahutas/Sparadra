@@ -1,19 +1,26 @@
 package classMetier.personne;
 
 import classMetier.Util.Adresse;
+import classMetier.Util.Regex;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 public class Medecin extends Personne{
-    private int numAgr;
+    private String numAgr;
     private ArrayList<Client> listPatient;
 
-    public int getNumAgr() {
+    public String getNumAgr() {
         return numAgr;
     }
 
-    public void setNumAgr(int numAgr) {
-        this.numAgr = numAgr;
+    public void setNumAgr(String numAgr)throws IllegalArgumentException {
+        if(Pattern.matches(Regex.getRegexAgr(),numAgr)){
+            this.numAgr = numAgr;
+        }
+        else {
+            throw new IllegalArgumentException("Numéro d'agrément incorrecte");
+        }
     }
 
     public ArrayList<Client> getListPatient() {
@@ -24,7 +31,7 @@ public class Medecin extends Personne{
         this.listPatient = listPatient;
     }
 
-    public Medecin(String nom, String prenom, String mail, String tel, Adresse adresse,int numAgr) {
+    public Medecin(String nom, String prenom, String mail, String tel, Adresse adresse, String numAgr) {
         super(nom, prenom, mail, tel, adresse);
         setNumAgr(numAgr);
     }

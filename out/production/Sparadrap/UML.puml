@@ -1,0 +1,171 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+Package Ppersonne{
+
+Abstract Personne #lightgrey{
+    -nom :String
+    -prenom : String
+    -mail : String
+    -tel : String
+    -adresse : Adresse
+
+    -getters()
+    -setters()
+}
+
+
+class Client #lightgrey{
+    -dateNaiss : String
+    -numSecu : String
+    -mutuelle : Mutuelle
+    -medecin : Medecin
+    -specialistes : ArrayList<Specialiste>
+
+    -getters()
+    -setters()
+}
+
+class Pharmacien #lightgrey{
+}
+
+class Medecin #lightgrey{
+    -numAgr : int
+    -patients : ArrayList<Client>
+
+    -getters()
+    -setters()
+}
+
+class Specialiste #lightgrey{
+    -specialite : Specialite
+
+    -getters()
+    -setters()
+}
+
+
+Personne  <|-[#red]up-Client
+Personne  <|-[#red]up-Medecin
+Personne  <|-[#red]up-Pharmacien
+Medecin <|-[#red]up Specialiste
+
+Client <->Medecin
+Specialiste<-Client
+
+note top of Medecin{
+Medecin peut avoir plusieurs Patient
+}
+
+note top of Client{
+specialiste peut etre null/plusieurs
+}
+}
+Personne-->Util.Adresse
+
+Package Util{
+
+class Adresse #lightpink{
+    -numero : int
+    -rue : String
+    -codePostal : int
+    -ville : String
+
+    -setters()
+    -toString()
+}
+
+Enum CategorieMedicament{
+Analgesique
+Anti-inflammatoires
+Antiviraux
+...
+}
+
+
+Enum Specialite{
+
+}
+}
+
+
+
+package Autre{
+
+class Medicament{
+    -nom : String
+    -prix : decimal
+    -dateMES : Date
+    -quantite : int
+    -categorie : Categorie
+
+    -getters()
+    -setters()
+}
+
+class Mutuelle{
+    -nom : String
+    -adresse : Adresse
+    -tel : String
+    -mail : String
+    -departement : int
+    -txPECR : int
+
+    -getters()
+    -setters()
+
+}
+
+class Ordonnance{
+    -date : Date
+    -medecin : Medecin
+    -patient : Client
+    -medicaments : ArrayList<Medicament>
+    -specialiste : Specialiste
+
+    -getters()
+    -setters()
+}
+
+
+note bottom of Ordonnance{
+specialiste peut etre null
+}
+
+
+}
+
+Medicament-->CategorieMedicament
+Ordonnance<->Medicament
+Client<--Ordonnance
+Mutuelle->Adresse
+Client->Mutuelle
+Specialite<--Specialiste
+
+package Principal{
+
+class main{
+main()
+}
+}
+
+Pharmacien-->Frame.principale
+
+Package Frame{
+
+class principale{
+    -connexion()
+    -enregistrementAchat()
+    -afficherAchat()
+    -afficherOrdonnance()
+}
+
+}
+
+principale <-- main
+
+
+
+
+
+@enduml

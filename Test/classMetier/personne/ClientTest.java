@@ -1,4 +1,4 @@
-package classMetier;
+package classMetier.personne;
 
 import classMetier.Util.Adresse;
 import classMetier.personne.Client;

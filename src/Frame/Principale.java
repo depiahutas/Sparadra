@@ -165,10 +165,10 @@ public class Principale extends JFrame {
     private void jeuDeDonnee(){
 
         //jeu de données pour test application
-        Medecin medecin1 = new Medecin("A", "B", "A.B@mail@.com", "0123456789",
+        Medecin medecin1 = new Medecin("A", "B", "jane.doe@example.net", "0123456789",
                 new Adresse(1, "a", "75001", "Paris"), "A123456789");
 
-        Medecin medecin2 = new Medecin("C", "D", "C.D@mail@.com", "0234567891",
+        Medecin medecin2 = new Medecin("C", "D", "johndoe@example.org", "0234567891",
                 new Adresse(2, "b", "69007", "Lyon"), "C098765432");
 
         listMedecin.add(medecin1);
@@ -177,18 +177,18 @@ public class Principale extends JFrame {
 
 
         Mutuelle mutuelle1 = new Mutuelle(new Adresse(77, "rue des mutuelles", "75423", "ici"),
-                "Mut", "0954642318", "mut@mail.fr", 2);
+                "Mut", "0954642318", "mut.mut@gmail.fr", 2);
 
 
         //creation jeux de données pour test
-        Client client1 = new Client("Dupont", "Marie", "dupont.marie@mail.com", "0612345678",
+        Client client1 = new Client("Dupont", "Marie", "dupont.marie@gmail.com", "0612345678",
                 new Adresse(123, "rue de la République", "75001", "Paris"),
-                "20/07/1995", medecin1, mutuelle1, "123 456 789 012 345"
+                "20/07/1995", medecin1, mutuelle1, "2012345678"
         );
 
-        Client client2 = new Client("Martin", "Jean", "martin.jean@mail.com", "0789101112",
+        Client client2 = new Client("Martin", "Jean", "martin.jean@gmail.com", "0789101112",
                 new Adresse(456, "avenue de la libération", "69007", "Lyon"),
-                "10/05/1975", medecin2, mutuelle1, "123 456 789 012 346"
+                "10/05/1975", medecin2, mutuelle1, "2012345679"
         );
 
         listClient.add(client1);
@@ -841,9 +841,19 @@ public class Principale extends JFrame {
 
     //action de recherche par date
     private void triDate(){
-        textFieldRecherche.addActionListener(new ActionListener() {
+        textFieldRecherche.addKeyListener(new KeyListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
                 String recherche = null;
 
                 try {
@@ -865,19 +875,19 @@ public class Principale extends JFrame {
                     model.addColumn("Prix");
 
 
-                        for (classMetier.Util.Achat achat : listAchat) {
-                            if (recherche.equals(achat.getDate())) {
-                                String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
-                                if (achat.getOrdonnance() != null) {
-                                    model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
-                                } else {
-                                    model.addRow(new Object[]{achat.getDate(), a, "", achat.getPrix()});
-                                }
+                    for (classMetier.Util.Achat achat : listAchat) {
+                        if (recherche.equals(achat.getDate())) {
+                            String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                            if (achat.getOrdonnance() != null) {
+                                model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
+                            } else {
+                                model.addRow(new Object[]{achat.getDate(), a, "", achat.getPrix()});
                             }
                         }
+                    }
 
 
-                        labelTable.setModel(model);
+                    labelTable.setModel(model);
                     labelTable.setAutoCreateRowSorter(true);
                     labelTable.setDefaultEditor(Object.class, null);
                 }
@@ -887,6 +897,11 @@ public class Principale extends JFrame {
                     lblErreurRecherche.setForeground(Color.red);
                 }
             }
+
+            //@Override
+            //public void (ActionEvent e) {
+            //
+            //}
         });
     }
 

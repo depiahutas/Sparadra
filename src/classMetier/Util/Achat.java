@@ -43,8 +43,13 @@ public class Achat {
         return prix;
     }
 
-    public void setPrix(double prix) {
-        this.prix = prix;
+    public void setPrix(double prix)throws IllegalArgumentException {
+        if (prix>0) {
+            this.prix = prix;
+        }
+        else {
+            throw new IllegalArgumentException("le prix doit etre positif");
+        }
     }
 
     public String getDate() {

@@ -43,7 +43,7 @@ public class Principale extends JFrame {
     private JComboBox prenomComboBox;
     private JTextField telTextField;
     private JTextField mailTextField;
-    private JTextField numéroTextField;
+    private JTextField numeroTextField;
     private JTextField rueTextField;
     private JTextField codePostalTextField;
     private JTextField villeTextField;
@@ -86,8 +86,8 @@ public class Principale extends JFrame {
     private JTextField mutuelleTextField;
     private JLabel lblDateNaiss;
     private JLabel lblMutuelle;
-    private JTextField numéroDeSécuritéSocialeTextField;
-    private JTextField médecinTraitantTextField;
+    private JTextField numeroDeSecuriteSocialeTextField;
+    private JTextField medecinTraitantTextField;
     private JLabel lblNumSecu;
     private JLabel lblMedecin;
     private JPanel PanelInfoOrdonannce;
@@ -98,7 +98,7 @@ public class Principale extends JFrame {
     private JTable tableMed;
     private JLabel lblNomPatient;
     private JLabel lblPrenomPatient;
-    private JTextField nomMédecinTextField;
+    private JTextField nomMedecinTextField;
     private JLabel lblDate;
     private JTextField nOrdonannceTextField;
     private JLabel lblNumOrdonannce;
@@ -106,6 +106,10 @@ public class Principale extends JFrame {
     private JLabel lblErreurClient;
     private JLabel lblErreurOdronnance;
     private JLabel lblErreurRecherche;
+    private JLabel lblQte;
+    private JLabel lblInfoClient;
+    private JLabel lblDateOrdo;
+    private JLabel lblNomMed;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -937,14 +941,14 @@ public class Principale extends JFrame {
                                     if ((client.getNom() + " " + client.getPrenom()).equals(target.getValueAt(row, column))) {
                                         NomTextField.setText(client.getNom());
                                         PrenomTextField.setText(client.getPrenom());
-                                        numéroTextField.setText(client.getTel());
+                                        numeroTextField.setText(client.getTel());
                                         rueTextField.setText(client.getAdresse().getRue());
                                         codePostalTextField.setText(client.getAdresse().getCodePostal());
                                         villeTextField.setText(client.getAdresse().getVille());
                                         dateDeNaissanceTextField.setText(client.getDateNaiss());
                                         mutuelleTextField.setText(client.getMutuelle().getNom());
-                                        numéroDeSécuritéSocialeTextField.setText(client.getNumSecu());
-                                        médecinTraitantTextField.setText(client.getMedecin().getNom());
+                                        numeroDeSecuriteSocialeTextField.setText(client.getNumSecu());
+                                        medecinTraitantTextField.setText(client.getMedecin().getNom());
                                     }
                                 }
                             }
@@ -965,7 +969,7 @@ public class Principale extends JFrame {
                                         if (ordonnance.getId() ==
                                                 Integer.parseInt(target.getValueAt(row, column).toString())) {
                                             lblDate.setText(ordonnance.getDate());
-                                            nomMédecinTextField.setText(ordonnance.getMedecin().getNom());
+                                            nomMedecinTextField.setText(ordonnance.getMedecin().getNom());
                                             nomDuPatientTextField.setText(ordonnance.getClient().getNom());
                                             prenomTextField.setText(ordonnance.getClient().getPrenom());
                                             DefaultTableModel x = new DefaultTableModel();
@@ -1031,14 +1035,14 @@ public class Principale extends JFrame {
                 if (prenomComboBox.getItemCount() == 1 && c != null) {
                     NomTextField.setText(c.getNom());
                     PrenomTextField.setText(c.getPrenom());
-                    numéroTextField.setText(c.getTel());
+                    numeroTextField.setText(c.getTel());
                     rueTextField.setText(c.getAdresse().getRue());
                     codePostalTextField.setText(c.getAdresse().getCodePostal());
                     villeTextField.setText(c.getAdresse().getVille());
                     dateDeNaissanceTextField.setText(c.getDateNaiss());
                     mutuelleTextField.setText(c.getMutuelle().getNom());
-                    numéroDeSécuritéSocialeTextField.setText(c.getNumSecu());
-                    médecinTraitantTextField.setText(c.getMedecin().getNom());
+                    numeroDeSecuriteSocialeTextField.setText(c.getNumSecu());
+                    medecinTraitantTextField.setText(c.getMedecin().getNom());
                 }
             }
         });
@@ -1055,14 +1059,14 @@ public class Principale extends JFrame {
 
                         NomTextField.setText(client.getNom());
                         PrenomTextField.setText(client.getPrenom());
-                        numéroTextField.setText(client.getTel());
+                        numeroTextField.setText(client.getTel());
                         rueTextField.setText(client.getAdresse().getRue());
                         codePostalTextField.setText(client.getAdresse().getCodePostal());
                         villeTextField.setText(client.getAdresse().getVille());
                         dateDeNaissanceTextField.setText(client.getDateNaiss());
                         mutuelleTextField.setText(client.getMutuelle().getNom());
-                        numéroDeSécuritéSocialeTextField.setText(client.getNumSecu());
-                        médecinTraitantTextField.setText(client.getMedecin().getNom());
+                        numeroDeSecuriteSocialeTextField.setText(client.getNumSecu());
+                        medecinTraitantTextField.setText(client.getMedecin().getNom());
                     }
                 }
             }

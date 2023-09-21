@@ -15,6 +15,14 @@ public class Achat {
 
     private Ordonnance ordonnance;
 
+    /**
+     * constructeur Achat
+     * @param client voir classe Client
+     * @param listMed ArrayList<Medicament></>( liste medicament de l'achat)
+     * @param prix double (2 chiffres apres la virgule)
+     * @param date String (date format jj/mm/aaaa)
+     * @param ordonnance voir classe Ordonnance
+     */
     public Achat(Client client, ArrayList<Medicament> listMed, double prix, String date, Ordonnance ordonnance) {
         setClient(client);
         setListMed(listMed);
@@ -28,7 +36,17 @@ public class Achat {
     }
 
     public void setClient(Client client) {
-        this.client = client;
+        try{
+            if (client != null){
+                this.client = client;
+            }
+            else {
+                throw new NullPointerException("Pas de client");
+            }
+        }
+        catch (NullPointerException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     public ArrayList<Medicament> getListMed() {
@@ -36,7 +54,16 @@ public class Achat {
     }
 
     public void setListMed(ArrayList<Medicament> listMed) {
-        this.listMed = listMed;
+        try{
+            if (listMed.isEmpty()){
+                throw new NullPointerException("listMed vide");
+            }else {
+                this.listMed = listMed;
+            }
+        }
+        catch (NullPointerException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     public double getPrix() {

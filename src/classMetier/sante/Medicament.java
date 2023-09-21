@@ -9,6 +9,14 @@ public class Medicament {
     private int quantite;
     private CategorieMedicament categorie;
 
+    /**
+     * constructeur médicament
+     * @param nom String (controle REGEX)
+     * @param prix double (2 chiffres apres la virgule)
+     * @param dateMES String (date format jj//mm/aaaa)
+     * @param quantite int (controle par REGEX)
+     * @param categorie Categorie
+     */
     public Medicament(String nom, double prix, String dateMES, int quantite, CategorieMedicament categorie) {
         setNom(nom);
         setPrix(prix);
@@ -22,7 +30,11 @@ public class Medicament {
     }
 
     public void setNom(String nom) {
-        this.nom = nom;
+        if (nom == null) {
+            throw new NullPointerException("le nom ne peut etre null");
+        } else {
+            this.nom = nom;
+        }
     }
 
     public double getPrix() {
@@ -30,7 +42,8 @@ public class Medicament {
     }
 
     public void setPrix(double prix) {
-        this.prix = prix;
+            this.prix = prix;
+
     }
 
     public String getDateMES() {
@@ -38,7 +51,12 @@ public class Medicament {
     }
 
     public void setDateMES(String dateMES) {
-        this.dateMES = dateMES;
+        if (dateMES==null){
+            throw new NullPointerException("la date de mise en service ne peut etre null");
+        }
+        else {
+            this.dateMES = dateMES;
+        }
     }
 
     public int getQuantite() {
@@ -54,6 +72,11 @@ public class Medicament {
     }
 
     public void setCategorie(CategorieMedicament categorie) {
-        this.categorie = categorie;
+        if (categorie==null){
+            throw new NullPointerException("la categorie ne peut etre null");
+        }
+        else {
+            this.categorie = categorie;
+        }
     }
 }

@@ -85,11 +85,9 @@ public class Principale extends JFrame {
     private JTextField dateDeNaissanceTextField;
     private JTextField mutuelleTextField;
     private JLabel lblDateNaiss;
-    private JLabel lblMutuelle;
     private JTextField numeroDeSecuriteSocialeTextField;
     private JTextField medecinTraitantTextField;
     private JLabel lblNumSecu;
-    private JLabel lblMedecin;
     private JPanel PanelInfoOrdonannce;
     private JPanel PanelInfoPatient;
     private JPanel PanelListMed;
@@ -110,6 +108,8 @@ public class Principale extends JFrame {
     private JLabel lblInfoClient;
     private JLabel lblDateOrdo;
     private JLabel lblNomMed;
+    private JLabel lblMutuelle;
+    private JLabel lblMedecin;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -1024,25 +1024,41 @@ public class Principale extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 Client c = null;
                 prenomComboBox.removeAllItems();
-                for (Client client : listClient) {
-                    if (client.getNom().equals(nomComboBox.getSelectedItem())) {
 
-                        prenomComboBox.addItem(client.getPrenom());
-                        c = client;
+                // affichage page index selection =-1
+                // informations client vide
+                if (nomComboBox.getSelectedIndex() == -1) {
+                    NomTextField.setText("");
+                    PrenomTextField.setText("");
+                    numeroTextField.setText("");
+                    rueTextField.setText("");
+                    codePostalTextField.setText("");
+                    villeTextField.setText("");
+                    dateDeNaissanceTextField.setText("");
+                    mutuelleTextField.setText("");
+                    numeroDeSecuriteSocialeTextField.setText("");
+                    medecinTraitantTextField.setText("");
+                } else {
+                    for (Client client : listClient) {
+                        if (client.getNom().equals(nomComboBox.getSelectedItem())) {
 
+                            prenomComboBox.addItem(client.getPrenom());
+                            c = client;
+                        }
                     }
-                }
-                if (prenomComboBox.getItemCount() == 1 && c != null) {
-                    NomTextField.setText(c.getNom());
-                    PrenomTextField.setText(c.getPrenom());
-                    numeroTextField.setText(c.getTel());
-                    rueTextField.setText(c.getAdresse().getRue());
-                    codePostalTextField.setText(c.getAdresse().getCodePostal());
-                    villeTextField.setText(c.getAdresse().getVille());
-                    dateDeNaissanceTextField.setText(c.getDateNaiss());
-                    mutuelleTextField.setText(c.getMutuelle().getNom());
-                    numeroDeSecuriteSocialeTextField.setText(c.getNumSecu());
-                    medecinTraitantTextField.setText(c.getMedecin().getNom());
+                    // si un seul prenom associé au nom alors affiche par default les données
+                    if (prenomComboBox.getItemCount() == 1 && c != null) {
+                        NomTextField.setText(c.getNom());
+                        PrenomTextField.setText(c.getPrenom());
+                        numeroTextField.setText(c.getTel());
+                        rueTextField.setText(c.getAdresse().getRue());
+                        codePostalTextField.setText(c.getAdresse().getCodePostal());
+                        villeTextField.setText(c.getAdresse().getVille());
+                        dateDeNaissanceTextField.setText(c.getDateNaiss());
+                        mutuelleTextField.setText(c.getMutuelle().getNom());
+                        numeroDeSecuriteSocialeTextField.setText(c.getNumSecu());
+                        medecinTraitantTextField.setText(c.getMedecin().getNom());
+                    }
                 }
             }
         });

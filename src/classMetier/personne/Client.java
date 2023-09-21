@@ -15,6 +15,7 @@ public class Client extends Personne{
     private Medecin medecin;
     private ArrayList<Specialiste> listSpecialiste;
 
+
     public String getDateNaiss() {
         return dateNaiss;
     }
@@ -47,7 +48,12 @@ public class Client extends Personne{
     }
 
     public void setMutuelle(Mutuelle mutuelle) {
-        this.mutuelle = mutuelle;
+        if (mutuelle==null){
+            throw new NullPointerException("la mutuelle ne peut etre null");
+        }
+        else {
+            this.mutuelle = mutuelle;
+        }
     }
 
     public Medecin getMedecin() {
@@ -55,7 +61,12 @@ public class Client extends Personne{
     }
 
     public void setMedecin(Medecin medecin) {
-        this.medecin = medecin;
+        if (medecin==null){
+            throw new NullPointerException("le medecin ne peut etre null");
+        }
+        else {
+            this.medecin = medecin;
+        }
     }
 
     public ArrayList<Specialiste> getListSpecialiste() {
@@ -67,16 +78,16 @@ public class Client extends Personne{
     }
 
     /**
-     *
-     * @param nom
-     * @param prenom
-     * @param mail
-     * @param tel
-     * @param adresse
-     * @param dateNaiss
-     * @param medecin
-     * @param mutuelle
-     * @param numSecu
+     * constructeur client
+     * @param nom voir classe Personne
+     * @param prenom voir classe Personne
+     * @param mail voir classe Personne
+     * @param tel voir classe Personne
+     * @param adresse voir classe Personne
+     * @param dateNaiss String (Date au format jj/mm/aaaa, controle par REGEX)
+     * @param medecin Medecin
+     * @param mutuelle Mutuelle
+     * @param numSecu String (controle REGEX)
      */
     public Client(String nom, String prenom, String mail, String tel, Adresse adresse, String dateNaiss, Medecin medecin, Mutuelle mutuelle, String numSecu) {
         super(nom, prenom, mail, tel, adresse);

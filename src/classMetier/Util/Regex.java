@@ -1,5 +1,8 @@
 package classMetier.Util;
 
+/**
+ * classe regroupant tous les REGEX de controle
+ */
 public class Regex {
 
     //regex Personne

@@ -71,9 +71,22 @@ public abstract class Personne {
     }
 
     public void setAdresse(Adresse adresse) {
-        this.adresse = adresse;
+        if (adresse==null){
+            throw new NullPointerException("l'adresse ne peut etre null");
+        }
+        else {
+            this.adresse = adresse;
+        }
     }
 
+    /**
+     * constructeur Personne
+     * @param nom String (controle ar REGEX)
+     * @param prenom String (controle ar REGEX)
+     * @param mail String (controle ar REGEX)
+     * @param tel String (controle ar REGEX)
+     * @param adresse Adresse
+     */
     public Personne(String nom, String prenom, String mail, String tel, Adresse adresse) {
         setNom(nom);
         setPrenom(prenom);

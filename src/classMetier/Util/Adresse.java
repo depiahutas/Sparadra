@@ -9,11 +9,11 @@ public class Adresse {
     private String ville;
 
     /**
-     *
-     * @param numero
-     * @param rue
-     * @param codePostal
-     * @param ville
+     * constructeur Adresse
+     * @param numero int
+     * @param rue String (controle par REGEX)
+     * @param codePostal String (controle par REGEX)
+     * @param ville String (controle par REGEX)
      */
     public Adresse(int numero, String rue, String codePostal, String ville) {
         setNumero(numero);

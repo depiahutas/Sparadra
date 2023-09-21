@@ -31,6 +31,15 @@ public class Medecin extends Personne{
         this.listPatient = listPatient;
     }
 
+    /**
+     *
+     * @param nom voir classe Personne
+     * @param prenom voir classe Personne
+     * @param mail voir classe Personne
+     * @param tel voir classe Personne
+     * @param adresse Adresse
+     * @param numAgr String ( controle par REGEX)
+     */
     public Medecin(String nom, String prenom, String mail, String tel, Adresse adresse, String numAgr) {
         super(nom, prenom, mail, tel, adresse);
         setNumAgr(numAgr);

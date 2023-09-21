@@ -12,8 +12,16 @@ public class Ordonnance {
     private ArrayList<Medicament> listMed;
     private String date;
 
+    /**
+     * constructeur Ordonnance
+     * @param medecin voir classe Medecin
+     * @param client voir classe Client
+     * @param listMed ArrayList<Medicament> (liste des medicament de l'ordonannce)
+     * @param date String (date format jj/mm/aaaa)
+     * @param id int (id ordonnance cache de l'utilisateur)
+     */
     public Ordonnance(Medecin medecin, Client client, ArrayList<Medicament> listMed, String date, int id) {
-        this.id = id;
+        setId(id);
         setMedecin(medecin);
         setClient(client);
         setListMed(listMed);
@@ -25,7 +33,12 @@ public class Ordonnance {
     }
 
     public void setMedecin(Medecin medecin) {
-        this.medecin = medecin;
+        if(medecin==null){
+            throw new NullPointerException("le medecin ne peut etre null");
+        }
+        else {
+            this.medecin = medecin;
+        }
     }
 
     public Client getClient() {
@@ -33,7 +46,12 @@ public class Ordonnance {
     }
 
     public void setClient(Client client) {
-        this.client = client;
+        if(client==null){
+            throw new NullPointerException("le nom ne peut etre null");
+        }
+        else {
+            this.client = client;
+        }
     }
 
     public ArrayList<Medicament> getListMed() {
@@ -41,7 +59,12 @@ public class Ordonnance {
     }
 
     public void setListMed(ArrayList<Medicament> listMed) {
-        this.listMed = listMed;
+        if(listMed==null){
+            throw new NullPointerException("le nom ne peut etre null");
+        }
+        else {
+            this.listMed = listMed;
+        }
     }
 
     public String getDate() {
@@ -49,16 +72,21 @@ public class Ordonnance {
     }
 
     public void setDate(String date) {
-        this.date = date;
+        if(date==null){
+            throw new NullPointerException("le nom ne peut etre null");
+        }
+        else {
+            this.date = date;
+        }
     }
 
     public String getListMedToString() {
-        String b="";
+        StringBuilder b= new StringBuilder();
         for (Medicament medicament:getListMed()){
-            b=b+" | "+medicament.getNom();
+            b.append(" | ").append(medicament.getNom());
         }
 
-        return b;
+        return b.toString();
     }
 
     public int getId() {

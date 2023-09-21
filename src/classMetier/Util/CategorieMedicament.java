@@ -1,5 +1,8 @@
 package classMetier.Util;
 
+/**
+ * catégorie de medicament
+ */
 public enum CategorieMedicament {
     ANTALGIQUE,
     ANALGESIQUE,

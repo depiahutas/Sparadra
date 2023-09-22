@@ -185,12 +185,12 @@ public class Principale extends JFrame {
 
 
         //creation jeux de données pour test
-        Client client1 = new Client("Dupont", "Marie", "dupont.marie@gmail.com", "0612345678",
+        Client client1 = new Client(1,"Dupont", "Marie", "dupont.marie@gmail.com", "0612345678",
                 new Adresse(123, "rue de la République", "75001", "Paris"),
                 "20/07/1995", medecin1, mutuelle1, "2012345678"
         );
 
-        Client client2 = new Client("Martin", "Jean", "martin.jean@gmail.com", "0789101112",
+        Client client2 = new Client(2,"Martin", "Jean", "martin.jean@gmail.com", "0789101112",
                 new Adresse(456, "avenue de la libération", "69007", "Lyon"),
                 "10/05/1975", medecin2, mutuelle1, "2012345679"
         );
@@ -222,6 +222,7 @@ public class Principale extends JFrame {
         listMed.add(Antituberculeux);
 
         medic.add(paracetamol);
+        medic.add(Corticoides);
 
 
         Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, medic, "30/01/2023", 1);
@@ -243,6 +244,8 @@ public class Principale extends JFrame {
      * & action menuItem
      */
     private void paramFenetre(){
+
+        setTitle("Accueil");
 
         //creation menuBar
         JMenuBar mbar = new JMenuBar();
@@ -269,10 +272,11 @@ public class Principale extends JFrame {
         // Action des MenuItem
 
         // retour a l'accueil
-        Retour.addActionListener(e -> setContentPane(PanelAcceuil));
+        Retour.addActionListener(e -> {setContentPane(PanelAcceuil); setTitle("Accueil");});
 
         //page d'achat
         Effectuer.addActionListener(e -> {
+            setTitle("Achat");
             sommeTot[0] = 0;
             Prixtot.setText("");
             QteTextField.setText("1");
@@ -301,6 +305,7 @@ public class Principale extends JFrame {
 
         //panel recherche ordonnance
         RechercherOrd.addActionListener(e -> {
+            setTitle("Recherche : ordonnance");
             setContentPane(PanelRecherche);
             lblRsh.setVisible(false);
             textFieldRecherche.setVisible(false);
@@ -341,6 +346,7 @@ public class Principale extends JFrame {
 
         //panel recherche achat par date
         RechercherAch.addActionListener(e -> {
+            setTitle("Recherche : achat");
             setContentPane(PanelRecherche);
             textFieldRecherche.setVisible(true);
             textFieldRecherche.setText("");
@@ -378,6 +384,7 @@ public class Principale extends JFrame {
 
         //panel info client
         RechercherClient.addActionListener(e -> {
+            setTitle("Information client");
             setContentPane(PanelInfoClient);
             nomComboBox.setVisible(true);
             nomComboBox.removeAllItems();
@@ -422,6 +429,7 @@ public class Principale extends JFrame {
     private void actionBtnAchat(){
         //Affichage panel Achat et réinitialise les données du form
         btnAchat.addActionListener(e -> {
+            setTitle("Achat");
             sommeTot[0] = 0;
             Prixtot.setText("");
             QteTextField.setText("1");
@@ -453,8 +461,11 @@ public class Principale extends JFrame {
     private void actionBtnRecherche(){
         //Affichage panel recherche et réinitialise les données de la JTable
         btnRecherche.addActionListener(e -> {
+            setTitle("Recherche");
             textFieldRecherche.setVisible(false);
             setContentPane(PanelRecherche);
+            revalidate();
+            repaint();
             PanelRecherche.setVisible(true);
             lblRsh.setVisible(true);
             historiqueOrdonnanceButton.setVisible(true);
@@ -478,7 +489,7 @@ public class Principale extends JFrame {
         informationsClientButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-
+                setTitle("Information client");
                 setContentPane(PanelInfoClient);
                 nomComboBox.setVisible(true);
                 nomComboBox.removeAllItems();
@@ -749,23 +760,24 @@ public class Principale extends JFrame {
             model.addColumn("Liste medicament");
             model.addColumn("Prix");
 
-
-            for (Achat achat : listAchat) {
-                String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
-                String b="";
-                for (Medicament medicament:achat.getListMed()){
-                    b=b+" | "+medicament.getNom();
-                }
-                if (achat.getOrdonnance()!=null) {
-                    model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(),
-                            b,achat.getPrix()});
-                }
-                else {
-                    model.addRow(new Object[]{achat.getDate(), a, "",
-                            b,achat.getPrix()});
+            if(!listAchat.isEmpty()) {
+                for (Achat achat : listAchat) {
+                    String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                    String b = "";
+                    if (achat.getListMed()!=null) {
+                        for (Medicament medicament : achat.getListMed()) {
+                            b = b + " | " + medicament.getNom();
+                        }
+                    }
+                    if (achat.getOrdonnance() != null) {
+                        model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(),
+                                b, achat.getPrix()});
+                    } else {
+                        model.addRow(new Object[]{achat.getDate(), a, "",
+                                b, achat.getPrix()});
+                    }
                 }
             }
-
             labelTable.setModel(model);
             labelTable.setDefaultEditor(Object.class, null);
 

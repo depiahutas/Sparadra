@@ -9,6 +9,16 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Client extends Personne{
+    private int idClient;
+
+    public int getIdClient() {
+        return idClient;
+    }
+
+    public void setIdClient(int idClient) {
+        this.idClient = idClient;
+    }
+
     private String dateNaiss;
     private String numSecu;
     private Mutuelle mutuelle;
@@ -89,12 +99,25 @@ public class Client extends Personne{
      * @param mutuelle Mutuelle
      * @param numSecu String (controle REGEX)
      */
-    public Client(String nom, String prenom, String mail, String tel, Adresse adresse, String dateNaiss, Medecin medecin, Mutuelle mutuelle, String numSecu) {
+    public Client(int id,String nom, String prenom, String mail, String tel, Adresse adresse, String dateNaiss, Medecin medecin, Mutuelle mutuelle, String numSecu) {
         super(nom, prenom, mail, tel, adresse);
+        setIdClient(id);
         setDateNaiss(dateNaiss);
         setMedecin(medecin);
         setMutuelle(mutuelle);
         setNumSecu(numSecu);
 
+    }
+
+    public void updateClient(String nom, String prenom, String mail, String tel, Adresse adresse, String dateNaiss, Medecin medecin, Mutuelle mutuelle, String numSecu){
+    this.setNom(nom);
+    this.setPrenom(prenom);
+    this.setMail(mail);
+    this.setTel(tel);
+    this.setAdresse(adresse);
+    this.setDateNaiss(dateNaiss);
+    this.setMedecin(medecin);
+    this.setMutuelle(mutuelle);
+    this.setNumSecu(numSecu);
     }
 }

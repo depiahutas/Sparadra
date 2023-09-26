@@ -110,6 +110,8 @@ public class Principale extends JFrame {
     private JLabel lblNomMed;
     private JLabel lblMutuelle;
     private JLabel lblMedecin;
+    private JButton modifierButton;
+    private JButton validerInfoButton;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -160,6 +162,7 @@ public class Principale extends JFrame {
         TableMed.setModel(modelRecapMed);
         TableMed.setEnabled(false);
         TableMed.setAutoCreateRowSorter(true);
+
 
     }
 
@@ -430,6 +433,9 @@ public class Principale extends JFrame {
         //Affichage panel Achat et réinitialise les données du form
         btnAchat.addActionListener(e -> {
             setTitle("Achat");
+            if (!listMedAchat.isEmpty()){
+                listMedAchat.clear();
+            }
             sommeTot[0] = 0;
             Prixtot.setText("");
             QteTextField.setText("1");
@@ -491,6 +497,18 @@ public class Principale extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 setTitle("Information client");
                 setContentPane(PanelInfoClient);
+
+                modifierButton.setVisible(false);
+                validerInfoButton.setVisible(false);
+                modifierButton.setVisible(true);
+                numeroTextField.setEditable(false);
+                rueTextField.setEditable(false);
+                codePostalTextField.setEditable(false);
+                villeTextField.setEditable(false);
+
+                medecinTraitantTextField.setEditable(false);
+                mutuelleTextField.setEditable(false);
+
                 nomComboBox.setVisible(true);
                 nomComboBox.removeAllItems();
                 prenomComboBox.removeAllItems();
@@ -566,6 +584,9 @@ public class Principale extends JFrame {
         ajouterButton.addActionListener(e -> {
                     Medicament m = null;
             try{
+
+
+
                     //en fonction du medicament choisit l'ajoute avec toutes ses informations dans la table recap
                     for (Medicament med : listMed) {
                         if (med.getNom().equals(libelleComboBox.getSelectedItem()) &&
@@ -574,10 +595,14 @@ public class Principale extends JFrame {
                         }
                     }
                     if (m != null) {
-                        modelRecapMed.addRow(new Object[]{m.getNom(), m.getCategorie(), QteTextField.getText(),
-                                m.getPrix(), m.getDateMES()});
-                        sommeTot[0] = sommeTot[0] + (m.getPrix() * Double.parseDouble(QteTextField.getText()));
-                        listMedAchat.add(m);
+                        if (Integer.parseInt(QteTextField.getText())<1){
+                            throw new IllegalArgumentException("la quantité doit etre positive");
+                        }else {
+                            modelRecapMed.addRow(new Object[]{m.getNom(), m.getCategorie(), QteTextField.getText(),
+                                    m.getPrix(), m.getDateMES()});
+                            sommeTot[0] = sommeTot[0] + (m.getPrix() * Double.parseDouble(QteTextField.getText()));
+                            listMedAchat.add(m);
+                        }
                     }
 
                     if (libelleComboBox.getSelectedItem()==null || libelleComboBox.getSelectedItem().equals("")){
@@ -585,6 +610,7 @@ public class Principale extends JFrame {
                     }else {
                         lblErreurAchat.setVisible(false);
                     }
+
 
 
             }catch(Exception erreur) {
@@ -694,7 +720,7 @@ public class Principale extends JFrame {
                     throw new NullPointerException("Médicament nécéssaire");
                 } else {
                     lblErreurClient.setVisible(false);
-                    Achat achat = new Achat(c, listMedAchat, sommeTot[0], classMetier.Util.Date.newDate(),ord );
+                    Achat achat = new Achat(c, new ArrayList<Medicament>(listMedAchat), sommeTot[0], classMetier.Util.Date.newDate(),ord );
                     listAchat.add(achat);
                     setContentPane(PanelAcceuil);
                 }
@@ -1026,6 +1052,7 @@ public class Principale extends JFrame {
     private void actionClient(){
         triNom();
         triPrenom();
+        miseAJour();
     }
 
     private void triNom(){
@@ -1037,10 +1064,30 @@ public class Principale extends JFrame {
                 Client c = null;
                 prenomComboBox.removeAllItems();
 
+                modifierButton.setVisible(false);
+                validerInfoButton.setVisible(false);
+                numeroTextField.setEditable(false);
+                rueTextField.setEditable(false);
+                codePostalTextField.setEditable(false);
+                villeTextField.setEditable(false);
+
+                medecinTraitantTextField.setEditable(false);
+                mutuelleTextField.setEditable(false);
+
+                telTextField.setEditable(false);
+                mailTextField.setEditable(false);
+
                 // affichage page index selection =-1
                 // informations client vide
                 if (nomComboBox.getSelectedIndex() == -1) {
+
+                    modifierButton.setVisible(false);
+
                     NomTextField.setText("");
+                    telTextField.setText("");
+                    telTextField.setEditable(false);
+                    mailTextField.setText("");
+                    mailTextField.setEditable(false);
                     PrenomTextField.setText("");
                     numeroTextField.setText("");
                     rueTextField.setText("");
@@ -1060,9 +1107,16 @@ public class Principale extends JFrame {
                     }
                     // si un seul prenom associé au nom alors affiche par default les données
                     if (prenomComboBox.getItemCount() == 1 && c != null) {
+
                         NomTextField.setText(c.getNom());
                         PrenomTextField.setText(c.getPrenom());
-                        numeroTextField.setText(c.getTel());
+                        lblTel.setVisible(true);
+                        telTextField.setVisible(true);
+                        telTextField.setText(c.getTel());
+                        lblMail.setVisible(true);
+                        mailTextField.setText(c.getMail());
+                        mailTextField.setVisible(true);
+                        numeroTextField.setText(c.getAdresse().getNumero()+"");
                         rueTextField.setText(c.getAdresse().getRue());
                         codePostalTextField.setText(c.getAdresse().getCodePostal());
                         villeTextField.setText(c.getAdresse().getVille());
@@ -1081,13 +1135,30 @@ public class Principale extends JFrame {
         prenomComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                validerInfoButton.setVisible(false);
+                numeroTextField.setEditable(false);
+                rueTextField.setEditable(false);
+                codePostalTextField.setEditable(false);
+                villeTextField.setEditable(false);
+
+                medecinTraitantTextField.setEditable(false);
+                mutuelleTextField.setEditable(false);
+
+                telTextField.setEditable(false);
+                mailTextField.setEditable(false);
+
                 for (Client client : listClient) {
                     if (client.getNom().equals(nomComboBox.getSelectedItem())
                             && client.getPrenom().equals(prenomComboBox.getSelectedItem())) {
 
+                        modifierButton.setVisible(true);
+
                         NomTextField.setText(client.getNom());
                         PrenomTextField.setText(client.getPrenom());
-                        numeroTextField.setText(client.getTel());
+                        telTextField.setText(client.getTel());
+                        mailTextField.setText(client.getMail());
+                        numeroTextField.setText(client.getAdresse().getNumero()+"");
                         rueTextField.setText(client.getAdresse().getRue());
                         codePostalTextField.setText(client.getAdresse().getCodePostal());
                         villeTextField.setText(client.getAdresse().getVille());
@@ -1100,5 +1171,28 @@ public class Principale extends JFrame {
             }
         });
 
+    }
+
+    private void miseAJour(){
+        modifierButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                telTextField.setEditable(true);
+                mailTextField.setEditable(true);
+
+                numeroTextField.setEditable(true);
+                rueTextField.setEditable(true);
+                codePostalTextField.setEditable(true);
+                villeTextField.setEditable(true);
+
+                medecinTraitantTextField.setEditable(true);
+                mutuelleTextField.setEditable(true);
+                modifierButton.setVisible(false);
+                validerInfoButton.setVisible(true);
+
+
+            }
+        });
     }
 }

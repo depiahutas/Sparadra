@@ -127,6 +127,9 @@ public class Principale extends JFrame {
     //liste medicament pour achat
     ArrayList<Medicament> listMedAchat = new ArrayList<>();
 
+    //liste Adresse
+    ArrayList<Adresse> listAdresse = new ArrayList<>();
+
     // model recapMed pour achat
     DefaultTableModel modelRecapMed = new DefaultTableModel();
 
@@ -171,30 +174,40 @@ public class Principale extends JFrame {
      */
     private void jeuDeDonnee(){
 
+
+        Adresse adresse1 =new Adresse(1, "a", "75001", "Paris");
+        Adresse adresse2 = new Adresse(2, "b", "69007", "Lyon");
+        Adresse adresse3 =new Adresse(77, "rue des mutuelles", "75423", "ici");
+        Adresse adresse4 = new Adresse(123, "rue de la République", "75001", "Paris");
+        Adresse adresse5 = new Adresse(456, "avenue de la libération", "69007", "Lyon");
+
+        listAdresse.add(adresse1);
+        listAdresse.add(adresse2);
+        listAdresse.add(adresse3);
+        listAdresse.add(adresse4);
+        listAdresse.add(adresse5);
+
         //jeu de données pour test application
         Medecin medecin1 = new Medecin("A", "B", "jane.doe@example.net", "0123456789",
-                new Adresse(1, "a", "75001", "Paris"), "A123456789");
+                adresse1, "A123456789");
 
         Medecin medecin2 = new Medecin("C", "D", "johndoe@example.org", "0234567891",
-                new Adresse(2, "b", "69007", "Lyon"), "C098765432");
+                adresse2, "C098765432");
 
         listMedecin.add(medecin1);
         listMedecin.add(medecin2);
 
 
 
-        Mutuelle mutuelle1 = new Mutuelle(new Adresse(77, "rue des mutuelles", "75423", "ici"),
-                "Mut", "0954642318", "mut.mut@gmail.fr", 2);
+        Mutuelle mutuelle1 = new Mutuelle(adresse3, "Mut", "0954642318", "mut.mut@gmail.fr", 2);
 
 
         //creation jeux de données pour test
         Client client1 = new Client(1,"Dupont", "Marie", "dupont.marie@gmail.com", "0612345678",
-                new Adresse(123, "rue de la République", "75001", "Paris"),
-                "20/07/1995", medecin1, mutuelle1, "2012345678"
+               adresse4, "20/07/1995", medecin1, mutuelle1, "2012345678"
         );
 
-        Client client2 = new Client(2,"Martin", "Jean", "martin.jean@gmail.com", "0789101112",
-                new Adresse(456, "avenue de la libération", "69007", "Lyon"),
+        Client client2 = new Client(2,"Martin", "Jean", "martin.jean@gmail.com", "0789101112", adresse5,
                 "10/05/1975", medecin2, mutuelle1, "2012345679"
         );
 
@@ -204,7 +217,6 @@ public class Principale extends JFrame {
 
         Medicament paracetamol = new Medicament("Paracétamol", 5.99, "15/02/98", 1,
                 CategorieMedicament.ANTALGIQUE);
-        listMed.add(paracetamol);
         Medicament Antispasmodiques = new Medicament("Antispasmodiques",2.66,"15/09/2020",1,
                 CategorieMedicament.ANTISPAMODIQUES);
         Medicament Corticoides = new Medicament("Corticoïdes",15.00,"28/07/2021",1,
@@ -217,15 +229,14 @@ public class Principale extends JFrame {
                 CategorieMedicament.TETRECYCLINES);
         Medicament Antituberculeux = new Medicament("Antituberculeux",36,"12/2022",1,
                 CategorieMedicament.ANTITUBERCULEUX);
-        listMed.add(Antispasmodiques);
-        listMed.add(Corticoides);
-        listMed.add(antibacteriens);
-        listMed.add(Polymyxines);
-        listMed.add(Tetracyclines);
-        listMed.add(Antituberculeux);
 
         medic.add(paracetamol);
         medic.add(Corticoides);
+        medic.add(Antispasmodiques);
+        medic.add(antibacteriens);
+        medic.add(Polymyxines);
+        medic.add(Tetracyclines);
+        medic.add(Antituberculeux);
 
 
         Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, medic, "30/01/2023", 1);
@@ -1194,5 +1205,136 @@ public class Principale extends JFrame {
 
             }
         });
+
+            validerInfoButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+
+                    for (Client c : listClient){
+                        if (c.getNom().equals(nomComboBox.getSelectedItem())&&c.getPrenom().equals(prenomComboBox.getSelectedItem())){
+
+                            boolean y=true;
+
+                            try {
+                                if (telTextField.getText().matches(Regex.getRegexTel())) {
+                                    c.setTel(telTextField.getText());
+                                }
+                                else {
+                                    throw new IllegalArgumentException("Le numéro de téléphone est incorrect");
+                                }
+                            } catch (Exception exception) {
+                                y=false;
+                                System.out.println(exception.getMessage());
+                            }
+
+                            try {
+                                if (mailTextField.getText().matches(Regex.getRegexMail())) {
+                                    c.setMail(mailTextField.getText());
+                                } else {
+                                    throw new IllegalArgumentException("Le mail est incorrect");
+                                }
+                            } catch (Exception exception) {
+                                    System.out.println(exception.getMessage());
+                                    y=false;
+                            }
+
+
+                            Adresse add = null;
+                            String numero = null;
+                            String rue = null;
+                            String ville = null;
+                            String cp = null;
+                            
+                            try{
+
+                                if (numeroTextField.getText().matches(Regex.getRegexNumeroAdresse())){
+                                        numero=numeroTextField.getText();
+                                }
+                                else {
+                                    throw new IllegalArgumentException("le numero de rue est incorrecte");
+                                }
+
+                                if (rueTextField.getText().matches(Regex.getRegexNomAdresse())){
+                                    rue=rueTextField.getText();
+                                }
+                                else{
+                                    throw new IllegalArgumentException("le nom de la rue est incorrecte");
+                                }
+
+                                if (villeTextField.getText().matches(Regex.getRegexVille())){
+                                    ville=villeTextField.getText();
+                                }
+                                else {
+                                    throw new IllegalArgumentException("la ville est incorrecte");
+                                }
+
+                                if (codePostalTextField.getText().matches(Regex.getRegexCodePostal())){
+                                    cp=codePostalTextField.getText();
+                                }
+                                else {
+                                    throw new IllegalArgumentException("le code postal est incorrecte");
+                                }
+
+                                for (Adresse adresse: listAdresse){
+                                    if (adresse.getNumero()==Integer.parseInt(numero)
+                                            && adresse.getRue().equals(rue)
+                                            && adresse.getVille().equals(ville)
+                                            && adresse.getCodePostal().equals(cp)){
+                                        add=adresse;
+                                    }
+                                }
+
+
+
+                            } catch (Exception exception){
+                                System.out.println(exception.getMessage());
+                                y=false;
+                            }
+
+                            if (add!=null){
+                                c.setAdresse(add);
+                            }
+                            else {
+                                try {
+                                Adresse newAdresse = new Adresse(Integer.parseInt(numero), rue, cp, ville);
+                                listAdresse.add(newAdresse);
+                                c.setAdresse(newAdresse);
+                                }
+                                catch (Exception exception){
+                                    System.out.println(exception.getMessage());
+                                    y=false;
+                                }
+
+                            }
+
+
+
+                            if (y==true){
+                                System.out.println("Mise a jour des informations");
+
+                                telTextField.setEditable(false);
+                                mailTextField.setEditable(false);
+                                numeroTextField.setEditable(false);
+                                rueTextField.setEditable(false);
+                                codePostalTextField.setEditable(false);
+                                villeTextField.setEditable(false);
+
+                                medecinTraitantTextField.setEditable(false);
+                                mutuelleTextField.setEditable(false);
+
+                                modifierButton.setVisible(true);
+                                validerInfoButton.setVisible(false);
+                            }
+                            else {
+                                System.out.println("Erreur lors de la mise a jour des informations");
+                            }
+
+                        }
+                    }
+
+                }
+            });
+
+
     }
 }

@@ -112,6 +112,9 @@ public class Principale extends JFrame {
     private JLabel lblMedecin;
     private JButton modifierButton;
     private JButton validerInfoButton;
+    private JLabel errorlbl;
+    private JButton NewClietnBtn;
+    private JPanel PanelAjoutClient;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -167,6 +170,7 @@ public class Principale extends JFrame {
         TableMed.setAutoCreateRowSorter(true);
 
 
+        
     }
 
     /**
@@ -400,6 +404,19 @@ public class Principale extends JFrame {
         RechercherClient.addActionListener(e -> {
             setTitle("Information client");
             setContentPane(PanelInfoClient);
+
+            errorlbl.setVisible(false);
+            modifierButton.setVisible(false);
+            validerInfoButton.setVisible(false);
+            modifierButton.setVisible(true);
+            numeroTextField.setEditable(false);
+            rueTextField.setEditable(false);
+            codePostalTextField.setEditable(false);
+            villeTextField.setEditable(false);
+
+            medecinTraitantTextField.setEditable(false);
+            mutuelleTextField.setEditable(false);
+
             nomComboBox.setVisible(true);
             nomComboBox.removeAllItems();
             prenomComboBox.removeAllItems();
@@ -411,6 +428,7 @@ public class Principale extends JFrame {
                 nomComboBox.addItem(client.getNom());
                 prenomComboBox.addItem(client.getPrenom());
             }
+
 
             prenomComboBox.setVisible(true);
             PrenomTextField.setText("");
@@ -509,6 +527,7 @@ public class Principale extends JFrame {
                 setTitle("Information client");
                 setContentPane(PanelInfoClient);
 
+                errorlbl.setVisible(false);
                 modifierButton.setVisible(false);
                 validerInfoButton.setVisible(false);
                 modifierButton.setVisible(true);
@@ -558,6 +577,7 @@ public class Principale extends JFrame {
         triParCategorie();
         triParLibelle();
         validerAchat();
+        nouveauClient();
     }
 
     //action radio boutton pour achat
@@ -646,6 +666,34 @@ public class Principale extends JFrame {
                 }
             }
         });
+    }
+
+    private void nouveauClient(){
+        NewClietnBtn.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                lblNomClient.setVisible(false);
+                lblPrenomClient.setVisible(false);
+                cBoxNom.setVisible(false);
+                cBoxPrenom.setVisible(false);
+
+                PanelAjoutClient.add(PanelInfosClient);
+                PanelAjoutClient.setVisible(true);
+                revalidate();
+                repaint();
+
+                CreationClient();
+            }
+        });
+    }
+
+    private void CreationClient(){
+        nomComboBox.setVisible(false);
+        prenomComboBox.setVisible(false);
+
+
+
     }
 
     // tri liste medicament en fonction de la categorie
@@ -1075,6 +1123,7 @@ public class Principale extends JFrame {
                 Client c = null;
                 prenomComboBox.removeAllItems();
 
+                errorlbl.setVisible(false);
                 modifierButton.setVisible(false);
                 validerInfoButton.setVisible(false);
                 numeroTextField.setEditable(false);
@@ -1147,6 +1196,7 @@ public class Principale extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
 
+                errorlbl.setVisible(false);
                 validerInfoButton.setVisible(false);
                 numeroTextField.setEditable(false);
                 rueTextField.setEditable(false);
@@ -1224,7 +1274,8 @@ public class Principale extends JFrame {
                                 }
                             } catch (Exception exception) {
                                 y=false;
-                                System.out.println(exception.getMessage());
+                                errorlbl.setVisible(true);
+                                errorlbl.setText(exception.getMessage());
                             }
 
                             try {
@@ -1234,7 +1285,8 @@ public class Principale extends JFrame {
                                     throw new IllegalArgumentException("Le mail est incorrect");
                                 }
                             } catch (Exception exception) {
-                                    System.out.println(exception.getMessage());
+                                errorlbl.setVisible(true);
+                                errorlbl.setText(exception.getMessage());
                                     y=false;
                             }
 
@@ -1244,6 +1296,8 @@ public class Principale extends JFrame {
                             String rue = null;
                             String ville = null;
                             String cp = null;
+
+
                             
                             try{
 
@@ -1287,7 +1341,8 @@ public class Principale extends JFrame {
 
 
                             } catch (Exception exception){
-                                System.out.println(exception.getMessage());
+                                errorlbl.setVisible(true);
+                                errorlbl.setText(exception.getMessage());
                                 y=false;
                             }
 
@@ -1301,32 +1356,35 @@ public class Principale extends JFrame {
                                 c.setAdresse(newAdresse);
                                 }
                                 catch (Exception exception){
-                                    System.out.println(exception.getMessage());
+                                    errorlbl.setVisible(true);
+                                    errorlbl.setText(exception.getMessage());
                                     y=false;
                                 }
 
                             }
 
 
+                            try {
+                                if (y) {
+                                    System.out.println("Mise a jour des informations");
+                                    errorlbl.setVisible(false);
+                                    telTextField.setEditable(false);
+                                    mailTextField.setEditable(false);
+                                    numeroTextField.setEditable(false);
+                                    rueTextField.setEditable(false);
+                                    codePostalTextField.setEditable(false);
+                                    villeTextField.setEditable(false);
 
-                            if (y==true){
-                                System.out.println("Mise a jour des informations");
+                                    medecinTraitantTextField.setEditable(false);
+                                    mutuelleTextField.setEditable(false);
 
-                                telTextField.setEditable(false);
-                                mailTextField.setEditable(false);
-                                numeroTextField.setEditable(false);
-                                rueTextField.setEditable(false);
-                                codePostalTextField.setEditable(false);
-                                villeTextField.setEditable(false);
-
-                                medecinTraitantTextField.setEditable(false);
-                                mutuelleTextField.setEditable(false);
-
-                                modifierButton.setVisible(true);
-                                validerInfoButton.setVisible(false);
-                            }
-                            else {
-                                System.out.println("Erreur lors de la mise a jour des informations");
+                                    modifierButton.setVisible(true);
+                                    validerInfoButton.setVisible(false);
+                                }
+                            }catch (Exception exception){
+                                JOptionPane.showMessageDialog(Principale.this,
+                                        "Erreur lors de la mise a jour des informations"+
+                                                "\n"+exception.getMessage());
                             }
 
                         }

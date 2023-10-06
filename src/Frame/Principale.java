@@ -115,6 +115,7 @@ public class Principale extends JFrame {
     private JLabel errorlbl;
     private JButton NewClietnBtn;
     private JPanel PanelAjoutClient;
+    private JButton validCreationButton;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -140,6 +141,8 @@ public class Principale extends JFrame {
     final double[] sommeTot = {0.00f};
 
     Dimension d = new Dimension(750, 350);
+
+    JFrame nouvClient = new JFrame();
 
 
     public Principale() {
@@ -527,6 +530,7 @@ public class Principale extends JFrame {
                 setTitle("Information client");
                 setContentPane(PanelInfoClient);
 
+
                 errorlbl.setVisible(false);
                 modifierButton.setVisible(false);
                 validerInfoButton.setVisible(false);
@@ -541,18 +545,23 @@ public class Principale extends JFrame {
 
                 nomComboBox.setVisible(true);
                 nomComboBox.removeAllItems();
+                prenomComboBox.setVisible(true);
                 prenomComboBox.removeAllItems();
+
                 NomTextField.setText("");
                 NomTextField.setVisible(false);
                 NomTextField.setEditable(false);
+
+                dateDeNaissanceTextField.setEditable(false);
+                numeroDeSecuriteSocialeTextField.setEditable(false);
 
                 for (Client client : listClient) {
                     nomComboBox.addItem(client.getNom());
                     prenomComboBox.addItem(client.getPrenom());
                 }
 
+                validCreationButton.setVisible(false);
 
-                prenomComboBox.setVisible(true);
                 PrenomTextField.setText("");
                 PrenomTextField.setVisible(false);
                 PrenomTextField.setEditable(false);
@@ -668,30 +677,47 @@ public class Principale extends JFrame {
         });
     }
 
+    // action bouton nouveau client
     private void nouveauClient(){
         NewClietnBtn.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
 
-                lblNomClient.setVisible(false);
-                lblPrenomClient.setVisible(false);
-                cBoxNom.setVisible(false);
-                cBoxPrenom.setVisible(false);
-
-                PanelAjoutClient.add(PanelInfosClient);
-                PanelAjoutClient.setVisible(true);
-                revalidate();
-                repaint();
+                // affichage d'une nouvelle fenetre (unique ne peut pas etre dupliquer)
+                // avec panelInfoClient modifier
+                nouvClient.setContentPane(PanelInfoClient);
+                nouvClient.setBounds(750,500,750,500);
+                nouvClient.setTitle("nouveau client");
+                nouvClient.setVisible(true);
 
                 CreationClient();
+
             }
         });
     }
 
+    // methode
     private void CreationClient(){
+
         nomComboBox.setVisible(false);
         prenomComboBox.setVisible(false);
 
+        validCreationButton.setVisible(true);
+        nomComboBox.setSelectedIndex(-1);
+        telTextField.setEditable(true);
+        telTextField.setVisible(true);
+        lblTel.setVisible(true);
+        mailTextField.setVisible(true);
+        mailTextField.setEditable(true);
+        lblMail.setVisible(true);
+        numeroTextField.setEditable(true);
+        rueTextField.setEditable(true);
+        codePostalTextField.setEditable(true);
+        villeTextField.setEditable(true);
+        dateDeNaissanceTextField.setEditable(true);
+        mutuelleTextField.setEditable(true);
+        numeroDeSecuriteSocialeTextField.setEditable(true);
+        medecinTraitantTextField.setEditable(true);
 
 
     }

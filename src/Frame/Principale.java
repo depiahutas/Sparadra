@@ -207,7 +207,7 @@ public class Principale extends JFrame {
 
 
         Mutuelle mutuelle1 = new Mutuelle(adresse3, "Mut", "0954642318", "mut.mut@gmail.fr", 2);
-
+        listMutuelle.add(mutuelle1);
 
         //creation jeux de données pour test
         Client client1 = new Client(1,"Dupont", "Marie", "dupont.marie@gmail.com", "0612345678",
@@ -419,6 +419,10 @@ public class Principale extends JFrame {
 
             medecinTraitantTextField.setEditable(false);
             mutuelleTextField.setEditable(false);
+
+            dateDeNaissanceTextField.setEditable(false);
+            numeroDeSecuriteSocialeTextField.setEditable(false);
+
 
             nomComboBox.setVisible(true);
             nomComboBox.removeAllItems();
@@ -718,6 +722,33 @@ public class Principale extends JFrame {
         mutuelleTextField.setEditable(true);
         numeroDeSecuriteSocialeTextField.setEditable(true);
         medecinTraitantTextField.setEditable(true);
+
+
+        final String[] donnees = {""};
+            validCreationButton.addActionListener(new ActionListener() {
+                @Override
+                public void actionPerformed(ActionEvent e) {
+                    try{
+                        int id = listClient.size()+1;
+                        String nom =  NomTextField.getText();
+                        String prenom = PrenomTextField.getText();
+                        String mail = mailTextField.getText();
+                        String tel =telTextField.getText();
+                        String dateNaiss = dateDeNaissanceTextField.getText();
+                        String numSecu = numeroDeSecuriteSocialeTextField.getText();
+                        donnees[0] = id+" |\n"+nom+" |\n"+prenom+" |\n"+ mail+" |\n"+tel+" |\n"+dateNaiss
+                                +" |\n"+numSecu;
+                    Client client = new Client(id, nom, prenom, mail, tel, listAdresse.get(0), dateNaiss,
+                            listMedecin.get(0), listMutuelle.get(0), numSecu);
+                    listClient.add(client);
+                    }catch (Exception exception){
+                        JOptionPane.showMessageDialog(null, donnees[0] + "\n"+
+                                exception.getMessage());
+                    }
+                }
+            });
+
+
 
 
     }

@@ -9,14 +9,18 @@ import classMetier.personne.Medecin;
 import classMetier.sante.Medicament;
 import classMetier.sante.Mutuelle;
 import classMetier.sante.Ordonnance;
+import com.itextpdf.text.DocumentException;
 
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.regex.Pattern;
+
+import static classMetier.Util.FilePdf.createPdf;
 
 public class Principale extends JFrame {
     private JPanel PanelMain;
@@ -116,6 +120,9 @@ public class Principale extends JFrame {
     private JButton NewClietnBtn;
     private JPanel PanelAjoutClient;
     private JButton validCreationButton;
+    private JPanel PanelOpenPDF;
+    private JPanel PanelListMedOrd;
+    private JButton btnOpenPDF;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -172,8 +179,6 @@ public class Principale extends JFrame {
         TableMed.setEnabled(false);
         TableMed.setAutoCreateRowSorter(true);
 
-
-        
     }
 
     /**
@@ -249,7 +254,7 @@ public class Principale extends JFrame {
         Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, medic, "30/01/2023", 1);
         listOrdonnance.add(ordonnance1);
 
-        Ordonnance ordonnance2 = new Ordonnance(medecin1, client1, new ArrayList<>(), "15/08/2023", 2);
+        Ordonnance ordonnance2 = new Ordonnance(medecin1, client1, new ArrayList<Medicament>(){{add(Corticoides);add(Antispasmodiques);}}, "15/08/2023", 2);
         listOrdonnance.add(ordonnance2);
 
 
@@ -628,9 +633,6 @@ public class Principale extends JFrame {
         ajouterButton.addActionListener(e -> {
                     Medicament m = null;
             try{
-
-
-
                     //en fonction du medicament choisit l'ajoute avec toutes ses informations dans la table recap
                     for (Medicament med : listMed) {
                         if (med.getNom().equals(libelleComboBox.getSelectedItem()) &&
@@ -705,6 +707,10 @@ public class Principale extends JFrame {
 
         nomComboBox.setVisible(false);
         prenomComboBox.setVisible(false);
+        PrenomTextField.setVisible(true);
+        PrenomTextField.setEditable(true);
+        NomTextField.setVisible(true);
+        NomTextField.setEditable(true);
 
         validCreationButton.setVisible(true);
         nomComboBox.setSelectedIndex(-1);
@@ -738,13 +744,31 @@ public class Principale extends JFrame {
                         String numSecu = numeroDeSecuriteSocialeTextField.getText();
                         donnees[0] = id+" |\n"+nom+" |\n"+prenom+" |\n"+ mail+" |\n"+tel+" |\n"+dateNaiss
                                 +" |\n"+numSecu;
+
                     Client client = new Client(id, nom, prenom, mail, tel, listAdresse.get(0), dateNaiss,
                             listMedecin.get(0), listMutuelle.get(0), numSecu);
                     listClient.add(client);
+
+                        JOptionPane.showMessageDialog(null,"Client Ajouté");
+
+                        cBoxNom.removeAllItems();
+                        for (Client clients : listClient) {
+                            cBoxNom.addItem(clients.getNom());
+                        }
+
+                        cBoxPrenom.removeAllItems();
+                        for (Client clients : listClient) {
+                                cBoxPrenom.addItem(clients.getPrenom());
+                        }
+                        cBoxNom.setSelectedIndex(cBoxNom.getItemCount()-1);
+                        nouvClient.dispose();
+
                     }catch (Exception exception){
                         JOptionPane.showMessageDialog(null, donnees[0] + "\n"+
                                 exception.getMessage());
                     }
+
+
                 }
             });
 
@@ -1141,9 +1165,23 @@ public class Principale extends JFrame {
                                             tableMed.setAutoCreateRowSorter(true);
 
 
+                                            String titre = "Ordonnance du " + ordonnance.getDate() +" "+ordonnance.getClient().getNom()+" "+ordonnance.getClient().getPrenom();
+                                            StringBuilder listMed= new StringBuilder();
+                                            String name=ordonnance.getClient().getNom()+"-"+ordonnance.getDate().replace("/","-");
+
                                             for (Medicament med : ordonnance.getListMed()) {
                                                 model.addRow(new Object[]{med.getCategorie(), med.getNom(), med.getDateMES(), med.getPrix()});
+                                                listMed.append(med.getNom()).append("\n");
                                             }
+
+                                            try {
+                                                createPdf(titre, listMed.toString(), name);
+                                            } catch (FileNotFoundException ex) {
+                                                throw new RuntimeException(ex);
+                                            } catch (DocumentException ex) {
+                                                throw new RuntimeException(ex);
+                                            }
+
                                             tableMed.setModel(model);
 
                                         }
@@ -1452,4 +1490,6 @@ public class Principale extends JFrame {
 
 
     }
+
+
 }

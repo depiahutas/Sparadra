@@ -58,12 +58,11 @@ public class Client extends Personne{
     }
 
     public void setMutuelle(Mutuelle mutuelle) {
-        if (mutuelle==null){
-            throw new NullPointerException("la mutuelle ne peut etre null");
-        }
-        else {
-            this.mutuelle = mutuelle;
-        }
+            if (mutuelle == null) {
+                throw new NullPointerException("la mutuelle ne peut etre null");
+            } else {
+                this.mutuelle = mutuelle;
+            }
     }
 
     public Medecin getMedecin() {

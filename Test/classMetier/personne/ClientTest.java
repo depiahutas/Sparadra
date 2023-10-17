@@ -29,7 +29,7 @@ class ClientTest {
 
     @Test
     public void testConstructeur() {
-        Client client = new Client("Dupont", "Jean", "jean.dupont@example.com", "0612345678",
+        Client client = new Client(99,"Dupont", "Jean", "jean.dupont@example.com", "0612345678",
                 new Adresse(123 ,"rue du Faubourg Saint-Honoré", "75008", "Paris"),
                 "01/01/1980",
                 new Medecin("Martin", "Martin","martin.martin@mail.com","0123456789",
@@ -50,7 +50,7 @@ class ClientTest {
     @Test
     void testSetNumSecu() throws Exception {
 
-        Client client = new Client("Dupont", "Jean", "jean.dupont@example.com", "0612345678",
+        Client client = new Client(99,"Dupont", "Jean", "jean.dupont@example.com", "0612345678",
                 new Adresse(123 ,"rue du Faubourg Saint-Honoré", "75008", "Paris"),
                 "01/01/1980",
                 new Medecin("Martin", "Martin","martin.martin@mail.com","0123456789",

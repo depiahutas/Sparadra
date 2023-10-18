@@ -16,11 +16,13 @@ import javax.swing.table.DefaultTableModel;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
 import static classMetier.Util.FilePdf.createPdf;
+import static classMetier.Util.FilePdf.openPdf;
 
 public class Principale extends JFrame {
     private JPanel PanelMain;
@@ -179,6 +181,7 @@ public class Principale extends JFrame {
         TableMed.setEnabled(false);
         TableMed.setAutoCreateRowSorter(true);
 
+
     }
 
     /**
@@ -249,6 +252,15 @@ public class Principale extends JFrame {
         medic.add(Polymyxines);
         medic.add(Tetracyclines);
         medic.add(Antituberculeux);
+
+
+        listMed.add(paracetamol);
+        listMed.add(Antispasmodiques);
+        listMed.add(Corticoides);
+        listMed.add(antibacteriens);
+        listMed.add(Polymyxines);
+        listMed.add(Tetracyclines);
+        listMed.add(Antituberculeux);
 
 
         Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, medic, "30/01/2023", 1);
@@ -493,6 +505,7 @@ public class Principale extends JFrame {
             mdl.setRowCount(0);
             cBoxCat.removeAllItems();
             cBoxNom.removeAllItems();
+
             for (CategorieMedicament c : CategorieMedicament.values()) {
                 cBoxCat.addItem(c.toString().toLowerCase());
             }
@@ -1042,8 +1055,10 @@ public class Principale extends JFrame {
                     if (Pattern.matches(Regex.getRegexDate(), textFieldRecherche.getText())) {
                         recherche = textFieldRecherche.getText();
                         lblErreurRecherche.setVisible(false);
-                    }
-                    else {
+                    } else if (textFieldRecherche.getText().isEmpty()) {
+                        lblErreurRecherche.setVisible(false);
+                        recherche = "all";
+                    } else {
                         throw new IllegalArgumentException("Date incorrecte");
                     }
 
@@ -1057,22 +1072,36 @@ public class Principale extends JFrame {
                     model.addColumn("Prix");
 
 
-                    for (classMetier.Util.Achat achat : listAchat) {
-                        if (recherche.equals(achat.getDate())) {
-                            String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
-                            if (achat.getOrdonnance() != null) {
-                                model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
-                            } else {
-                                model.addRow(new Object[]{achat.getDate(), a, "", achat.getPrix()});
+                    if (recherche.equals("all")) {
+
+                        for (classMetier.Util.Achat achat : listAchat) {
+                                String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                                if (achat.getOrdonnance() != null) {
+                                    model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
+                                } else {
+                                    model.addRow(new Object[]{achat.getDate(), a, "", achat.getPrix()});
+                                }
+                        }
+
+                    } else {
+                        for (classMetier.Util.Achat achat : listAchat) {
+                            if (recherche.equals(achat.getDate())) {
+                                String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                                if (achat.getOrdonnance() != null) {
+                                    model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
+                                } else {
+                                    model.addRow(new Object[]{achat.getDate(), a, "", achat.getPrix()});
+                                }
                             }
+
                         }
                     }
 
 
-                    labelTable.setModel(model);
-                    labelTable.setAutoCreateRowSorter(true);
-                    labelTable.setDefaultEditor(Object.class, null);
-                }
+                        labelTable.setModel(model);
+                        labelTable.setAutoCreateRowSorter(true);
+                        labelTable.setDefaultEditor(Object.class, null);
+                    }
                 catch (Exception exception){
                     lblErreurRecherche.setVisible(true);
                     lblErreurRecherche.setText(exception.getMessage());
@@ -1143,6 +1172,9 @@ public class Principale extends JFrame {
                                 } else if (!target.getValueAt(row,column).equals("")) {
 
 
+                                    String name=null;
+                                    String date = null;
+
                                     for (Ordonnance ordonnance : listOrdonnance) {
                                         if (ordonnance.getId() ==
                                                 Integer.parseInt(target.getValueAt(row, column).toString())) {
@@ -1165,9 +1197,11 @@ public class Principale extends JFrame {
                                             tableMed.setAutoCreateRowSorter(true);
 
 
-                                            String titre = "Ordonnance du " + ordonnance.getDate() +" "+ordonnance.getClient().getNom()+" "+ordonnance.getClient().getPrenom();
                                             StringBuilder listMed= new StringBuilder();
-                                            String name=ordonnance.getClient().getNom()+"-"+ordonnance.getDate().replace("/","-");
+                                            name=ordonnance.getClient().getNom()+" "+ordonnance.getClient().getPrenom();
+                                            date = ordonnance.getDate().replace("/","-");
+                                            String titre = "Ordonnance du " + date +" "+name;
+                                            String medecin = ordonnance.getMedecin().getNom()+" "+ordonnance.getMedecin().getPrenom();
 
                                             for (Medicament med : ordonnance.getListMed()) {
                                                 model.addRow(new Object[]{med.getCategorie(), med.getNom(), med.getDateMES(), med.getPrix()});
@@ -1175,7 +1209,7 @@ public class Principale extends JFrame {
                                             }
 
                                             try {
-                                                createPdf(titre, listMed.toString(), name);
+                                                createPdf(titre,listMed.toString(),name,date,medecin);
                                             } catch (FileNotFoundException ex) {
                                                 throw new RuntimeException(ex);
                                             } catch (DocumentException ex) {
@@ -1184,8 +1218,12 @@ public class Principale extends JFrame {
 
                                             tableMed.setModel(model);
 
+
                                         }
                                     }
+
+                                    afficherPdf(name,date);
+
                                     info.setVisible(true);
                                 }
                             }
@@ -1491,5 +1529,19 @@ public class Principale extends JFrame {
 
     }
 
+    private void afficherPdf(String name,String date){
 
+        btnOpenPDF.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+
+                try {
+                    openPdf(name,date);
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
+                }
+
+            }
+        });
+    }
 }

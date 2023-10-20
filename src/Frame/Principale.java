@@ -126,6 +126,7 @@ public class Principale extends JFrame {
     private JPanel PanelListMedOrd;
     private JButton btnOpenPDF;
     private JButton historiqueMutuelleButton;
+    private JComboBox CBBoxMutuelle;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -181,6 +182,7 @@ public class Principale extends JFrame {
         TableMed.setModel(modelRecapMed);
         TableMed.setEnabled(false);
         TableMed.setAutoCreateRowSorter(true);
+
 
 
     }
@@ -291,18 +293,22 @@ public class Principale extends JFrame {
         JMenu Accueil = new JMenu("Accueil");
         JMenu Achat = new JMenu("Achat");
         JMenu recherche = new JMenu("recherche");
+        JMenu RechercheClient = new JMenu("Recherche Client");
 
         JMenuItem Retour = new JMenuItem("Retour");
         JMenuItem Effectuer = new JMenuItem("Effectuer achat");
         JMenuItem RechercherOrd = new JMenuItem("Ordonnance");
         JMenuItem RechercherAch = new JMenuItem("Achat");
-        JMenuItem RechercherClient = new JMenuItem("Client");
+        JMenuItem RechercherClientNom = new JMenuItem("par Nom");
+        JMenuItem RechercherClientMutuelle = new JMenuItem("par Mutuelle");
 
         Accueil.add(Retour);
         Achat.add(Effectuer);
         recherche.add(RechercherOrd);
         recherche.add(RechercherAch);
-        recherche.add(RechercherClient);
+        recherche.add(RechercheClient);
+        RechercheClient.add(RechercherClientNom);
+        RechercheClient.add(RechercherClientMutuelle);
 
         mbar.add(Accueil);
         mbar.add(Achat);
@@ -353,6 +359,8 @@ public class Principale extends JFrame {
             lblRecherche.setVisible(true);
             rechercheComboBox.setVisible(true);
             historiqueOrdonnanceButton.setVisible(false);
+            historiqueMutuelleButton.setVisible(false);
+            CBBoxMutuelle.setVisible(false);
             rechercheComboBox.removeAllItems();
 
 
@@ -421,8 +429,39 @@ public class Principale extends JFrame {
             labelTable.setDefaultEditor(Object.class, null);
         });
 
+        //Recherche Client par Mutuelle
+        RechercherClientMutuelle.addActionListener(e -> {
+            setTitle("Recherche : Client-Mutuelle");
+            setContentPane(PanelRecherche);
+
+            historiqueDAchatButton.setVisible(false);
+            historiqueOrdonnanceButton.setVisible(false);
+            historiqueMutuelleButton.setVisible(false);
+            CBBoxMutuelle.setVisible(true);
+
+            CBBoxMutuelle.removeAllItems();
+            for (Mutuelle mutuelle:listMutuelle){
+                CBBoxMutuelle.addItem(mutuelle.getNom());
+            }
+
+            DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+            x.setRowCount(0);
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Mutuelle");
+            model.addColumn("Client");
+            model.addColumn("Medecin traitant");
+
+            for (Client client : listClient) {
+                model.addRow(new Object[]{client.getMutuelle().getNom(), (client.getNom() + " " + client.getPrenom()),
+                        ("Dr." + client.getMedecin().getNom())});
+            }
+            labelTable.setModel(model);
+            labelTable.setAutoCreateRowSorter(true);
+            labelTable.setDefaultEditor(Object.class, null);
+        });
+
         //panel info client
-        RechercherClient.addActionListener(e -> {
+        RechercherClientNom.addActionListener(e -> {
             setTitle("Information client");
             setContentPane(PanelInfoClient);
 
@@ -463,6 +502,8 @@ public class Principale extends JFrame {
             nomComboBox.setSelectedIndex(-1);
             prenomComboBox.setSelectedIndex(-1);
         });
+
+
 
         //param fenetre par defaut
         setContentPane(PanelAcceuil);
@@ -934,6 +975,8 @@ public class Principale extends JFrame {
             PanelRecherche.setVisible(true);
             lblRecherche.setVisible(true);
             historiqueOrdonnanceButton.setVisible(false);
+            historiqueMutuelleButton.setVisible(false);
+            CBBoxMutuelle.setVisible(false);
 
             DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
             x.setRowCount(0);
@@ -979,6 +1022,8 @@ public class Principale extends JFrame {
             lblRecherche.setVisible(true);
             rechercheComboBox.setVisible(true);
             historiqueOrdonnanceButton.setVisible(false);
+            historiqueMutuelleButton.setVisible(false);
+            CBBoxMutuelle.setVisible(false);
             rechercheComboBox.removeAllItems();
 
 
@@ -1046,11 +1091,11 @@ public class Principale extends JFrame {
             historiqueDAchatButton.setVisible(false);
             historiqueOrdonnanceButton.setVisible(false);
             historiqueMutuelleButton.setVisible(false);
-            rechercheComboBox.setVisible(true);
+            CBBoxMutuelle.setVisible(true);
 
-            rechercheComboBox.removeAllItems();
+            CBBoxMutuelle.removeAllItems();
             for (Mutuelle mutuelle:listMutuelle){
-                rechercheComboBox.addItem(mutuelle.getNom());
+                CBBoxMutuelle.addItem(mutuelle.getNom());
             }
 
             DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
@@ -1074,20 +1119,33 @@ public class Principale extends JFrame {
     private void triMutuelle(){
 
 
-        DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
-        x.setRowCount(0);
-        DefaultTableModel model = new DefaultTableModel();
-        model.addColumn("Mutuelle");
-        model.addColumn("Client");
-        model.addColumn("Medecin traitant");
+        CBBoxMutuelle.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
 
-        //for (Client client : listClient) {
-        //    if (client.getMutuelle().getNom().equals(rechercheMutComboBox.getSelectedItem())) {
-        //        model.addRow(new Object[]{client.getMutuelle().getNom(), (client.getNom() + " " + client.getPrenom()),
-        //                ("Dr." + client.getMedecin().getNom())});
-        //    }
-        //}
-    });
+                DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+                x.setRowCount(0);
+                DefaultTableModel model = new DefaultTableModel();
+                model.addColumn("Mutuelle");
+                model.addColumn("Client");
+                model.addColumn("Medecin traitant");
+
+                for (Client client : listClient) {
+                    if (client.getMutuelle().getNom().equals(CBBoxMutuelle.getSelectedItem())) {
+
+                        x.addRow(new Object[]{client.getMutuelle().getNom(), (client.getNom() + " " + client.getPrenom()),
+
+                                ("Dr." + client.getMedecin().getNom())});
+
+                    }
+                }
+            }
+        });
+
+
+
+
+
     }
 
 

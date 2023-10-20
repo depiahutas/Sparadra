@@ -43,6 +43,7 @@ public class FilePdf {
 
         String Realname="src\\PDF\\"+name+"-"+date+".pdf";
         File test = new File(Realname);
+        // ouvre aussi les pdf des anciennes ordonnance
         Desktop.getDesktop().open(test);
     }
 }

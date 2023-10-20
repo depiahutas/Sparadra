@@ -125,6 +125,7 @@ public class Principale extends JFrame {
     private JPanel PanelOpenPDF;
     private JPanel PanelListMedOrd;
     private JButton btnOpenPDF;
+    private JButton historiqueMutuelleButton;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -530,6 +531,7 @@ public class Principale extends JFrame {
             lblRsh.setVisible(true);
             historiqueOrdonnanceButton.setVisible(true);
             historiqueDAchatButton.setVisible(true);
+            historiqueMutuelleButton.setVisible(true);
             lblRecherche.setVisible(false);
             rechercheComboBox.setSelectedIndex(-1);
             rechercheComboBox.setVisible(false);
@@ -913,6 +915,10 @@ public class Principale extends JFrame {
         RechercheOrd();
         triOrdonnance();
 
+        //Recherche Mutuelle
+        RechercheMutuelle();
+        triMutuelle();
+
         //Jtable
         TableRecherche();
     }
@@ -1016,6 +1022,7 @@ public class Principale extends JFrame {
             model.addColumn("ID ordonnance");
             model.addColumn("Date");
             model.addColumn("Medicament");
+
             for (Medecin medecin : listMedecin) {
                 if (medecin.getNom().equals(rechercheComboBox.getSelectedItem())) {
                     for (Ordonnance ordonnance : listOrdonnance) {
@@ -1031,6 +1038,56 @@ public class Principale extends JFrame {
             labelTable.setAutoCreateRowSorter(true);
             labelTable.setDefaultEditor(Object.class, null);
         });
+    }
+
+    private void RechercheMutuelle(){
+        historiqueMutuelleButton.addActionListener(e -> {
+
+            historiqueDAchatButton.setVisible(false);
+            historiqueOrdonnanceButton.setVisible(false);
+            historiqueMutuelleButton.setVisible(false);
+            rechercheComboBox.setVisible(true);
+
+            rechercheComboBox.removeAllItems();
+            for (Mutuelle mutuelle:listMutuelle){
+                rechercheComboBox.addItem(mutuelle.getNom());
+            }
+
+            DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+            x.setRowCount(0);
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Mutuelle");
+            model.addColumn("Client");
+            model.addColumn("Medecin traitant");
+
+            for (Client client : listClient) {
+                model.addRow(new Object[]{client.getMutuelle().getNom(), (client.getNom() + " " + client.getPrenom()),
+                        ("Dr." + client.getMedecin().getNom())});
+            }
+            labelTable.setModel(model);
+            labelTable.setAutoCreateRowSorter(true);
+            labelTable.setDefaultEditor(Object.class, null);
+        });
+
+    }
+
+    private void triMutuelle(){
+
+
+        DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
+        x.setRowCount(0);
+        DefaultTableModel model = new DefaultTableModel();
+        model.addColumn("Mutuelle");
+        model.addColumn("Client");
+        model.addColumn("Medecin traitant");
+
+        //for (Client client : listClient) {
+        //    if (client.getMutuelle().getNom().equals(rechercheMutComboBox.getSelectedItem())) {
+        //        model.addRow(new Object[]{client.getMutuelle().getNom(), (client.getNom() + " " + client.getPrenom()),
+        //                ("Dr." + client.getMedecin().getNom())});
+        //    }
+        //}
+    });
     }
 
 

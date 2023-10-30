@@ -1,9 +1,6 @@
 package Frame;
 
-import classMetier.Util.Achat;
-import classMetier.Util.Adresse;
-import classMetier.Util.CategorieMedicament;
-import classMetier.Util.Regex;
+import classMetier.Util.*;
 import classMetier.personne.Client;
 import classMetier.personne.Medecin;
 import classMetier.sante.Medicament;
@@ -156,7 +153,7 @@ public class Principale extends JFrame {
     JFrame nouvClient = new JFrame();
 
 
-    public Principale() {
+    public Principale() throws IOException, ClassNotFoundException {
 
         // button group pour achat-> radio boutton ordonnance choix unique
         buttonGroup.add(ordonnanceRadioButton);
@@ -168,6 +165,8 @@ public class Principale extends JFrame {
         actionAchat();
         actionClient();
         actionRecherche();
+
+        connection conn = new connection(".\\src\\ressources\\sql\\conf.properties");
 
         //table Recap Medicament
 
@@ -273,7 +272,7 @@ public class Principale extends JFrame {
         listOrdonnance.add(ordonnance2);
 
 
-        Achat achat1 = new Achat(client1, new ArrayList<>(), 25.37, "30/08/2023",
+        Achat achat1 = new Achat(client1, new ArrayList<Medicament>(){{add(Corticoides);}}, 25.37, "30/08/2023",
                 ordonnance1);
 
         listAchat.add(achat1);

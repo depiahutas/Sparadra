@@ -20,7 +20,7 @@ public class FilePdf {
     public static void createPdf(String title, String texte, String name,String date,String Medecin) throws FileNotFoundException, DocumentException {
 
         Document document = new Document();
-        String Realname="src\\PDF\\"+name+"-"+date+".pdf";
+        String Realname="src\\ressources\\PDF\\"+name+"-"+date+".pdf";
         Paragraph nomMed =new Paragraph("Dr."+Medecin);
         nomMed.setAlignment(Element.ALIGN_RIGHT);
 
@@ -41,7 +41,7 @@ public class FilePdf {
 
     public static void openPdf(String name,String date) throws IOException {
 
-        String Realname="src\\PDF\\"+name+"-"+date+".pdf";
+        String Realname="src\\ressources\\PDF\\"+name+"-"+date+".pdf";
         File test = new File(Realname);
         // ouvre aussi les pdf des anciennes ordonnance
         Desktop.getDesktop().open(test);

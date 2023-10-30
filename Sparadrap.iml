@@ -35,5 +35,6 @@
       </library>
     </orderEntry>
     <orderEntry type="library" name="itextpdf" level="project" />
+    <orderEntry type="library" name="mysql.connector.j" level="project" />
   </component>
 </module>

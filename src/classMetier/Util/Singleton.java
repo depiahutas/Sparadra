@@ -35,7 +35,7 @@ public class Singleton {
         return connection;
     }
 
-    private static Connection getInstanceDB() {
+    public static Connection getInstanceDB() {
         if (getConnection() == null) {
             new Singleton();
             System.out.println("RelationWithDB infos : Connection etablished");

@@ -166,7 +166,6 @@ public class Principale extends JFrame {
         buttonGroup.add(ordonnanceRadioButton);
         buttonGroup.add(sansOrdonnanceRadioButton);
 
-        jeuDeDonnee();
         paramFenetre();
         actionAccueil();
         actionAchat();
@@ -194,97 +193,6 @@ public class Principale extends JFrame {
 
     }
 
-    /**
-     * Jeu de données pour tester l'application
-     */
-    private void jeuDeDonnee(){
-
-
-        Adresse adresse1 =new Adresse(1, "a", "75001", "Paris");
-        Adresse adresse2 = new Adresse(2, "b", "69007", "Lyon");
-        Adresse adresse3 =new Adresse(77, "rue des mutuelles", "75423", "ici");
-        Adresse adresse4 = new Adresse(123, "rue de la République", "75001", "Paris");
-        Adresse adresse5 = new Adresse(456, "avenue de la libération", "69007", "Lyon");
-
-        listAdresse.add(adresse1);
-        listAdresse.add(adresse2);
-        listAdresse.add(adresse3);
-        listAdresse.add(adresse4);
-        listAdresse.add(adresse5);
-
-        //jeu de données pour test application
-        Medecin medecin1 = new Medecin("A", "B", "jane.doe@example.net", "0123456789",
-                adresse1, "A123456789");
-
-        Medecin medecin2 = new Medecin("C", "D", "johndoe@example.org", "0234567891",
-                adresse2, "C098765432");
-
-        listMedecin.add(medecin1);
-        listMedecin.add(medecin2);
-
-
-
-        Mutuelle mutuelle1 = new Mutuelle(adresse3, "Mut", "0954642318", "mut.mut@gmail.fr", 2);
-        listMutuelle.add(mutuelle1);
-
-        //creation jeux de données pour test
-        Client client1 = new Client(1,"Dupont", "Marie", "dupont.marie@gmail.com", "0612345678",
-               adresse4, "20/07/1995", medecin1, mutuelle1, "2012345678"
-        );
-
-        Client client2 = new Client(2,"Martin", "Jean", "martin.jean@gmail.com", "0789101112", adresse5,
-                "10/05/1975", medecin2, mutuelle1, "2012345679"
-        );
-
-        listClient.add(client1);
-        listClient.add(client2);
-
-
-        Medicament paracetamol = new Medicament("Paracétamol", 5.99, "15/02/98", 1,
-                CategorieMedicament.ANTALGIQUE);
-        Medicament Antispasmodiques = new Medicament("Antispasmodiques",2.66,"15/09/2020",1,
-                CategorieMedicament.ANTISPAMODIQUES);
-        Medicament Corticoides = new Medicament("Corticoïdes",15.00,"28/07/2021",1,
-                CategorieMedicament.CORTICOIDES);
-        Medicament antibacteriens = new Medicament("antibactériens",12.50,"08/02/2023",1,
-                CategorieMedicament.ANTIBACTERIENS);
-        Medicament Polymyxines = new Medicament("Polymyxines",24.33,"12/06/2022",1,
-                CategorieMedicament.POLYMIXINES);
-        Medicament Tetracyclines = new Medicament("Tétracyclines",30.48,"01/01/2021",1,
-                CategorieMedicament.TETRECYCLINES);
-        Medicament Antituberculeux = new Medicament("Antituberculeux",36,"12/2022",1,
-                CategorieMedicament.ANTITUBERCULEUX);
-
-        medic.add(paracetamol);
-        medic.add(Corticoides);
-        medic.add(Antispasmodiques);
-        medic.add(antibacteriens);
-        medic.add(Polymyxines);
-        medic.add(Tetracyclines);
-        medic.add(Antituberculeux);
-
-
-        listMed.add(paracetamol);
-        listMed.add(Antispasmodiques);
-        listMed.add(Corticoides);
-        listMed.add(antibacteriens);
-        listMed.add(Polymyxines);
-        listMed.add(Tetracyclines);
-        listMed.add(Antituberculeux);
-
-
-        Ordonnance ordonnance1 = new Ordonnance(medecin1, client1, medic, "30/01/2023", 1);
-        listOrdonnance.add(ordonnance1);
-
-        Ordonnance ordonnance2 = new Ordonnance(medecin1, client1, new ArrayList<Medicament>(){{add(Corticoides);add(Antispasmodiques);}}, "15/08/2023", 2);
-        listOrdonnance.add(ordonnance2);
-
-
-        Achat achat1 = new Achat(client1, new ArrayList<Medicament>(){{add(Corticoides);}}, 25.37, "30/08/2023",
-                ordonnance1);
-
-        listAchat.add(achat1);
-    }
 
     /**
      * Parametre de la fenetre

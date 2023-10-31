@@ -5,12 +5,17 @@ import classMetier.Util.Regex;
 
 import java.util.regex.Pattern;
 
-public abstract class Personne {
+public class Personne {
+
+
+
+    private int id;
     private String nom;
     private String prenom;
     private String mail;
     private String tel;
     private Adresse adresse;
+
 
     public String getNom() {
         return nom;
@@ -79,6 +84,14 @@ public abstract class Personne {
         }
     }
 
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     /**
      * constructeur Personne
      * @param nom String (controle ar REGEX)
@@ -87,7 +100,8 @@ public abstract class Personne {
      * @param tel String (controle ar REGEX)
      * @param adresse Adresse
      */
-    public Personne(String nom, String prenom, String mail, String tel, Adresse adresse) {
+    public Personne(int id ,String nom, String prenom, String mail, String tel, Adresse adresse) {
+        setId(id);
         setNom(nom);
         setPrenom(prenom);
         setMail(mail);

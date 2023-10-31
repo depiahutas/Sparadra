@@ -7,6 +7,9 @@ public class Adresse {
     private String rue;
     private String codePostal;
     private String ville;
+    private int id;
+
+
 
     /**
      * constructeur Adresse
@@ -15,7 +18,8 @@ public class Adresse {
      * @param codePostal String (controle par REGEX)
      * @param ville String (controle par REGEX)
      */
-    public Adresse(int numero, String rue, String codePostal, String ville) {
+    public Adresse(int id,int numero, String rue, String codePostal, String ville) {
+        setId(id);
         setNumero(numero);
         setRue(rue);
         setVille(ville);
@@ -47,6 +51,10 @@ public class Adresse {
             }
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public String getCodePostal() {
         return codePostal;
     }
@@ -74,5 +82,9 @@ public class Adresse {
             else {
                 throw new IllegalArgumentException("ville incorrecte");
             }
+    }
+
+    public int getID() {
+        return this.id;
     }
 }

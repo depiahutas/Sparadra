@@ -124,6 +124,13 @@ public class Principale extends JFrame {
     private JButton btnOpenPDF;
     private JButton historiqueMutuelleButton;
     private JComboBox CBBoxMutuelle;
+    private JButton gestionStockButton;
+    private JPanel PanelGestionStock;
+    private JTable TabMedic;
+    private JPanel PanelTabMedic;
+    private JLabel lblRechercheMed;
+    private JPanel PanelRechercheMed;
+    private JTextField txtFieldRchMed;
     private JButton validerAchatButton;
 
     private final ButtonGroup buttonGroup = new ButtonGroup();
@@ -166,8 +173,7 @@ public class Principale extends JFrame {
         actionClient();
         actionRecherche();
 
-        connection conn = new connection(".\\src\\ressources\\sql\\conf.properties");
-
+        Singleton.RequeteTest();
         //table Recap Medicament
 
 
@@ -181,6 +187,8 @@ public class Principale extends JFrame {
         TableMed.setModel(modelRecapMed);
         TableMed.setEnabled(false);
         TableMed.setAutoCreateRowSorter(true);
+
+
 
 
 
@@ -293,6 +301,7 @@ public class Principale extends JFrame {
         JMenu Achat = new JMenu("Achat");
         JMenu recherche = new JMenu("recherche");
         JMenu RechercheClient = new JMenu("Recherche Client");
+        JMenu Stock = new JMenu("Stock");
 
         JMenuItem Retour = new JMenuItem("Retour");
         JMenuItem Effectuer = new JMenuItem("Effectuer achat");
@@ -300,6 +309,7 @@ public class Principale extends JFrame {
         JMenuItem RechercherAch = new JMenuItem("Achat");
         JMenuItem RechercherClientNom = new JMenuItem("par Nom");
         JMenuItem RechercherClientMutuelle = new JMenuItem("par Mutuelle");
+        JMenuItem GestionStock = new JMenuItem("Gestion");
 
         Accueil.add(Retour);
         Achat.add(Effectuer);
@@ -308,10 +318,12 @@ public class Principale extends JFrame {
         recherche.add(RechercheClient);
         RechercheClient.add(RechercherClientNom);
         RechercheClient.add(RechercherClientMutuelle);
+        Stock.add(GestionStock);
 
         mbar.add(Accueil);
         mbar.add(Achat);
         mbar.add(recherche);
+        mbar.add(Stock);
 
         // Action des MenuItem
 
@@ -502,6 +514,35 @@ public class Principale extends JFrame {
             prenomComboBox.setSelectedIndex(-1);
         });
 
+        // affichage panel Gestion des Stocks de medicament
+        // via menu bar
+        GestionStock.addActionListener(e -> {
+            setTitle("Gestion des Stock");
+            setContentPane(PanelGestionStock);
+
+
+            DefaultTableModel x = (DefaultTableModel) TabMedic.getModel();
+            x.setRowCount(0);
+            DefaultTableModel model = new DefaultTableModel();
+            model.addColumn("Libelle");
+            model.addColumn("Prix");
+            model.addColumn("Categorie");
+            model.addColumn("Quantite en stock");
+            model.addColumn("DateMES");
+
+            for (Medicament med : listMed) {
+                model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie(),med.getQuantite(),med.getDateMES()});
+            }
+
+            TabMedic.setAutoCreateRowSorter(true);
+            TabMedic.setDefaultEditor(Object.class, null);
+            TabMedic.setModel(model);
+
+            triStock();
+
+            revalidate();
+            repaint();
+        });
 
 
         //param fenetre par defaut
@@ -521,6 +562,7 @@ public class Principale extends JFrame {
         actionBtnAchat();
         actionBtnRecherche();
         actionBtnInformation();
+        actionBtnStock();
     }
 
     private void actionBtnAchat(){
@@ -632,6 +674,41 @@ public class Principale extends JFrame {
 
                 nomComboBox.setSelectedIndex(-1);
                 prenomComboBox.setSelectedIndex(-1);
+            }
+        });
+    }
+
+    private void actionBtnStock(){
+
+        gestionStockButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                setTitle("Gestion des Stock");
+                setContentPane(PanelGestionStock);
+
+
+                DefaultTableModel x = (DefaultTableModel) TabMedic.getModel();
+                x.setRowCount(0);
+                DefaultTableModel model = new DefaultTableModel();
+                model.addColumn("Libelle");
+                model.addColumn("Prix");
+                model.addColumn("Categorie");
+                model.addColumn("Quantite en stock");
+                model.addColumn("DateMES");
+
+                for (Medicament med : listMed) {
+                    model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie(),med.getQuantite(),med.getDateMES()});
+                }
+
+                TabMedic.setAutoCreateRowSorter(true);
+                TabMedic.setDefaultEditor(Object.class, null);
+                TabMedic.setModel(model);
+
+
+                triStock();
+
+                revalidate();
+                repaint();
             }
         });
     }
@@ -1230,6 +1307,51 @@ public class Principale extends JFrame {
         });
     }
 
+    private void triStock(){
+
+        txtFieldRchMed.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                DefaultTableModel x = (DefaultTableModel) TabMedic.getModel();
+                x.setRowCount(0);
+                DefaultTableModel model = new DefaultTableModel();
+                model.addColumn("Libelle");
+                model.addColumn("Prix");
+                model.addColumn("Categorie");
+                model.addColumn("Quantite en stock");
+                model.addColumn("DateMES");
+
+                String test=txtFieldRchMed.getText();
+                for (Medicament med : listMed) {
+                    if (Objects.equals(txtFieldRchMed.getText(), "")){
+                        model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie(),med.getQuantite(),med.getDateMES()});
+                    }
+                    if (med.getNom().toLowerCase().equals(test) || med.getCategorie().toString().toLowerCase().equals(test)){
+                        model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie(),med.getQuantite(),med.getDateMES()});
+                    }
+                }
+
+
+                TabMedic.setAutoCreateRowSorter(true);
+                TabMedic.setDefaultEditor(Object.class, null);
+                TabMedic.setModel(model);
+
+            }
+        });
+
+
+    }
+
 
     //action selon case double cliqué dans la Jtable des recherche
     //colonne client affiche données client dans nouvelle fenetre
@@ -1658,4 +1780,6 @@ public class Principale extends JFrame {
             }
         });
     }
+
+
 }

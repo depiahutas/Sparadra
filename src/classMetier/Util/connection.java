@@ -22,25 +22,6 @@ public class connection {
         try{
             Connection conn = DriverManager.getConnection(url,login,password);
             System.out.println("Connecter");
-
-            String sql = "select * from client inner join personne on cli_per=per_id;";
-
-            Statement statement = conn.createStatement();
-            ResultSet result = statement.executeQuery(sql);
-
-            while (result.next()){
-                System.out.println("resultat : "+result.getInt("cli_id") + "-"+result.getString("per_nom"));
-            }
-
-            sql="select * from client inner join personne on cli_per=per_id where cli_id= ?";
-            PreparedStatement statement1 = conn.prepareStatement(sql);
-            statement1.setInt(1,1);
-            ResultSet resultSet = statement1.executeQuery();
-            while (resultSet.next()){
-                System.out.println("resultat : "+resultSet.getInt("cli_id") + "-"+resultSet.getString("per_nom"));
-            }
-            conn.close();
-            System.out.println("Deconnecter");
         } catch (SQLException e) {
             e.printStackTrace();
             System.out.println("Erreur");

@@ -8,23 +8,30 @@ import org.junit.platform.commons.function.Try;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class Client extends Personne{
+public class Client{
     private int idClient;
+    private Personne personne;
+    private String dateNaiss;
+    private Mutuelle mutuelle;
+    private Medecin medecin;
+    private String numSecu;
+
+    public Personne getPersonne() {
+        return personne;
+    }
+
+    public void setPersonne(Personne personne) {
+        this.personne = personne;
+    }
 
     public int getIdClient() {
+
         return idClient;
     }
 
     public void setIdClient(int idClient) {
         this.idClient = idClient;
     }
-
-    private String dateNaiss;
-    private String numSecu;
-    private Mutuelle mutuelle;
-    private Medecin medecin;
-    private ArrayList<Specialiste> listSpecialiste;
-
 
     public String getDateNaiss() {
         return dateNaiss;
@@ -78,29 +85,18 @@ public class Client extends Personne{
         }
     }
 
-    public ArrayList<Specialiste> getListSpecialiste() {
-        return listSpecialiste;
-    }
-
-    public void setListSpecialiste(ArrayList<Specialiste> listSpecialiste) {
-        this.listSpecialiste = listSpecialiste;
-    }
-
     /**
      * constructeur client
-     * @param nom voir classe Personne
-     * @param prenom voir classe Personne
-     * @param mail voir classe Personne
-     * @param tel voir classe Personne
-     * @param adresse voir classe Personne
+     * @param id id client
+     * @param personne  Personne associé
      * @param dateNaiss String (Date au format jj/mm/aaaa, controle par REGEX)
      * @param medecin Medecin
      * @param mutuelle Mutuelle
      * @param numSecu String (controle REGEX)
      */
-    public Client(int id,String nom, String prenom, String mail, String tel, Adresse adresse, String dateNaiss, Medecin medecin, Mutuelle mutuelle, String numSecu) {
-        super(nom, prenom, mail, tel, adresse);
+    public Client(int id,Personne personne, String dateNaiss, Medecin medecin, Mutuelle mutuelle, String numSecu) {
         setIdClient(id);
+        setPersonne(personne);
         setDateNaiss(dateNaiss);
         setMedecin(medecin);
         setMutuelle(mutuelle);
@@ -108,15 +104,12 @@ public class Client extends Personne{
 
     }
 
-    public void updateClient(String nom, String prenom, String mail, String tel, Adresse adresse, String dateNaiss, Medecin medecin, Mutuelle mutuelle, String numSecu){
-    this.setNom(nom);
-    this.setPrenom(prenom);
-    this.setMail(mail);
-    this.setTel(tel);
-    this.setAdresse(adresse);
-    this.setDateNaiss(dateNaiss);
-    this.setMedecin(medecin);
-    this.setMutuelle(mutuelle);
-    this.setNumSecu(numSecu);
+    public void updateClient(Personne personne,String dateNaiss, Medecin medecin, Mutuelle mutuelle, String numSecu){
+    setPersonne(personne);
+    setDateNaiss(dateNaiss);
+    setMedecin(medecin);
+    setMutuelle(mutuelle);
+    setNumSecu(numSecu);
     }
+
 }

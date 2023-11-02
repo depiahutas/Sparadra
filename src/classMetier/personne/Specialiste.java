@@ -14,8 +14,8 @@ public class Specialiste extends Medecin{
         this.specialite = specialite;
     }
 
-    public Specialiste(String nom, String prenom, String mail, String tel, Adresse adresse, String numAgr, Specialite specialite) {
-        super(nom, prenom, mail, tel, adresse, numAgr);
+    public Specialiste(int id,Personne personne, String numAgr, Specialite specialite) {
+        super(id,personne, numAgr);
         setSpecialite(specialite);
     }
 }

@@ -6,8 +6,10 @@ import classMetier.Util.Regex;
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
-public class Medecin extends Personne{
+public class Medecin{
+    private int id;
     private String numAgr;
+    private Personne personne;
     private ArrayList<Client> listPatient;
 
     public String getNumAgr() {
@@ -23,6 +25,22 @@ public class Medecin extends Personne{
         }
     }
 
+    public Personne getPersonne() {
+        return personne;
+    }
+
+    public void setPersonne(Personne personne) {
+        this.personne = personne;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     public ArrayList<Client> getListPatient() {
         return listPatient;
     }
@@ -33,15 +51,12 @@ public class Medecin extends Personne{
 
     /**
      *
-     * @param nom voir classe Personne
-     * @param prenom voir classe Personne
-     * @param mail voir classe Personne
-     * @param tel voir classe Personne
-     * @param adresse Adresse
+     * @param personne
      * @param numAgr String ( controle par REGEX)
      */
-    public Medecin(String nom, String prenom, String mail, String tel, Adresse adresse, String numAgr) {
-        super(nom, prenom, mail, tel, adresse);
+    public Medecin(int id,Personne personne, String numAgr) {
+        setId(id);
+        setPersonne(personne);
         setNumAgr(numAgr);
     }
 }

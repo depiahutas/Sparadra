@@ -3,7 +3,8 @@ package DAO;
 import classMetier.Util.Singleton;
 
 import java.sql.Connection;
-import java.util.List;
+import java.sql.SQLException;
+import java.util.ArrayList;
 
 public abstract class DAO<T> {
 
@@ -13,9 +14,9 @@ public abstract class DAO<T> {
 
     public abstract boolean delete(T obj);
 
-    public abstract boolean update(T obj);
+    public abstract boolean update(T obj) throws SQLException;
 
     public abstract T find(Integer pID);
 
-    public abstract List<T> findAll();
+    public abstract ArrayList<T> findAll();
 }

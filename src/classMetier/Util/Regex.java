@@ -6,7 +6,7 @@ package classMetier.Util;
 public class Regex {
 
     //regex Personne
-    static final String regexDate = "^([0-9]{2})\\/([0-9]{2})\\/([0-9]{4})$";
+    static final String regexDate = "^\\d{4}-\\d{2}-\\d{2}$";
 
 
     static final String regexNom="^[a-zA-ZÀ-ÖØ-öø-ÿ]+([-'\\s][a-zA-ZÀ-ÖØ-öø-ÿ]+)*$";
@@ -43,7 +43,7 @@ public class Regex {
     static final String regexNomAdresse = "^([a-zA-Z0-9\\-\\.\\,' ]+)\\S*$";
 
     static final String regexCodePostal = "^[0-9]{5}$";
-    static final String regexVille="^([a-zA-Z-.,' ]+)\\s*$";
+    static final String regexVille="^\\p{Lu}\\p{L}*(?:[\\s-]\\p{Lu}\\p{L}*)*$";
 
     public static String getRegexNumeroAdresse(){
         return regexNumeroAdresse;
@@ -62,7 +62,7 @@ public class Regex {
     }
 
     //regex Client
-    static final String regexDateNaiss="^(0[1-9]|[1-2][0-9]|3[0-1])[\\/-](0[1-9]|1[0-2])[\\/-]\\d{4}$";
+    static final String regexDateNaiss="^\\d{4}-\\d{2}-\\d{2}$";
     static final String regexNumSecu = "^([1-2][0-9]{2})([0-1][0-9]|2[0-9]|9[1-7])([0-9]{2})([0-9]{3}(-[0-9]{2})?)$";
 
     public static String getRegexDateNaiss(){
@@ -73,7 +73,7 @@ public class Regex {
     }
 
     //regex Medecin
-    static final String regexAgr="^([A-Z]\\d{9})$";
+    static final String regexAgr="^([A-Z]{2})([0-9]{8})$";
     public static String getRegexAgr(){
         return regexAgr;
     }

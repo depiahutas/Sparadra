@@ -4,6 +4,12 @@ import classMetier.Util.Adresse;
 
 public class Mutuelle {
     private Adresse adresse;
+    int id;
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
     private String nom;
     private String tel;
     private String mail;
@@ -17,7 +23,8 @@ public class Mutuelle {
      * @param mail String (controle par REGEX)
      * @param txPECR int (controle par REGEX)
      */
-    public Mutuelle(Adresse adresse, String nom, String tel, String mail, int txPECR) {
+    public Mutuelle(int id,Adresse adresse, String nom, String tel, String mail, int txPECR) {
+        setId(id);
         setAdresse(adresse);
         setNom(nom);
         setTel(tel);
@@ -84,5 +91,9 @@ public class Mutuelle {
     public void setTxPECR(int txPECR) {
 
         this.txPECR = txPECR;
+    }
+
+    public int getId() {
+        return this.id;
     }
 }

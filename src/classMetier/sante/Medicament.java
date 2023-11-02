@@ -1,10 +1,10 @@
 package classMetier.sante;
 
-import classMetier.Util.CategorieMedicament;
-
 public class Medicament {
+
+    private int id;
     private String nom;
-    private double prix;
+    private float prix;
     private String dateMES;
     private int quantite;
     private CategorieMedicament categorie;
@@ -17,12 +17,21 @@ public class Medicament {
      * @param quantite int (controle par REGEX)
      * @param categorie Categorie
      */
-    public Medicament(String nom, double prix, String dateMES, int quantite, CategorieMedicament categorie) {
+    public Medicament(int id,String nom, float prix, String dateMES, int quantite, CategorieMedicament categorie) {
+        setId(id);
         setNom(nom);
         setPrix(prix);
         setDateMES(dateMES);
         setQuantite(quantite);
         setCategorie(categorie);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public String getNom() {
@@ -37,11 +46,11 @@ public class Medicament {
         }
     }
 
-    public double getPrix() {
+    public float getPrix() {
         return prix;
     }
 
-    public void setPrix(double prix) {
+    public void setPrix(float prix) {
             this.prix = prix;
 
     }

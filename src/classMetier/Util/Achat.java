@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Achat {
+
+    private int id;
     private Client client;
-    private ArrayList<Medicament> listMed;
+    private Panier panier;
     private double prix;
     private String date;
 
@@ -18,17 +20,26 @@ public class Achat {
     /**
      * constructeur Achat
      * @param client voir classe Client
-     * @param listMed ArrayList<Medicament></>( liste medicament de l'achat)
+     * @param panier
      * @param prix double (2 chiffres apres la virgule)
      * @param date String (date format jj/mm/aaaa)
      * @param ordonnance voir classe Ordonnance
      */
-    public Achat(Client client, ArrayList<Medicament> listMed, double prix, String date, Ordonnance ordonnance) {
+    public Achat(int id,Client client, Panier panier, double prix, String date, Ordonnance ordonnance) {
+        setId(id);
         setClient(client);
-        setListMed(listMed);
+        setPanier(panier);
         setPrix(prix);
         setDate(date);
         setOrdonnance(ordonnance);
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public Client getClient() {
@@ -49,21 +60,12 @@ public class Achat {
         }
     }
 
-    public ArrayList<Medicament> getListMed() {
-        return listMed;
+    public Panier getPanier() {
+        return panier;
     }
 
-    public void setListMed(ArrayList<Medicament> listMed) {
-        try{
-            if (listMed.isEmpty()){
-                throw new NullPointerException("listMed vide");
-            }else {
-                this.listMed = listMed;
-            }
-        }
-        catch (NullPointerException e){
-            System.out.println(e.getMessage());
-        }
+    public void setPanier(Panier panier) {
+        this.panier = panier;
     }
 
     public double getPrix() {

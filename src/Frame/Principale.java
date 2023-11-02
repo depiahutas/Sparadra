@@ -1,8 +1,20 @@
 package Frame;
 
+import DAO.DAO;
+import DAO.Util.AchatDAO;
+import DAO.Util.AdresseDAO;
+import DAO.personne.ClientDAO;
+import DAO.personne.MedecinDAO;
+import DAO.personne.personneDAO;
+import DAO.sante.CategorieMedicamentDAO;
+import DAO.sante.MedicamentDAO;
+import DAO.sante.MutuelleDAO;
+import DAO.sante.OrdonnanceDAO;
 import classMetier.Util.*;
 import classMetier.personne.Client;
 import classMetier.personne.Medecin;
+import classMetier.personne.Personne;
+import classMetier.sante.CategorieMedicament;
 import classMetier.sante.Medicament;
 import classMetier.sante.Mutuelle;
 import classMetier.sante.Ordonnance;
@@ -145,10 +157,13 @@ public class Principale extends JFrame {
 
     //liste medicament pour achat
     ArrayList<Medicament> listMedAchat = new ArrayList<>();
+    java.util.List<Personne> listPersonne = new ArrayList<>();
 
     //liste Adresse
     ArrayList<Adresse> listAdresse = new ArrayList<>();
 
+
+    ArrayList<CategorieMedicament> listCategorie = new ArrayList<>();
     // model recapMed pour achat
     DefaultTableModel modelRecapMed = new DefaultTableModel();
 
@@ -158,6 +173,20 @@ public class Principale extends JFrame {
     Dimension d = new Dimension(750, 350);
 
     JFrame nouvClient = new JFrame();
+
+    CategorieMedicamentDAO catDAO = new CategorieMedicamentDAO();
+
+    ClientDAO clientDAO = new ClientDAO();
+
+    MedecinDAO medecinDAO = new MedecinDAO();
+
+    MutuelleDAO mutuelleDAO = new MutuelleDAO();
+
+    MedicamentDAO medicamentDAO = new MedicamentDAO();
+
+    OrdonnanceDAO ordonnanceDAO = new OrdonnanceDAO();
+
+    AchatDAO achatDAO = new AchatDAO();
 
 
     public Principale() throws IOException, ClassNotFoundException {
@@ -172,10 +201,13 @@ public class Principale extends JFrame {
         actionClient();
         actionRecherche();
 
-        Singleton.RequeteTest();
+        for (Medicament medicament:medicamentDAO.findAll()){
+            System.out.println(medicament.getNom() + " "+medicament.getCategorie().getLibelle()+" "+ medicament.getQuantite());
+        }
+
+
+
         //table Recap Medicament
-
-
         TableMed.setDefaultEditor(Object.class, null);
 
         modelRecapMed.addColumn("Libéllé");
@@ -186,11 +218,6 @@ public class Principale extends JFrame {
         TableMed.setModel(modelRecapMed);
         TableMed.setEnabled(false);
         TableMed.setAutoCreateRowSorter(true);
-
-
-
-
-
     }
 
 
@@ -257,12 +284,12 @@ public class Principale extends JFrame {
             mdl.setRowCount(0);
             cBoxCat.removeAllItems();
             cBoxNom.removeAllItems();
-            for (CategorieMedicament c : CategorieMedicament.values()) {
+            for (CategorieMedicament c : listCategorie) {
                 cBoxCat.addItem(c.toString().toLowerCase());
             }
             cBoxCat.setSelectedIndex(-1);
             for (Client client : listClient) {
-                cBoxNom.addItem(client.getNom());
+                cBoxNom.addItem(client.getPersonne().getNom());
             }
             cBoxNom.setSelectedIndex(-1);
         });
@@ -294,14 +321,14 @@ public class Principale extends JFrame {
 
 
             for (Medecin medecin : listMedecin) {
-                rechercheComboBox.addItem(medecin.getNom());
+                rechercheComboBox.addItem(medecin.getPersonne().getNom());
             }
             rechercheComboBox.setSelectedIndex(-1);
 
 
             for (Ordonnance ordonnance : listOrdonnance) {
-                String a = ordonnance.getClient().getNom() + " " + ordonnance.getClient().getPrenom();
-                model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
+                String a = ordonnance.getClient().getPersonne().getNom() + " " + ordonnance.getClient().getPersonne().getPrenom();
+                model.addRow(new Object[]{ordonnance.getMedecin().getPersonne().getNom(),
                         a, ordonnance.getId(),ordonnance.getDate(),
                         ordonnance.getListMedToString()});
             }
@@ -333,7 +360,7 @@ public class Principale extends JFrame {
             model.addColumn("Prix");
 
             for (Achat achat : listAchat) {
-                String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                String a = achat.getClient().getPersonne().getNom() + " " + achat.getClient().getPersonne().getPrenom();
                 if (achat.getOrdonnance()!=null) {
                     model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(),
                             achat.getPrix()});
@@ -371,8 +398,8 @@ public class Principale extends JFrame {
             model.addColumn("Medecin traitant");
 
             for (Client client : listClient) {
-                model.addRow(new Object[]{client.getMutuelle().getNom(), (client.getNom() + " " + client.getPrenom()),
-                        ("Dr." + client.getMedecin().getNom())});
+                model.addRow(new Object[]{client.getMutuelle().getNom(), (client.getPersonne().getNom() + " " + client.getPersonne().getPrenom()),
+                        ("Dr." + client.getMedecin().getPersonne().getNom())});
             }
             labelTable.setModel(model);
             labelTable.setAutoCreateRowSorter(true);
@@ -408,8 +435,8 @@ public class Principale extends JFrame {
             NomTextField.setEditable(false);
 
             for (Client client : listClient) {
-                nomComboBox.addItem(client.getNom());
-                prenomComboBox.addItem(client.getPrenom());
+                nomComboBox.addItem(client.getPersonne().getNom());
+                prenomComboBox.addItem(client.getPersonne().getPrenom());
             }
 
 
@@ -477,9 +504,6 @@ public class Principale extends JFrame {
         //Affichage panel Achat et réinitialise les données du form
         btnAchat.addActionListener(e -> {
             setTitle("Achat");
-            if (!listMedAchat.isEmpty()){
-                listMedAchat.clear();
-            }
             sommeTot[0] = 0;
             Prixtot.setText("");
             QteTextField.setText("1");
@@ -492,18 +516,20 @@ public class Principale extends JFrame {
             cBoxCat.setVisible(false);
             lblCat.setVisible(false);
             ajouterButton.setVisible(false);
+
+
             DefaultTableModel mdl = (DefaultTableModel) TableMed.getModel();
             mdl.setRowCount(0);
             cBoxCat.removeAllItems();
             cBoxNom.removeAllItems();
 
-            for (CategorieMedicament c : CategorieMedicament.values()) {
-                cBoxCat.addItem(c.toString().toLowerCase());
+            for (CategorieMedicament c :catDAO.findAll()) {
+                cBoxCat.addItem(c.getLibelle().toLowerCase());
             }
             cBoxCat.setSelectedIndex(-1);
 
-            for (Client client : listClient) {
-                cBoxNom.addItem(client.getNom());
+            for (Client client : clientDAO.findAll()) {
+                cBoxNom.addItem(client.getPersonne().getNom());
             }
             cBoxNom.setSelectedIndex(-1);
         });
@@ -569,9 +595,9 @@ public class Principale extends JFrame {
                 dateDeNaissanceTextField.setEditable(false);
                 numeroDeSecuriteSocialeTextField.setEditable(false);
 
-                for (Client client : listClient) {
-                    nomComboBox.addItem(client.getNom());
-                    prenomComboBox.addItem(client.getPrenom());
+                for (Client client : clientDAO.findAll()) {
+                    nomComboBox.addItem(client.getPersonne().getNom());
+                    prenomComboBox.addItem(client.getPersonne().getPrenom());
                 }
 
                 validCreationButton.setVisible(false);
@@ -604,8 +630,8 @@ public class Principale extends JFrame {
                 model.addColumn("Quantite en stock");
                 model.addColumn("DateMES");
 
-                for (Medicament med : listMed) {
-                    model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie(),med.getQuantite(),med.getDateMES()});
+                for (Medicament med : medicamentDAO.findAll()) {
+                    model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie().getLibelle(),med.getQuantite(),med.getDateMES()});
                 }
 
                 TabMedic.setAutoCreateRowSorter(true);
@@ -674,7 +700,7 @@ public class Principale extends JFrame {
                     Medicament m = null;
             try{
                     //en fonction du medicament choisit l'ajoute avec toutes ses informations dans la table recap
-                    for (Medicament med : listMed) {
+                    for (Medicament med : medicamentDAO.findAll()) {
                         if (med.getNom().equals(libelleComboBox.getSelectedItem()) &&
                                 med.getCategorie().toString().toLowerCase().equals(cBoxCat.getSelectedItem())) {
                             m = med;
@@ -715,9 +741,9 @@ public class Principale extends JFrame {
         //tri list client en fonctio nom sélectionner
         cBoxNom.addActionListener(e -> {
             cBoxPrenom.removeAllItems();
-            for (Client client : listClient) {
-                if (client.getNom().equals(cBoxNom.getSelectedItem())) {
-                    cBoxPrenom.addItem(client.getPrenom());
+            for (Client client : clientDAO.findAll()) {
+                if (client.getPersonne().getNom().equals(cBoxNom.getSelectedItem())) {
+                    cBoxPrenom.addItem(client.getPersonne().getPrenom());
                 }
             }
         });
@@ -776,29 +802,30 @@ public class Principale extends JFrame {
                 public void actionPerformed(ActionEvent e) {
                     try{
                         int id = listClient.size()+1;
-                        String nom =  NomTextField.getText();
-                        String prenom = PrenomTextField.getText();
-                        String mail = mailTextField.getText();
-                        String tel =telTextField.getText();
+                        Personne p =new Personne(0,
+                                NomTextField.getText(),
+                                PrenomTextField.getText(),
+                                mailTextField.getText(),
+                                telTextField.getText(),
+                                null);
                         String dateNaiss = dateDeNaissanceTextField.getText();
                         String numSecu = numeroDeSecuriteSocialeTextField.getText();
-                        donnees[0] = id+" |\n"+nom+" |\n"+prenom+" |\n"+ mail+" |\n"+tel+" |\n"+dateNaiss
-                                +" |\n"+numSecu;
+                        //donnees[0] = id+" |\n"+nom+" |\n"+prenom+" |\n"+ mail+" |\n"+tel+" |\n"+dateNaiss
+                         //       +" |\n"+numSecu;
 
-                    Client client = new Client(id, nom, prenom, mail, tel, listAdresse.get(0), dateNaiss,
-                            listMedecin.get(0), listMutuelle.get(0), numSecu);
+                    Client client = new Client(id,p, dateNaiss,listMedecin.get(0),listMutuelle.get(0),numSecu);
                     listClient.add(client);
 
                         JOptionPane.showMessageDialog(null,"Client Ajouté");
 
                         cBoxNom.removeAllItems();
                         for (Client clients : listClient) {
-                            cBoxNom.addItem(clients.getNom());
+                            cBoxNom.addItem(clients.getPersonne().getNom());
                         }
 
                         cBoxPrenom.removeAllItems();
                         for (Client clients : listClient) {
-                                cBoxPrenom.addItem(clients.getPrenom());
+                                cBoxPrenom.addItem(clients.getPersonne().getPrenom());
                         }
                         cBoxNom.setSelectedIndex(cBoxNom.getItemCount()-1);
                         nouvClient.dispose();
@@ -823,14 +850,14 @@ public class Principale extends JFrame {
         cBoxCat.addItemListener(e -> {
             if (Objects.equals(cBoxCat.getSelectedItem(), "") || cBoxCat.getSelectedItem() == null) {
                 libelleComboBox.removeAllItems();
-                for (Medicament med : listMed) {
+                for (Medicament med : medicamentDAO.findAll()) {
                     libelleComboBox.addItem(med.getNom());
                 }
                 libelleComboBox.setSelectedIndex(-1);
             } else {
                 libelleComboBox.removeAllItems();
-                for (Medicament med : listMed) {
-                    if (med.getCategorie().toString().toLowerCase().equals(cBoxCat.getSelectedItem())) {
+                for (Medicament med : medicamentDAO.findAll()) {
+                    if (med.getCategorie().getLibelle().toLowerCase().equals(cBoxCat.getSelectedItem())) {
                         libelleComboBox.addItem(med.getNom());
                     }
                 }
@@ -842,13 +869,13 @@ public class Principale extends JFrame {
         // action pour afficher le prix en fonction du médicament choisit
         libelleComboBox.addItemListener(e -> {
             if (Objects.equals(cBoxCat.getSelectedItem(), "") || cBoxCat.getSelectedItem() == null) {
-                for (Medicament med : listMed) {
+                for (Medicament med : medicamentDAO.findAll()) {
                     if (med.getNom().equals(libelleComboBox.getSelectedItem())) {
                         cBoxCat.setSelectedItem(med.getCategorie().toString().toLowerCase());
                     }
                 }
             } else {
-                for (Medicament m : listMed) {
+                for (Medicament m : medicamentDAO.findAll()) {
                     if (m.getNom().equals(libelleComboBox.getSelectedItem())) {
                         prixTextField.setText("" + m.getPrix());
                     }
@@ -863,17 +890,18 @@ public class Principale extends JFrame {
         validerButton.addActionListener(e -> {
 
             Client c = null;
+            Panier p = null;
 
             String regexIDOrd = "[0-9]";
             Ordonnance ord = null;
             try {
-                for (Client client : listClient) {
+                for (Client client : clientDAO.findAll()) {
                     if (cBoxPrenom.getSelectedItem() == null) {
-                        if (client.getNom().equals(cBoxNom.getSelectedItem())) {
+                        if (client.getPersonne().getNom().equals(cBoxNom.getSelectedItem())) {
                             c = client;
                         }
-                    } else if (client.getNom().equals(cBoxNom.getSelectedItem())
-                            && client.getPrenom().equals(cBoxPrenom.getSelectedItem())) {
+                    } else if (client.getPersonne().getNom().equals(cBoxNom.getSelectedItem())
+                            && client.getPersonne().getPrenom().equals(cBoxPrenom.getSelectedItem())) {
                         c = client;
                     }
                 }
@@ -882,7 +910,7 @@ public class Principale extends JFrame {
                         throw new NullPointerException("Numéro Ordonnance nécéssaire");
                     }
                     if (Pattern.matches(regexIDOrd,nOrdonannceTextField.getText())) {
-                        for (Ordonnance ordonnance:listOrdonnance){
+                        for (Ordonnance ordonnance: ordonnanceDAO.findAll()){
                             if (ordonnance.getId()==Integer.parseInt(nOrdonannceTextField.getText())){
                                 ord=ordonnance;
                             }
@@ -900,7 +928,8 @@ public class Principale extends JFrame {
                     throw new NullPointerException("Médicament nécéssaire");
                 } else {
                     lblErreurClient.setVisible(false);
-                    Achat achat = new Achat(c, new ArrayList<Medicament>(listMedAchat), sommeTot[0], classMetier.Util.Date.newDate(),ord );
+                    Achat achat = new Achat(0,c,p
+                            , sommeTot[0], classMetier.Util.Date.newDate(),ord );
                     listAchat.add(achat);
                     setContentPane(PanelAcceuil);
                 }
@@ -972,12 +1001,11 @@ public class Principale extends JFrame {
             model.addColumn("Liste medicament");
             model.addColumn("Prix");
 
-            if(!listAchat.isEmpty()) {
-                for (Achat achat : listAchat) {
-                    String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                for (Achat achat : achatDAO.findAll()) {
+                    String a = achat.getClient().getPersonne().getNom() + " " + achat.getClient().getPersonne().getPrenom();
                     String b = "";
-                    if (achat.getListMed()!=null) {
-                        for (Medicament medicament : achat.getListMed()) {
+                    if (achat.getPanier().getResumePanier()!=null) {
+                        for (Medicament medicament : achat.getPanier().getResumePanier()) {
                             b = b + " | " + medicament.getNom();
                         }
                     }
@@ -989,7 +1017,7 @@ public class Principale extends JFrame {
                                 b, achat.getPrix()});
                     }
                 }
-            }
+
             labelTable.setModel(model);
             labelTable.setDefaultEditor(Object.class, null);
 
@@ -1021,15 +1049,15 @@ public class Principale extends JFrame {
             model.addColumn("Medicament");
 
 
-            for (Medecin medecin : listMedecin) {
-                rechercheComboBox.addItem(medecin.getNom());
+            for (Medecin medecin : medecinDAO.findAll()) {
+                rechercheComboBox.addItem(medecin.getPersonne().getNom());
             }
             rechercheComboBox.setSelectedIndex(-1);
 
 
-            for (Ordonnance ordonnance : listOrdonnance) {
-                String a = ordonnance.getClient().getNom() + " " + ordonnance.getClient().getPrenom();
-                model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
+            for (Ordonnance ordonnance : ordonnanceDAO.findAll()) {
+                String a = ordonnance.getClient().getPersonne().getNom() + " " + ordonnance.getClient().getPersonne().getPrenom();
+                model.addRow(new Object[]{ordonnance.getMedecin().getPersonne().getNom(),
                         a, ordonnance.getId(),ordonnance.getDate(),
                         ordonnance.getListMedToString()});
             }
@@ -1052,12 +1080,12 @@ public class Principale extends JFrame {
             model.addColumn("Date");
             model.addColumn("Medicament");
 
-            for (Medecin medecin : listMedecin) {
-                if (medecin.getNom().equals(rechercheComboBox.getSelectedItem())) {
-                    for (Ordonnance ordonnance : listOrdonnance) {
-                        if (ordonnance.getMedecin().getNom().equals(medecin.getNom())) {
-                            String a = ordonnance.getClient().getNom() + " " + ordonnance.getClient().getPrenom();
-                            model.addRow(new Object[]{ordonnance.getMedecin().getNom(),
+            for (Medecin medecin : medecinDAO.findAll()) {
+                if (medecin.getPersonne().getNom().equals(rechercheComboBox.getSelectedItem())) {
+                    for (Ordonnance ordonnance : ordonnanceDAO.findAll()) {
+                        if (ordonnance.getMedecin().getPersonne().getNom().equals(medecin.getPersonne().getNom())) {
+                            String a = ordonnance.getClient().getPersonne().getNom() + " " + ordonnance.getClient().getPersonne().getPrenom();
+                            model.addRow(new Object[]{ordonnance.getMedecin().getPersonne().getNom(),
                                     a, ordonnance.getId(),ordonnance.getDate(), ordonnance.getListMedToString()});
                         }
                     }
@@ -1078,7 +1106,7 @@ public class Principale extends JFrame {
             CBBoxMutuelle.setVisible(true);
 
             CBBoxMutuelle.removeAllItems();
-            for (Mutuelle mutuelle:listMutuelle){
+            for (Mutuelle mutuelle:mutuelleDAO.findAll()){
                 CBBoxMutuelle.addItem(mutuelle.getNom());
             }
 
@@ -1089,9 +1117,9 @@ public class Principale extends JFrame {
             model.addColumn("Client");
             model.addColumn("Medecin traitant");
 
-            for (Client client : listClient) {
-                model.addRow(new Object[]{client.getMutuelle().getNom(), (client.getNom() + " " + client.getPrenom()),
-                        ("Dr." + client.getMedecin().getNom())});
+            for (Client client : clientDAO.findAll()) {
+                model.addRow(new Object[]{client.getMutuelle().getNom(), (client.getPersonne().getNom() + " " + client.getPersonne().getPrenom()),
+                        ("Dr." + client.getMedecin().getPersonne().getNom())});
             }
             labelTable.setModel(model);
             labelTable.setAutoCreateRowSorter(true);
@@ -1114,12 +1142,12 @@ public class Principale extends JFrame {
                 model.addColumn("Client");
                 model.addColumn("Medecin traitant");
 
-                for (Client client : listClient) {
+                for (Client client : clientDAO.findAll()) {
                     if (client.getMutuelle().getNom().equals(CBBoxMutuelle.getSelectedItem())) {
 
-                        x.addRow(new Object[]{client.getMutuelle().getNom(), (client.getNom() + " " + client.getPrenom()),
+                        x.addRow(new Object[]{client.getMutuelle().getNom(), (client.getPersonne().getNom() + " " + client.getPersonne().getPrenom()),
 
-                                ("Dr." + client.getMedecin().getNom())});
+                                ("Dr." + client.getMedecin().getPersonne().getNom())});
 
                     }
                 }
@@ -1173,8 +1201,8 @@ public class Principale extends JFrame {
 
                     if (recherche.equals("all")) {
 
-                        for (classMetier.Util.Achat achat : listAchat) {
-                                String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                        for (classMetier.Util.Achat achat : achatDAO.findAll()) {
+                                String a = achat.getClient().getPersonne().getNom() + " " + achat.getClient().getPersonne().getPrenom();
                                 if (achat.getOrdonnance() != null) {
                                     model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
                                 } else {
@@ -1183,9 +1211,9 @@ public class Principale extends JFrame {
                         }
 
                     } else {
-                        for (classMetier.Util.Achat achat : listAchat) {
+                        for (classMetier.Util.Achat achat : achatDAO.findAll()) {
                             if (recherche.equals(achat.getDate())) {
-                                String a = achat.getClient().getNom() + " " + achat.getClient().getPrenom();
+                                String a = achat.getClient().getPersonne().getNom() + " " + achat.getClient().getPersonne().getPrenom();
                                 if (achat.getOrdonnance() != null) {
                                     model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
                                 } else {
@@ -1240,7 +1268,7 @@ public class Principale extends JFrame {
                 model.addColumn("DateMES");
 
                 String test=txtFieldRchMed.getText();
-                for (Medicament med : listMed) {
+                for (Medicament med : medicamentDAO.findAll()) {
                     if (Objects.equals(txtFieldRchMed.getText(), "")){
                         model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie(),med.getQuantite(),med.getDateMES()});
                     }
@@ -1288,18 +1316,18 @@ public class Principale extends JFrame {
                                 PrenomTextField.setText("");
                                 PrenomTextField.setVisible(true);
                                 PrenomTextField.setEditable(false);
-                                for (Client client : listClient) {
-                                    if ((client.getNom() + " " + client.getPrenom()).equals(target.getValueAt(row, column))) {
-                                        NomTextField.setText(client.getNom());
-                                        PrenomTextField.setText(client.getPrenom());
-                                        numeroTextField.setText(client.getTel());
-                                        rueTextField.setText(client.getAdresse().getRue());
-                                        codePostalTextField.setText(client.getAdresse().getCodePostal());
-                                        villeTextField.setText(client.getAdresse().getVille());
+                                for (Client client : clientDAO.findAll()) {
+                                    if ((client.getPersonne().getNom() + " " + client.getPersonne().getPrenom()).equals(target.getValueAt(row, column))) {
+                                        NomTextField.setText(client.getPersonne().getNom());
+                                        PrenomTextField.setText(client.getPersonne().getPrenom());
+                                        numeroTextField.setText(client.getPersonne().getTel());
+                                        rueTextField.setText(client.getPersonne().getAdresse().getRue());
+                                        codePostalTextField.setText(client.getPersonne().getAdresse().getCodePostal());
+                                        villeTextField.setText(client.getPersonne().getAdresse().getVille());
                                         dateDeNaissanceTextField.setText(client.getDateNaiss());
                                         mutuelleTextField.setText(client.getMutuelle().getNom());
                                         numeroDeSecuriteSocialeTextField.setText(client.getNumSecu());
-                                        medecinTraitantTextField.setText(client.getMedecin().getNom());
+                                        medecinTraitantTextField.setText(client.getMedecin().getPersonne().getNom());
                                     }
                                 }
                             }
@@ -1319,13 +1347,13 @@ public class Principale extends JFrame {
                                     String name=null;
                                     String date = null;
 
-                                    for (Ordonnance ordonnance : listOrdonnance) {
+                                    for (Ordonnance ordonnance : ordonnanceDAO.findAll()) {
                                         if (ordonnance.getId() ==
                                                 Integer.parseInt(target.getValueAt(row, column).toString())) {
                                             lblDate.setText(ordonnance.getDate());
-                                            nomMedecinTextField.setText(ordonnance.getMedecin().getNom());
-                                            nomDuPatientTextField.setText(ordonnance.getClient().getNom());
-                                            prenomTextField.setText(ordonnance.getClient().getPrenom());
+                                            nomMedecinTextField.setText(ordonnance.getMedecin().getPersonne().getNom());
+                                            nomDuPatientTextField.setText(ordonnance.getClient().getPersonne().getNom());
+                                            prenomTextField.setText(ordonnance.getClient().getPersonne().getPrenom());
                                             DefaultTableModel x = new DefaultTableModel();
 
                                             x.addColumn("Categorie");
@@ -1342,10 +1370,10 @@ public class Principale extends JFrame {
 
 
                                             StringBuilder listMed= new StringBuilder();
-                                            name=ordonnance.getClient().getNom()+" "+ordonnance.getClient().getPrenom();
+                                            name=ordonnance.getClient().getPersonne().getNom()+" "+ordonnance.getClient().getPersonne().getPrenom();
                                             date = ordonnance.getDate().replace("/","-");
                                             String titre = "Ordonnance du " + date +" "+name;
-                                            String medecin = ordonnance.getMedecin().getNom()+" "+ordonnance.getMedecin().getPrenom();
+                                            String medecin = ordonnance.getMedecin().getPersonne().getNom()+" "+ordonnance.getMedecin().getPersonne().getPrenom();
 
                                             for (Medicament med : ordonnance.getListMed()) {
                                                 model.addRow(new Object[]{med.getCategorie(), med.getNom(), med.getDateMES(), med.getPrix()});
@@ -1435,32 +1463,32 @@ public class Principale extends JFrame {
                     numeroDeSecuriteSocialeTextField.setText("");
                     medecinTraitantTextField.setText("");
                 } else {
-                    for (Client client : listClient) {
-                        if (client.getNom().equals(nomComboBox.getSelectedItem())) {
+                    for (Client client : clientDAO.findAll()) {
+                        if (client.getPersonne().getNom().equals(nomComboBox.getSelectedItem())) {
 
-                            prenomComboBox.addItem(client.getPrenom());
+                            prenomComboBox.addItem(client.getPersonne().getPrenom());
                             c = client;
                         }
                     }
                     // si un seul prenom associé au nom alors affiche par default les données
                     if (prenomComboBox.getItemCount() == 1 && c != null) {
 
-                        NomTextField.setText(c.getNom());
-                        PrenomTextField.setText(c.getPrenom());
+                        NomTextField.setText(c.getPersonne().getNom());
+                        PrenomTextField.setText(c.getPersonne().getPrenom());
                         lblTel.setVisible(true);
                         telTextField.setVisible(true);
-                        telTextField.setText(c.getTel());
+                        telTextField.setText(c.getPersonne().getTel());
                         lblMail.setVisible(true);
-                        mailTextField.setText(c.getMail());
+                        mailTextField.setText(c.getPersonne().getMail());
                         mailTextField.setVisible(true);
-                        numeroTextField.setText(c.getAdresse().getNumero()+"");
-                        rueTextField.setText(c.getAdresse().getRue());
-                        codePostalTextField.setText(c.getAdresse().getCodePostal());
-                        villeTextField.setText(c.getAdresse().getVille());
+                        numeroTextField.setText(c.getPersonne().getAdresse().getNumero()+"");
+                        rueTextField.setText(c.getPersonne().getAdresse().getRue());
+                        codePostalTextField.setText(c.getPersonne().getAdresse().getCodePostal());
+                        villeTextField.setText(c.getPersonne().getAdresse().getVille());
                         dateDeNaissanceTextField.setText(c.getDateNaiss());
                         mutuelleTextField.setText(c.getMutuelle().getNom());
                         numeroDeSecuriteSocialeTextField.setText(c.getNumSecu());
-                        medecinTraitantTextField.setText(c.getMedecin().getNom());
+                        medecinTraitantTextField.setText(c.getMedecin().getPersonne().getNom());
                     }
                 }
             }
@@ -1486,24 +1514,24 @@ public class Principale extends JFrame {
                 telTextField.setEditable(false);
                 mailTextField.setEditable(false);
 
-                for (Client client : listClient) {
-                    if (client.getNom().equals(nomComboBox.getSelectedItem())
-                            && client.getPrenom().equals(prenomComboBox.getSelectedItem())) {
+                for (Client client : clientDAO.findAll()) {
+                    if (client.getPersonne().getNom().equals(nomComboBox.getSelectedItem())
+                            && client.getPersonne().getPrenom().equals(prenomComboBox.getSelectedItem())) {
 
                         modifierButton.setVisible(true);
 
-                        NomTextField.setText(client.getNom());
-                        PrenomTextField.setText(client.getPrenom());
-                        telTextField.setText(client.getTel());
-                        mailTextField.setText(client.getMail());
-                        numeroTextField.setText(client.getAdresse().getNumero()+"");
-                        rueTextField.setText(client.getAdresse().getRue());
-                        codePostalTextField.setText(client.getAdresse().getCodePostal());
-                        villeTextField.setText(client.getAdresse().getVille());
+                        NomTextField.setText(client.getPersonne().getNom());
+                        PrenomTextField.setText(client.getPersonne().getPrenom());
+                        telTextField.setText(client.getPersonne().getTel());
+                        mailTextField.setText(client.getPersonne().getMail());
+                        numeroTextField.setText(client.getPersonne().getAdresse().getNumero()+"");
+                        rueTextField.setText(client.getPersonne().getAdresse().getRue());
+                        codePostalTextField.setText(client.getPersonne().getAdresse().getCodePostal());
+                        villeTextField.setText(client.getPersonne().getAdresse().getVille());
                         dateDeNaissanceTextField.setText(client.getDateNaiss());
                         mutuelleTextField.setText(client.getMutuelle().getNom());
                         numeroDeSecuriteSocialeTextField.setText(client.getNumSecu());
-                        medecinTraitantTextField.setText(client.getMedecin().getNom());
+                        medecinTraitantTextField.setText(client.getMedecin().getPersonne().getNom());
                     }
                 }
             }
@@ -1538,13 +1566,14 @@ public class Principale extends JFrame {
                 public void actionPerformed(ActionEvent e) {
 
                     for (Client c : listClient){
-                        if (c.getNom().equals(nomComboBox.getSelectedItem())&&c.getPrenom().equals(prenomComboBox.getSelectedItem())){
+                        if (c.getPersonne().getNom().equals(nomComboBox.getSelectedItem())&&
+                                c.getPersonne().getPrenom().equals(prenomComboBox.getSelectedItem())){
 
                             boolean y=true;
 
                             try {
                                 if (telTextField.getText().matches(Regex.getRegexTel())) {
-                                    c.setTel(telTextField.getText());
+                                    c.getPersonne().setTel(telTextField.getText());
                                 }
                                 else {
                                     throw new IllegalArgumentException("Le numéro de téléphone est incorrect");
@@ -1557,7 +1586,7 @@ public class Principale extends JFrame {
 
                             try {
                                 if (mailTextField.getText().matches(Regex.getRegexMail())) {
-                                    c.setMail(mailTextField.getText());
+                                    c.getPersonne().setMail(mailTextField.getText());
                                 } else {
                                     throw new IllegalArgumentException("Le mail est incorrect");
                                 }
@@ -1569,6 +1598,7 @@ public class Principale extends JFrame {
 
 
                             Adresse add = null;
+                            int id = 0;
                             String numero = null;
                             String rue = null;
                             String ville = null;
@@ -1624,13 +1654,13 @@ public class Principale extends JFrame {
                             }
 
                             if (add!=null){
-                                c.setAdresse(add);
+                                c.getPersonne().setAdresse(add);
                             }
                             else {
                                 try {
-                                Adresse newAdresse = new Adresse(Integer.parseInt(numero), rue, cp, ville);
+                                Adresse newAdresse = new Adresse(id,Integer.parseInt(numero), rue, cp, ville);
                                 listAdresse.add(newAdresse);
-                                c.setAdresse(newAdresse);
+                                c.getPersonne().setAdresse(newAdresse);
                                 }
                                 catch (Exception exception){
                                     errorlbl.setVisible(true);

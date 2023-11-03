@@ -3,6 +3,7 @@ package Frame;
 import DAO.DAO;
 import DAO.Util.AchatDAO;
 import DAO.Util.AdresseDAO;
+import DAO.Util.PanierDAO;
 import DAO.personne.ClientDAO;
 import DAO.personne.MedecinDAO;
 import DAO.personne.personneDAO;
@@ -188,6 +189,8 @@ public class Principale extends JFrame {
 
     AchatDAO achatDAO = new AchatDAO();
 
+    PanierDAO panierDAO = new PanierDAO();
+
 
     public Principale() throws IOException, ClassNotFoundException {
 
@@ -200,12 +203,6 @@ public class Principale extends JFrame {
         actionAchat();
         actionClient();
         actionRecherche();
-
-        for (Medicament medicament:medicamentDAO.findAll()){
-            System.out.println(medicament.getNom() + " "+medicament.getCategorie().getLibelle()+" "+ medicament.getQuantite());
-        }
-
-
 
         //table Recap Medicament
         TableMed.setDefaultEditor(Object.class, null);
@@ -702,7 +699,7 @@ public class Principale extends JFrame {
                     //en fonction du medicament choisit l'ajoute avec toutes ses informations dans la table recap
                     for (Medicament med : medicamentDAO.findAll()) {
                         if (med.getNom().equals(libelleComboBox.getSelectedItem()) &&
-                                med.getCategorie().toString().toLowerCase().equals(cBoxCat.getSelectedItem())) {
+                                med.getCategorie().getLibelle().toString().toLowerCase().equals(cBoxCat.getSelectedItem())) {
                             m = med;
                         }
                     }
@@ -710,7 +707,7 @@ public class Principale extends JFrame {
                         if (Integer.parseInt(QteTextField.getText())<1){
                             throw new IllegalArgumentException("la quantité doit etre positive");
                         }else {
-                            modelRecapMed.addRow(new Object[]{m.getNom(), m.getCategorie(), QteTextField.getText(),
+                            modelRecapMed.addRow(new Object[]{m.getNom(), m.getCategorie().getLibelle(), QteTextField.getText(),
                                     m.getPrix(), m.getDateMES()});
                             sommeTot[0] = sommeTot[0] + (m.getPrix() * Double.parseDouble(QteTextField.getText()));
                             listMedAchat.add(m);
@@ -1270,10 +1267,10 @@ public class Principale extends JFrame {
                 String test=txtFieldRchMed.getText();
                 for (Medicament med : medicamentDAO.findAll()) {
                     if (Objects.equals(txtFieldRchMed.getText(), "")){
-                        model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie(),med.getQuantite(),med.getDateMES()});
+                        model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie().getLibelle().toLowerCase(),med.getQuantite(),med.getDateMES()});
                     }
-                    if (med.getNom().toLowerCase().equals(test) || med.getCategorie().toString().toLowerCase().equals(test)){
-                        model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie(),med.getQuantite(),med.getDateMES()});
+                    if (med.getNom().toLowerCase().equals(test) || med.getCategorie().getLibelle().toLowerCase().equals(test)){
+                        model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie().getLibelle().toLowerCase(),med.getQuantite(),med.getDateMES()});
                     }
                 }
 

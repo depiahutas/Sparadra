@@ -26,7 +26,7 @@ public class Panier {
     }
 
     public Panier(int id, ArrayList<Medicament> resumePanier) {
-        this.id = id;
-        this.resumePanier = resumePanier;
+        setId(id);
+        setResumePanier(resumePanier);
     }
 }

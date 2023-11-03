@@ -84,6 +84,8 @@ public class MedicamentDAO extends DAO<Medicament> {
 
     @Override
     public Medicament find(Integer mID) {
+
+        CategorieMedicamentDAO categorieMedicamentDAO = new CategorieMedicamentDAO();
         
         StringBuilder sqlFindMedicament = new StringBuilder();
         sqlFindMedicament.append("select * from medicament ");
@@ -103,8 +105,7 @@ public class MedicamentDAO extends DAO<Medicament> {
                         resultSet.getFloat("medic_prix"),
                         resultSet.getString("medic_dateMES"),
                         resultSet.getInt("medic_qteStock"),
-                        null
-                        // CategorieMedicamentDAO.find(resultSet.getInt("medic_categorie"))
+                        categorieMedicamentDAO.find(resultSet.getInt("medic_categorie"))
                 );
             }
 

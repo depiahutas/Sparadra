@@ -1,10 +1,8 @@
 package classMetier.Util;
 
 import classMetier.personne.Client;
-import classMetier.sante.Medicament;
 import classMetier.sante.Ordonnance;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Achat {
@@ -12,7 +10,7 @@ public class Achat {
     private int id;
     private Client client;
     private Panier panier;
-    private double prix;
+    private float prix;
     private String date;
 
     private Ordonnance ordonnance;
@@ -25,7 +23,7 @@ public class Achat {
      * @param date String (date format jj/mm/aaaa)
      * @param ordonnance voir classe Ordonnance
      */
-    public Achat(int id,Client client, Panier panier, double prix, String date, Ordonnance ordonnance) {
+    public Achat(int id,Client client, Panier panier, float prix, String date, Ordonnance ordonnance) {
         setId(id);
         setClient(client);
         setPanier(panier);
@@ -68,11 +66,11 @@ public class Achat {
         this.panier = panier;
     }
 
-    public double getPrix() {
+    public float getPrix() {
         return prix;
     }
 
-    public void setPrix(double prix)throws IllegalArgumentException {
+    public void setPrix(float prix)throws IllegalArgumentException {
         if (prix>0) {
             this.prix = prix;
         }

@@ -1,5 +1,6 @@
 package classMetier.sante;
 
+import classMetier.Util.Compose;
 import classMetier.personne.Client;
 import classMetier.personne.Medecin;
 
@@ -9,22 +10,21 @@ public class Ordonnance {
     private int id;
     private Medecin medecin;
     private Client client;
-    private ArrayList<Medicament> listMed;
+    private Compose compose;
     private String date;
 
     /**
      * constructeur Ordonnance
      * @param medecin voir classe Medecin
      * @param client voir classe Client
-     * @param listMed ArrayList<Medicament> (liste des medicament de l'ordonannce)
      * @param date String (date format jj/mm/aaaa)
      * @param id int (id ordonnance cache de l'utilisateur)
      */
-    public Ordonnance(Medecin medecin, Client client, ArrayList<Medicament> listMed, String date, int id) {
+    public Ordonnance(Medecin medecin, Client client, Compose compose, String date, int id) {
         setId(id);
         setMedecin(medecin);
         setClient(client);
-        setListMed(listMed);
+        setCompose(compose);
         setDate(date);
     }
 
@@ -54,18 +54,7 @@ public class Ordonnance {
         }
     }
 
-    public ArrayList<Medicament> getListMed() {
-        return listMed;
-    }
 
-    public void setListMed(ArrayList<Medicament> listMed) {
-        if(listMed==null){
-            throw new NullPointerException("le nom ne peut etre null");
-        }
-        else {
-            this.listMed = listMed;
-        }
-    }
 
     public String getDate() {
         return date;
@@ -80,14 +69,7 @@ public class Ordonnance {
         }
     }
 
-    public String getListMedToString() {
-        StringBuilder b= new StringBuilder();
-        for (Medicament medicament:getListMed()){
-            b.append(" | ").append(medicament.getNom());
-        }
 
-        return b.toString();
-    }
 
     public int getId() {
         return id;
@@ -95,5 +77,13 @@ public class Ordonnance {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public Compose getCompose() {
+        return compose;
+    }
+
+    public void setCompose(Compose compose) {
+        this.compose = compose;
     }
 }

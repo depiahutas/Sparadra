@@ -169,7 +169,7 @@ public class Principale extends JFrame {
     DefaultTableModel modelRecapMed = new DefaultTableModel();
 
 
-    final double[] sommeTot = {0.00f};
+    final float[] sommeTot = {0.00f};
 
     Dimension d = new Dimension(750, 350);
 
@@ -327,7 +327,7 @@ public class Principale extends JFrame {
                 String a = ordonnance.getClient().getPersonne().getNom() + " " + ordonnance.getClient().getPersonne().getPrenom();
                 model.addRow(new Object[]{ordonnance.getMedecin().getPersonne().getNom(),
                         a, ordonnance.getId(),ordonnance.getDate(),
-                        ordonnance.getListMedToString()});
+                        ordonnance.getCompose().getListMedToString()});
             }
             labelTable.setModel(model);
             labelTable.setAutoCreateRowSorter(true);
@@ -709,7 +709,7 @@ public class Principale extends JFrame {
                         }else {
                             modelRecapMed.addRow(new Object[]{m.getNom(), m.getCategorie().getLibelle(), QteTextField.getText(),
                                     m.getPrix(), m.getDateMES()});
-                            sommeTot[0] = sommeTot[0] + (m.getPrix() * Double.parseDouble(QteTextField.getText()));
+                            sommeTot[0] = sommeTot[0] + (m.getPrix() * Integer.parseInt(QteTextField.getText()));
                             listMedAchat.add(m);
                         }
                     }
@@ -1056,7 +1056,7 @@ public class Principale extends JFrame {
                 String a = ordonnance.getClient().getPersonne().getNom() + " " + ordonnance.getClient().getPersonne().getPrenom();
                 model.addRow(new Object[]{ordonnance.getMedecin().getPersonne().getNom(),
                         a, ordonnance.getId(),ordonnance.getDate(),
-                        ordonnance.getListMedToString()});
+                        ordonnance.getCompose().getListMedToString()});
             }
             labelTable.setModel(model);
             labelTable.setAutoCreateRowSorter(true);
@@ -1083,7 +1083,7 @@ public class Principale extends JFrame {
                         if (ordonnance.getMedecin().getPersonne().getNom().equals(medecin.getPersonne().getNom())) {
                             String a = ordonnance.getClient().getPersonne().getNom() + " " + ordonnance.getClient().getPersonne().getPrenom();
                             model.addRow(new Object[]{ordonnance.getMedecin().getPersonne().getNom(),
-                                    a, ordonnance.getId(),ordonnance.getDate(), ordonnance.getListMedToString()});
+                                    a, ordonnance.getId(),ordonnance.getDate(), ordonnance.getCompose().getListMedToString()});
                         }
                     }
                 }
@@ -1372,8 +1372,8 @@ public class Principale extends JFrame {
                                             String titre = "Ordonnance du " + date +" "+name;
                                             String medecin = ordonnance.getMedecin().getPersonne().getNom()+" "+ordonnance.getMedecin().getPersonne().getPrenom();
 
-                                            for (Medicament med : ordonnance.getListMed()) {
-                                                model.addRow(new Object[]{med.getCategorie(), med.getNom(), med.getDateMES(), med.getPrix()});
+                                            for (Medicament med : ordonnance.getCompose().getListMedic()) {
+                                                model.addRow(new Object[]{med.getCategorie().getLibelle(), med.getNom(), med.getDateMES(), med.getPrix()});
                                                 listMed.append(med.getNom()).append("\n");
                                             }
 

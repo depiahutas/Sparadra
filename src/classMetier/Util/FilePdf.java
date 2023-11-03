@@ -17,6 +17,8 @@ import java.io.IOException;
 
 public class FilePdf {
 
+    static File test;
+
     public static void createPdf(String title, String texte, String name,String date,String Medecin) throws FileNotFoundException, DocumentException {
 
         Document document = new Document();
@@ -42,7 +44,7 @@ public class FilePdf {
     public static void openPdf(String name,String date) throws IOException {
 
         String Realname="src\\ressources\\PDF\\"+name+"-"+date+".pdf";
-        File test = new File(Realname);
+         test= new File(Realname);
         // ouvre aussi les pdf des anciennes ordonnance
         Desktop.getDesktop().open(test);
     }

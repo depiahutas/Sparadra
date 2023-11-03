@@ -41,6 +41,11 @@ public class FilePdf {
 
     }
 
+
+    /*
+        Ouvre le PDF dans le navigateur
+        !!! BUG -> réouvre les PDF ouvert précédement dans le navigateur
+     */
     public static void openPdf(String name,String date) throws IOException {
 
         String Realname="src\\ressources\\PDF\\"+name+"-"+date+".pdf";

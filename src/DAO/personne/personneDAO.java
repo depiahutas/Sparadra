@@ -26,11 +26,11 @@ public class personneDAO extends DAO<Personne> {
 
         try (PreparedStatement preparedStatement =
                      this.connection.prepareStatement(sqlInsertPersonne.toString())) {
-            preparedStatement.setString(2, obj.getNom());
-            preparedStatement.setString(3, obj.getPrenom());
-            preparedStatement.setString(4, obj.getMail());
-            preparedStatement.setString(5, obj.getTel());
-            preparedStatement.setInt(6, obj.getAdresse().getID());
+            preparedStatement.setString(1, obj.getNom());
+            preparedStatement.setString(2, obj.getPrenom());
+            preparedStatement.setString(3, obj.getMail());
+            preparedStatement.setString(4, obj.getTel());
+            preparedStatement.setInt(5, obj.getAdresse().getID());
 
             preparedStatement.executeUpdate();
             requetOK = true;
@@ -66,7 +66,7 @@ public class personneDAO extends DAO<Personne> {
     public boolean update(Personne obj) {
         StringBuilder sqlUpdatePersonne = new StringBuilder();
         sqlUpdatePersonne.append("update personne ");
-        sqlUpdatePersonne.append("set per_nom=?,per_prenom=?,per_mail=?,per_tel=?,per_adresse=?)");
+        sqlUpdatePersonne.append("set per_nom=?,per_prenom=?,per_mail=?,per_tel=?,per_Personne=?)");
         sqlUpdatePersonne.append("where per_id=?");
 
         boolean requetOK = false;
@@ -96,7 +96,6 @@ public class personneDAO extends DAO<Personne> {
 
         StringBuilder sqlFindPersonne = new StringBuilder();
         sqlFindPersonne.append("select * from personne ");
-        sqlFindPersonne.append("inner join adresse on adr_id = per_adresse ");
         sqlFindPersonne.append("where per_id = ?");
 
 
@@ -114,7 +113,7 @@ public class personneDAO extends DAO<Personne> {
                         resultSet.getString("per_mail"),
                         resultSet.getString("per_tel"),
                         adresseDAO.find(resultSet.getInt("per_adresse"))
-                        );
+                );
             }
 
         } catch (SQLException e) {
@@ -132,7 +131,6 @@ public class personneDAO extends DAO<Personne> {
 
         StringBuilder sqlFindAllPersonne = new StringBuilder();
         sqlFindAllPersonne.append("select * from personne ");
-        sqlFindAllPersonne.append("inner join adresse on adr_id = per_adresse ");
 
         try (PreparedStatement preparedStatement =
                      this.connection.prepareStatement(sqlFindAllPersonne.toString())) {
@@ -145,7 +143,7 @@ public class personneDAO extends DAO<Personne> {
                         resultSet.getString("per_prenom"),
                         resultSet.getString("per_mail"),
                         resultSet.getString("per_tel"),
-                        adresseDAO.find(resultSet.getInt("per_adresse"))
+                        adresseDAO.find(resultSet.getInt("per_Adresse"))
                 ));
             }
             return listPersonne;
@@ -154,4 +152,59 @@ public class personneDAO extends DAO<Personne> {
             throw new RuntimeException(e);
         }
     }
+
+    public Personne verif_per(Personne personne) {
+
+        StringBuilder sqlFindPersonne = new StringBuilder();
+        sqlFindPersonne.append("select * from Personne ");
+        sqlFindPersonne.append("where per_nom like ? and per_prenom like ?");
+
+
+        try (PreparedStatement preparedStatement =
+                     this.connection.prepareStatement(sqlFindPersonne.toString())) {
+
+            preparedStatement.setString(1, personne.getNom());
+            preparedStatement.setString(2, personne.getPrenom());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+
+                if (personne.getMail().equals(resultSet.getString("per_mail")) &&
+                        personne.getTel().equals(resultSet.getString("per_tel"))
+                    ) {
+                    personne.setId(resultSet.getInt("per_id"));
+                    return personne;
+                }
+            }
+
+            if (create(personne)) {
+                int c=count();
+                personne.setId(c);
+                return personne;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
+        }
+
+        return null;
+    }
+
+    public int count() {
+        StringBuilder sqlCountPersonne = new StringBuilder();
+        sqlCountPersonne.append("select count(*) as nb_per from Personne ");
+        try (PreparedStatement preparedStatement =
+                     this.connection.prepareStatement(sqlCountPersonne.toString())) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                    return resultSet.getInt("nb_per");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
+        }
+        return -1;
+    }
+
 }

@@ -22,11 +22,11 @@ public class ClientDAO extends DAO<Client> {
         
         try (PreparedStatement preparedStatement =
                      this.connection.prepareStatement(sqlInsertClient.toString())) {
-            preparedStatement.setInt(2,obj.getPersonne().getId());
-            preparedStatement.setString(3,obj.getDateNaiss());
-            preparedStatement.setInt(4,obj.getMedecin().getId());
-            preparedStatement.setInt(5,obj.getMutuelle().getId());
-            preparedStatement.setString(6,obj.getNumSecu());
+            preparedStatement.setInt(1,obj.getPersonne().getId());
+            preparedStatement.setString(2,obj.getDateNaiss());
+            preparedStatement.setInt(3,obj.getMedecin().getId());
+            preparedStatement.setInt(4,obj.getMutuelle().getId());
+            preparedStatement.setString(5,obj.getNumSecu());
 
             preparedStatement.executeUpdate();
             requetOK = true;
@@ -159,5 +159,61 @@ public class ClientDAO extends DAO<Client> {
         }
 
         return null;
+    }
+
+    public Client verif_client(Client client){
+
+        StringBuilder sqlFindClient = new StringBuilder();
+        sqlFindClient.append("select * from client ");
+        sqlFindClient.append("where cli_dateNaiss = ? and cli_numSecu like ?");
+
+
+        try (PreparedStatement preparedStatement =
+                     this.connection.prepareStatement(sqlFindClient.toString())) {
+
+            preparedStatement.setString(1, client.getDateNaiss());
+            preparedStatement.setString(2, client.getNumSecu());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+
+                if (client.getDateNaiss().equals(resultSet.getString("cli_dateNaiss")) &&
+                        client.getNumSecu().equals(resultSet.getString("cli_numSecu"))
+                ) {
+                    client.setIdClient(resultSet.getInt("cli_id"));
+                    return client;
+                }
+            }
+
+            if (create(client)) {
+                int c=count();
+                client.setIdClient(c);
+                return client;
+            }
+
+        } catch (SQLException e) {
+            System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
+        }
+
+        return null;
+    }
+
+
+
+    public int count(){
+        StringBuilder sqlCountClient = new StringBuilder();
+        sqlCountClient.append("select count(*) as nb_cli from Client ");
+        try (PreparedStatement preparedStatement =
+                     this.connection.prepareStatement(sqlCountClient.toString())) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                return resultSet.getInt("nb_cli");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
+        }
+        return -1;
     }
 }

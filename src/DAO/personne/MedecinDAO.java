@@ -22,8 +22,8 @@ public class MedecinDAO extends DAO<Medecin> {
 
         try (PreparedStatement preparedStatement =
                      this.connection.prepareStatement(sqlInsertMedecin.toString())) {
-            preparedStatement.setInt(2,obj.getPersonne().getId());
-            preparedStatement.setString(3,obj.getNumAgr());
+            preparedStatement.setInt(1,obj.getPersonne().getId());
+            preparedStatement.setString(2,obj.getNumAgr());
 
             preparedStatement.executeUpdate();
             requetOK = true;
@@ -84,8 +84,6 @@ public class MedecinDAO extends DAO<Medecin> {
     public Medecin find(Integer mID) {
 
         personneDAO personneDAO = new personneDAO();
-        MedecinDAO medecinDAO = new MedecinDAO();
-        MutuelleDAO mutuelleDAO = new MutuelleDAO();
 
 
         StringBuilder sqlFindMedecin = new StringBuilder();
@@ -102,13 +100,12 @@ public class MedecinDAO extends DAO<Medecin> {
             Medecin m = null;
             while (resultSet.next()) {
 
-                m = new Medecin(resultSet.getInt("med_id"),
+                return new Medecin(resultSet.getInt("med_id"),
                         personneDAO.find(resultSet.getInt("med_per")),
                         resultSet.getString("med_numAgr")
                 );
             }
 
-            return m;
 
         } catch (SQLException e) {
             System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
@@ -142,6 +139,41 @@ public class MedecinDAO extends DAO<Medecin> {
             }
 
             return listMedecin;
+        } catch (SQLException e) {
+            System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
+        }
+
+        return null;
+    }
+
+    public Medecin findMed(String nom){
+
+        personneDAO personneDAO = new personneDAO();
+
+
+        StringBuilder sqlFindMedecin = new StringBuilder();
+        sqlFindMedecin.append("select * from medecin ");
+        sqlFindMedecin.append("inner join personne on per_id=med_per ");
+        sqlFindMedecin.append("where per_nom like ?");
+
+
+        try (PreparedStatement preparedStatement =
+                     this.connection.prepareStatement(sqlFindMedecin.toString())) {
+
+            preparedStatement.setString(1, nom);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            Medecin m = null;
+            while (resultSet.next()) {
+
+                m = new Medecin(resultSet.getInt("med_id"),
+                        personneDAO.find(resultSet.getInt("med_per")),
+                        resultSet.getString("med_numAgr")
+                );
+            }
+
+            return m;
+
         } catch (SQLException e) {
             System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
         }

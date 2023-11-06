@@ -22,10 +22,10 @@ public class AdresseDAO  extends DAO<classMetier.Util.Adresse> {
 
         try (PreparedStatement preparedStatement =
                      this.connection.prepareStatement(sqlInsertAdresse.toString())) {
-            preparedStatement.setInt(2, obj.getNumero());
-            preparedStatement.setString(3, obj.getRue());
-            preparedStatement.setString(4, obj.getCodePostal());
-            preparedStatement.setString(5, obj.getVille());
+            preparedStatement.setInt(1, obj.getNumero());
+            preparedStatement.setString(2, obj.getRue());
+            preparedStatement.setString(3, obj.getCodePostal());
+            preparedStatement.setString(4, obj.getVille());
 
             preparedStatement.executeUpdate();
             requetOK = true;
@@ -138,5 +138,60 @@ public class AdresseDAO  extends DAO<classMetier.Util.Adresse> {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
+    }
+
+
+    public Adresse verif_adr(Adresse adresse){
+
+        StringBuilder sqlFindAdresse = new StringBuilder();
+        sqlFindAdresse.append("select * from adresse ");
+        sqlFindAdresse.append("where adr_rue like ? and adr_ville like ?");
+
+
+        try (PreparedStatement preparedStatement =
+                     this.connection.prepareStatement(sqlFindAdresse.toString())) {
+
+            preparedStatement.setString(1, adresse.getRue());
+            preparedStatement.setString(2, adresse.getVille());
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+
+                if( adresse.getNumero() == resultSet.getInt("adr_num") &&
+                        adresse.getCodePostal().equals(resultSet.getString("adr_CP"))
+                ) {
+                    adresse.setId(resultSet.getInt("adr_id"));
+                    return adresse;
+                }
+            }
+
+            create(adresse);
+            adresse.setId(count()+1);
+
+            return adresse;
+
+        } catch (SQLException e) {
+            System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
+        }
+
+        return null;
+    }
+
+
+    public int count(){
+        StringBuilder sqlCountAdresse = new StringBuilder();
+        sqlCountAdresse.append("select count(*) as nb_adr from Adresse ");
+        try (PreparedStatement preparedStatement =
+                     this.connection.prepareStatement(sqlCountAdresse.toString())) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                return resultSet.getInt("nb_adr");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
+        }
+        return -1;
     }
 }

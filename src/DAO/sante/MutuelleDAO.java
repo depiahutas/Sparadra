@@ -24,11 +24,11 @@ public class MutuelleDAO extends DAO<classMetier.sante.Mutuelle> {
 
         try (PreparedStatement preparedStatement =
                      this.connection.prepareStatement(sqlInsertMutuelle.toString())) {
-            preparedStatement.setString(2,obj.getNom());
-            preparedStatement.setInt(3,obj.getAdresse().getID());
-            preparedStatement.setString(4,obj.getTel());
+            preparedStatement.setString(1,obj.getNom());
+            preparedStatement.setInt(2,obj.getAdresse().getID());
+            preparedStatement.setString(3,obj.getTel());
             preparedStatement.setString(4,obj.getMail());
-            preparedStatement.setInt(4,obj.getTxPECR());
+            preparedStatement.setInt(5,obj.getTxPECR());
 
             preparedStatement.executeUpdate();
             requetOK = true;
@@ -147,6 +147,40 @@ public class MutuelleDAO extends DAO<classMetier.sante.Mutuelle> {
             }
 
             return listMutuelle;
+        } catch (SQLException e) {
+            System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
+        }
+
+        return null;
+    }
+
+    public Mutuelle findMut(String string) {
+
+        AdresseDAO adresseDAO = new AdresseDAO();
+
+
+        StringBuilder sqlFindMutuelle = new StringBuilder();
+        sqlFindMutuelle.append("select * from mutuelle ");
+        sqlFindMutuelle.append("where mut_nom = ?");
+
+
+        try (PreparedStatement preparedStatement =
+                     this.connection.prepareStatement(sqlFindMutuelle.toString())) {
+
+            preparedStatement.setString(1, string);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+
+                return new Mutuelle(resultSet.getInt("mut_id"),
+                        adresseDAO.find(resultSet.getInt("mut_adresse")),
+                        resultSet.getString("mut_nom"),
+                        resultSet.getString("mut_tel"),
+                        resultSet.getString("mut_mail"),
+                        resultSet.getInt("mut_txPECR")
+                );
+            }
+
         } catch (SQLException e) {
             System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
         }

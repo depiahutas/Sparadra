@@ -14,6 +14,8 @@ public class PanierDAO extends DAO<Panier> {
 
     public boolean create(Panier obj,int idAchat) {
 
+        MedicamentDAO medicamentDAO = new MedicamentDAO();
+
         StringBuilder sqlInsertPanier = new StringBuilder();
         sqlInsertPanier.append("insert into Panier ");
         sqlInsertPanier.append("(pan_id,pan_achat,pan_medic,pan_qte)");
@@ -25,10 +27,12 @@ public class PanierDAO extends DAO<Panier> {
                      this.connection.prepareStatement(sqlInsertPanier.toString())) {
 
             for (Medicament medicament : obj.getResumePanier()) {
-                preparedStatement.setInt(2, idAchat);
-                preparedStatement.setInt(3, medicament.getId());
-                preparedStatement.setInt(4, medicament.getQuantite());
+                preparedStatement.setInt(1, idAchat);
+                preparedStatement.setInt(2, medicament.getId());
+                preparedStatement.setInt(3, medicament.getQuantite());
                 preparedStatement.executeUpdate();
+
+                medicamentDAO.updateQte(medicament);
             }
             requetOK = true;
         } catch (SQLException e) {

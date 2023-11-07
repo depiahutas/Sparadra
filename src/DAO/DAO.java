@@ -10,7 +10,7 @@ public abstract class DAO<T> {
 
     protected Connection connection = Singleton.getInstanceDB();
 
-    public abstract boolean create(T obj);
+    public abstract boolean create(T obj) throws SQLException;
 
     public abstract boolean delete(T obj);
 

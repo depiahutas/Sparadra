@@ -511,6 +511,7 @@ public class Principale extends JFrame {
         //Affichage panel Achat et réinitialise les données du form
         btnAchat.addActionListener(e -> {
             setTitle("Achat");
+            listMedAchat.clear();
             sommeTot[0] = 0;
             Prixtot.setText("");
             QteTextField.setText("1");
@@ -720,7 +721,8 @@ public class Principale extends JFrame {
                             modelRecapMed.addRow(new Object[]{m.getNom(), m.getCategorie().getLibelle(), QteTextField.getText(),
                                     m.getPrix(), m.getDateMES()});
                             sommeTot[0] = sommeTot[0] + (m.getPrix() * Integer.parseInt(QteTextField.getText()));
-                            //listMedAchat.add(m);
+                            m.setQuantite(Integer.parseInt(QteTextField.getText()));
+                            listMedAchat.add(m);
                         }
                     }
 
@@ -931,7 +933,7 @@ public class Principale extends JFrame {
         validerButton.addActionListener(e -> {
 
             Client c = null;
-            Panier p = null;
+            Panier p = new Panier(0,listMedAchat);
 
             String regexIDOrd = "[0-9]";
             Ordonnance ord = null;
@@ -971,6 +973,8 @@ public class Principale extends JFrame {
                     lblErreurClient.setVisible(false);
                     Achat achat = new Achat(0,c,p
                             , sommeTot[0], classMetier.Util.Date.newDate(),ord );
+
+                    achatDAO.create(achat);
                     //listAchat.add(achat);
                     setContentPane(PanelAcceuil);
                 }
@@ -1714,11 +1718,18 @@ public class Principale extends JFrame {
                                 if (y) {
                                     //update dans base de données
 
+                                    Adresse adresse = adresseDAO.find(c.getPersonne().getAdresse().getID());
 
+                                    if( adresse == null){
+                                        adresseDAO.create(adresse);
+                                    }
+
+                                    personneDAO.update(c.getPersonne());
+                                    clientDAO.update(c);
 
 
                                     // rend les champs non modifiable une fois modification terminé
-                                    System.out.println("Mise a jour des informations");
+                                    JOptionPane.showMessageDialog(null,"Mise a jour des informations");
                                     errorlbl.setVisible(false);
                                     telTextField.setEditable(false);
                                     mailTextField.setEditable(false);

@@ -96,8 +96,6 @@ public class MedecinDAO extends DAO<Medecin> {
 
             preparedStatement.setInt(1, mID);
             ResultSet resultSet = preparedStatement.executeQuery();
-
-            Medecin m = null;
             while (resultSet.next()) {
 
                 return new Medecin(resultSet.getInt("med_id"),
@@ -105,7 +103,6 @@ public class MedecinDAO extends DAO<Medecin> {
                         resultSet.getString("med_numAgr")
                 );
             }
-
 
         } catch (SQLException e) {
             System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");

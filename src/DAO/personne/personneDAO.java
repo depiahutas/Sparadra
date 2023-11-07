@@ -66,8 +66,8 @@ public class personneDAO extends DAO<Personne> {
     public boolean update(Personne obj) {
         StringBuilder sqlUpdatePersonne = new StringBuilder();
         sqlUpdatePersonne.append("update personne ");
-        sqlUpdatePersonne.append("set per_nom=?,per_prenom=?,per_mail=?,per_tel=?,per_Personne=?)");
-        sqlUpdatePersonne.append("where per_id=?");
+        sqlUpdatePersonne.append("set per_nom = ?,per_prenom = ?,per_mail = ?,per_tel = ?,per_adresse = ? ");
+        sqlUpdatePersonne.append("where per_id = ?");
 
         boolean requetOK = false;
 
@@ -169,7 +169,7 @@ public class personneDAO extends DAO<Personne> {
 
             while (resultSet.next()) {
 
-                if (personne.getMail().equals(resultSet.getString("per_mail")) &&
+                if (personne.getMail().equals(resultSet.getString("per_mail")) ||
                         personne.getTel().equals(resultSet.getString("per_tel"))
                     ) {
                     personne.setId(resultSet.getInt("per_id"));

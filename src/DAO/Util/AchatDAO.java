@@ -4,6 +4,8 @@ import DAO.DAO;
 import DAO.personne.ClientDAO;
 import DAO.sante.OrdonnanceDAO;
 import classMetier.Util.Achat;
+import classMetier.sante.Medicament;
+import classMetier.sante.Ordonnance;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -12,22 +14,39 @@ import java.util.ArrayList;
 
 public class AchatDAO extends DAO<Achat> {
     @Override
-    public boolean create(Achat obj) {
+    public boolean create(Achat obj){
+
+        PanierDAO panierDAO = new PanierDAO();
+
         StringBuilder sqlInsertAchat = new StringBuilder();
+        if (obj.getOrdonnance()!=null) {
+
         sqlInsertAchat.append("insert into Achat ");
         sqlInsertAchat.append("(ach_id,ach_cli,ach_date,ach_prixTot,ach_ord)");
         sqlInsertAchat.append("values (null,?,?,?,?)");
-
+        }
+        else {
+            sqlInsertAchat.append("insert into Achat ");
+            sqlInsertAchat.append("(ach_id,ach_cli,ach_date,ach_prixTot,ach_ord)");
+            sqlInsertAchat.append("values (null,?,?,?,null)");
+        }
         boolean requetOK = false;
 
         try (PreparedStatement preparedStatement =
                      this.connection.prepareStatement(sqlInsertAchat.toString())) {
-            preparedStatement.setInt(2, obj.getClient().getIdClient());
-            preparedStatement.setString(3, obj.getDate());
-            preparedStatement.setFloat(4, obj.getPrix());
-            preparedStatement.setInt(5, obj.getOrdonnance().getId());
+            preparedStatement.setInt(1, obj.getClient().getIdClient());
+            preparedStatement.setString(2, obj.getDate());
+            preparedStatement.setFloat(3, obj.getPrix());
+            if (obj.getOrdonnance()!=null) {
+                preparedStatement.setInt(4, obj.getOrdonnance().getId());
+            }
+
+
 
             preparedStatement.executeUpdate();
+
+            panierDAO.create(obj.getPanier(),count());
+
             requetOK = true;
         } catch (SQLException e) {
             System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
@@ -101,6 +120,9 @@ public class AchatDAO extends DAO<Achat> {
             preparedStatement.setInt(1, pID);
             ResultSet resultSet = preparedStatement.executeQuery();
 
+            Ordonnance ord=ordonnanceDAO.find(resultSet.getInt("ach_ord"));
+
+
             while (resultSet.next()) {
 
                return new Achat(resultSet.getInt("ach_id"),
@@ -108,7 +130,8 @@ public class AchatDAO extends DAO<Achat> {
                         panierDAO.find(resultSet.getInt("ach_id")),
                         resultSet.getFloat("ach_prixTot"),
                         resultSet.getString("ach_date"),
-                        ordonnanceDAO.find(resultSet.getInt("ach_ord"))
+                        ord
+
                 );
             }
 
@@ -154,5 +177,23 @@ public class AchatDAO extends DAO<Achat> {
         }
 
         return null;
+    }
+
+    public int count(){
+
+        StringBuilder sqlCountClient = new StringBuilder();
+        sqlCountClient.append("select count(*) as nb_ach from Achat ");
+        try (PreparedStatement preparedStatement =
+                     this.connection.prepareStatement(sqlCountClient.toString())) {
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next()) {
+                return resultSet.getInt("nb_ach");
+            }
+
+        } catch (SQLException e) {
+            System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
+        }
+        return -1;
     }
 }

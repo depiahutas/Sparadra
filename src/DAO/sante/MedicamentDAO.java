@@ -149,4 +149,28 @@ public class MedicamentDAO extends DAO<Medicament> {
 
         return null;
     }
+
+
+    public boolean updateQte(Medicament obj){
+
+            StringBuilder sqlUpdateMedicament = new StringBuilder();
+            sqlUpdateMedicament.append("update medicament ");
+            sqlUpdateMedicament.append("set medic_qteStock= medic_qteStock - ? ");
+            sqlUpdateMedicament.append("where medic_id= ?");
+
+            boolean requetOK = false;
+
+            try (PreparedStatement preparedStatement =
+                         this.connection.prepareStatement(sqlUpdateMedicament.toString())) {
+                preparedStatement.setInt(1, obj.getQuantite());
+                preparedStatement.setInt(2, obj.getId());
+
+                preparedStatement.executeUpdate();
+                requetOK = true;
+            } catch (SQLException e) {
+                System.out.println("RelationWithDB erreur : " + e.getMessage() + " [SQL error code : " + e.getSQLState() + "]");
+            }
+
+            return requetOK;
+    }
 }

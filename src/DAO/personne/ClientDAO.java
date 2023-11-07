@@ -63,15 +63,15 @@ public class ClientDAO extends DAO<Client> {
     public boolean update(Client obj) throws SQLException {
         StringBuilder sqlUpdateClient = new StringBuilder();
         sqlUpdateClient.append("update Client ");
-        sqlUpdateClient.append("set cli_dateNaiss=?,cli_medecin=?,cli_mutuelle=?,cli_numSecu=?)");
-        sqlUpdateClient.append("where cli_id=?");
+        sqlUpdateClient.append("set cli_dateNaiss = ?,cli_medecin = ?,cli_mutuelle = ?,cli_numSecu = ? ");
+        sqlUpdateClient.append("where cli_id = ?");
 
         boolean requetOK = false;
 
         try (PreparedStatement preparedStatement =
                      this.connection.prepareStatement(sqlUpdateClient.toString())) {
             preparedStatement.setString(1, obj.getDateNaiss());
-            preparedStatement.setInt(2, obj.getMedecin().getPersonne().getId());
+            preparedStatement.setInt(2, obj.getMedecin().getId());
             preparedStatement.setInt(3, obj.getMutuelle().getId());
             preparedStatement.setString(4, obj.getNumSecu());
             preparedStatement.setInt(5, obj.getIdClient());
@@ -106,7 +106,7 @@ public class ClientDAO extends DAO<Client> {
 
             while (resultSet.next()) {
 
-                 Client c=new Client(resultSet.getInt("cli_id"),
+                 return new Client(resultSet.getInt("cli_id"),
                         personneDAO.find(resultSet.getInt("cli_per")),
                         resultSet.getString("cli_dateNaiss"),
                         medecinDAO.find(resultSet.getInt("cli_medecin")),
@@ -114,7 +114,6 @@ public class ClientDAO extends DAO<Client> {
                         resultSet.getString("cli_numSecu")
                 );
 
-                return c;
             }
 
         } catch (SQLException e) {
@@ -177,8 +176,9 @@ public class ClientDAO extends DAO<Client> {
 
             while (resultSet.next()) {
 
-                if (client.getDateNaiss().equals(resultSet.getString("cli_dateNaiss")) &&
-                        client.getNumSecu().equals(resultSet.getString("cli_numSecu"))
+                if ((client.getDateNaiss().equals(resultSet.getString("cli_dateNaiss")) &&
+                        client.getNumSecu().equals(resultSet.getString("cli_numSecu"))) ||
+                        client.getPersonne().getId()==resultSet.getInt("cli_per")
                 ) {
                     client.setIdClient(resultSet.getInt("cli_id"));
                     return client;

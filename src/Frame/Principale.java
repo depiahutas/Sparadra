@@ -267,13 +267,14 @@ public class Principale extends JFrame {
         mbar.add(recherche);
         mbar.add(Stock);
 
-        // Action des MenuItem
+        //Action des MenuItem
 
-        // retour a l'accueil
+        //retour a l'accueil
         Retour.addActionListener(e -> {setContentPane(PanelAcceuil); setTitle("Accueil");});
 
         //page d'achat
         Effectuer.addActionListener(e -> {
+            // reset des élements utilisé
             setTitle("Achat");
             sommeTot[0] = 0;
             Prixtot.setText("");
@@ -287,22 +288,35 @@ public class Principale extends JFrame {
             cBoxCat.setVisible(false);
             lblCat.setVisible(false);
             ajouterButton.setVisible(false);
+            ordonnanceRadioButton.setSelected(false);
+            sansOrdonnanceRadioButton.setSelected(false);
+            lblNumOrdonannce.setVisible(false);
+            nOrdonannceTextField.setVisible(false);
+
+
             DefaultTableModel mdl = (DefaultTableModel) TableMed.getModel();
             mdl.setRowCount(0);
             cBoxCat.removeAllItems();
             cBoxNom.removeAllItems();
+
+            //remplissage combobox
             for (CategorieMedicament c : catDAO.findAll()) {
                 cBoxCat.addItem(c.getLibelle().toLowerCase());
             }
+            // élement null sélectionné par défaut
             cBoxCat.setSelectedIndex(-1);
+
+            //remplissage combobox
             for (Client client : clientDAO.findAll()) {
                 cBoxNom.addItem(client.getPersonne().getNom());
             }
+            // élement null sélectionné par défaut
             cBoxNom.setSelectedIndex(-1);
         });
 
         //panel recherche ordonnance
         RechercherOrd.addActionListener(e -> {
+            // reset des élements utilisé
             setTitle("Recherche : ordonnance");
             setContentPane(PanelRecherche);
             lblRsh.setVisible(false);
@@ -326,13 +340,15 @@ public class Principale extends JFrame {
             model.addColumn("Date");
             model.addColumn("Medicament");
 
-
+            //remplissage combobox
             for (Medecin medecin : medecinDAO.findAll()) {
                 rechercheComboBox.addItem(medecin.getPersonne().getNom());
             }
+            // élement null sélectionné par défaut
             rechercheComboBox.setSelectedIndex(-1);
 
 
+            //model de JTable tableRecherche
             for (Ordonnance ordonnance : ordonnanceDAO.findAll()) {
                 String a = ordonnance.getClient().getPersonne().getNom() + " " + ordonnance.getClient().getPersonne().getPrenom();
                 model.addRow(new Object[]{ordonnance.getMedecin().getPersonne().getNom(),
@@ -346,6 +362,7 @@ public class Principale extends JFrame {
 
         //panel recherche achat par date
         RechercherAch.addActionListener(e -> {
+            // reset des élements utilisé
             setTitle("Recherche : achat");
             setContentPane(PanelRecherche);
             textFieldRecherche.setVisible(true);
@@ -356,6 +373,7 @@ public class Principale extends JFrame {
             PanelRecherche.setVisible(true);
             lblRecherche.setVisible(true);
             historiqueOrdonnanceButton.setVisible(false);
+            CBBoxMutuelle.setVisible(false);
 
             DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
             x.setRowCount(0);
@@ -366,6 +384,7 @@ public class Principale extends JFrame {
             model.addColumn("ID ordonnance");
             model.addColumn("Prix");
 
+            //model JTable tableRecherche
             for (Achat achat : achatDAO.findAll()) {
                 String a = achat.getClient().getPersonne().getNom() + " " + achat.getClient().getPersonne().getPrenom();
                 if (achat.getOrdonnance()!=null) {
@@ -378,12 +397,15 @@ public class Principale extends JFrame {
                 }
             }
 
+
             labelTable.setModel(model);
             labelTable.setDefaultEditor(Object.class, null);
         });
 
         //Recherche Client par Mutuelle
         RechercherClientMutuelle.addActionListener(e -> {
+
+            // reset des élements utilisé
             setTitle("Recherche : Client-Mutuelle");
             setContentPane(PanelRecherche);
 
@@ -391,8 +413,12 @@ public class Principale extends JFrame {
             historiqueOrdonnanceButton.setVisible(false);
             historiqueMutuelleButton.setVisible(false);
             CBBoxMutuelle.setVisible(true);
+            textFieldRecherche.setVisible(false);
+            rechercheComboBox.setVisible(false);
 
+            //reset element combobox
             CBBoxMutuelle.removeAllItems();
+            // remplissage combobox
             for (Mutuelle mutuelle:mutuelleDAO.findAll()){
                 CBBoxMutuelle.addItem(mutuelle.getNom());
             }
@@ -404,6 +430,7 @@ public class Principale extends JFrame {
             model.addColumn("Client");
             model.addColumn("Medecin traitant");
 
+            // model JTable tableRecherche
             for (Client client : clientDAO.findAll()) {
                 model.addRow(new Object[]{client.getMutuelle().getNom(), (client.getPersonne().getNom() + " " + client.getPersonne().getPrenom()),
                         ("Dr." + client.getMedecin().getPersonne().getNom())});
@@ -415,6 +442,7 @@ public class Principale extends JFrame {
 
         //panel info client
         RechercherClientNom.addActionListener(e -> {
+            // reset des élements utilisé
             setTitle("Information client");
             setContentPane(PanelInfoClient);
 
@@ -432,6 +460,7 @@ public class Principale extends JFrame {
 
             dateDeNaissanceTextField.setEditable(false);
             numeroDeSecuriteSocialeTextField.setEditable(false);
+            textFieldRecherche.setVisible(false);
 
 
             nomComboBox.setVisible(true);
@@ -441,6 +470,7 @@ public class Principale extends JFrame {
             NomTextField.setVisible(false);
             NomTextField.setEditable(false);
 
+            //remplissage combobox
             for (Client client : clientDAO.findAll()) {
                 nomComboBox.addItem(client.getPersonne().getNom());
                 prenomComboBox.addItem(client.getPersonne().getPrenom());
@@ -452,6 +482,7 @@ public class Principale extends JFrame {
             PrenomTextField.setVisible(false);
             PrenomTextField.setEditable(false);
 
+            // élement null sélectionné par défaut
             nomComboBox.setSelectedIndex(-1);
             prenomComboBox.setSelectedIndex(-1);
         });
@@ -472,8 +503,9 @@ public class Principale extends JFrame {
             model.addColumn("Quantite en stock");
             model.addColumn("DateMES");
 
+            //model JTable tableStock
             for (Medicament med : medicamentDAO.findAll()) {
-                model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie(),med.getQuantite(),med.getDateMES()});
+                model.addRow(new Object[]{med.getNom(),med.getPrix(),med.getCategorie().getLibelle(),med.getQuantite(),med.getDateMES()});
             }
 
             TabMedic.setAutoCreateRowSorter(true);
@@ -510,6 +542,8 @@ public class Principale extends JFrame {
     private void actionBtnAchat(){
         //Affichage panel Achat et réinitialise les données du form
         btnAchat.addActionListener(e -> {
+
+            //reset des éléments utilisés
             setTitle("Achat");
             listMedAchat.clear();
             sommeTot[0] = 0;
@@ -528,12 +562,15 @@ public class Principale extends JFrame {
 
             DefaultTableModel mdl = (DefaultTableModel) TableMed.getModel();
             mdl.setRowCount(0);
+            //reset données combobox
             cBoxCat.removeAllItems();
             cBoxNom.removeAllItems();
 
+            //remplissage combobox
             for (CategorieMedicament c :catDAO.findAll()) {
                 cBoxCat.addItem(c.getLibelle().toLowerCase());
             }
+            // sélectionne null par défaut
             cBoxCat.setSelectedIndex(-1);
 
             for (Client client : clientDAO.findAll()) {
@@ -546,6 +583,7 @@ public class Principale extends JFrame {
     private void actionBtnRecherche(){
         //Affichage panel recherche et réinitialise les données de la JTable
         btnRecherche.addActionListener(e -> {
+            //reset des élements utilisés
             setTitle("Recherche");
             textFieldRecherche.setVisible(false);
             setContentPane(PanelRecherche);
@@ -882,9 +920,6 @@ public class Principale extends JFrame {
 
                 }
             });
-
-
-
 
     }
 

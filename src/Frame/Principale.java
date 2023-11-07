@@ -559,6 +559,7 @@ public class Principale extends JFrame {
             lblRecherche.setVisible(false);
             rechercheComboBox.setSelectedIndex(-1);
             rechercheComboBox.setVisible(false);
+            CBBoxMutuelle.setVisible(false);
 
             DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
             x.setRowCount(0);
@@ -974,8 +975,9 @@ public class Principale extends JFrame {
                     Achat achat = new Achat(0,c,p
                             , sommeTot[0], classMetier.Util.Date.newDate(),ord );
 
-                    achatDAO.create(achat);
-                    //listAchat.add(achat);
+                    if (achatDAO.create(achat)){
+                        JOptionPane.showMessageDialog(null,"Enregistrement de l'achat");
+                    }
                     setContentPane(PanelAcceuil);
                 }
             }catch (Exception exception){

@@ -9,8 +9,9 @@ class MedecinTest {
 
     @Test
     void setNumAgr() {
-        Medecin medecin=new Medecin("Martin", "Martin","martin.martin@mail.com","0123456789",
-                new Adresse(13 ,"rue Saint-Honoré", "75008", "Paris"),
+        Medecin medecin=new Medecin(0,
+                new Personne(0,"Martin", "Martin","martin.martin@mail.com","0123456789",
+                new Adresse(0,13 ,"rue Saint-Honoré", "75008", "Paris")),
                 "M123456789");
         assertEquals("M123456789",medecin.getNumAgr());
         try {

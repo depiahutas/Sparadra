@@ -27,20 +27,21 @@ class ClientTest {
 
     @Test
     public void testConstructeur() {
-        Client client = new Client(99,"Dupont", "Jean", "jean.dupont@example.com", "0612345678",
-                new Adresse(123 ,"rue du Faubourg Saint-Honoré", "75008", "Paris"),
+        Client client = new Client(0,
+                new Personne(0,"Dupont", "Jean", "jean.dupont@example.com", "0612345678",
+                    new Adresse(0,123 ,"rue du Faubourg Saint-Honoré", "75008", "Paris")),
                 "01/01/1980",
-                new Medecin("Martin", "Martin","martin.martin@mail.com","0123456789",
-                        new Adresse(13 ,"rue Saint-Honoré", "75008", "Paris"),
+                new Medecin(0,new Personne(1,"Martin", "Martin","martin.martin@mail.com",
+                        "0123456789",new Adresse(0,13 ,"rue Saint-Honoré", "75008", "Paris")),
                         "M123456789"),
-                new Mutuelle(new Adresse(75,"rue Saint-Honoré", "75008", "Paris"),
+                new Mutuelle(0,new Adresse(0,75,"rue Saint-Honoré", "75008", "Paris"),
                         "Mutuelle Nationale", "0123456789","mutuelle.nationale@mut.com",2),
                 "2012345678");
 
-        Assertions.assertEquals("Dupont", client.getNom());
-        Assertions.assertEquals("Jean", client.getPrenom());
-        Assertions.assertEquals("jean.dupont@example.com", client.getMail());
-        Assertions.assertEquals("0612345678", client.getTel());
+        Assertions.assertEquals("Dupont", client.getPersonne().getNom());
+        Assertions.assertEquals("Jean", client.getPersonne().getPrenom());
+        Assertions.assertEquals("jean.dupont@example.com", client.getPersonne().getMail());
+        Assertions.assertEquals("0612345678", client.getPersonne().getTel());
         Assertions.assertEquals("01/01/1980",client.getDateNaiss());
         Assertions.assertEquals("2012345678", client.getNumSecu());
     }
@@ -48,13 +49,14 @@ class ClientTest {
     @Test
     void testSetNumSecu() throws Exception {
 
-        Client client = new Client(99,"Dupont", "Jean", "jean.dupont@example.com", "0612345678",
-                new Adresse(123 ,"rue du Faubourg Saint-Honoré", "75008", "Paris"),
+        Client client = new Client(0,
+                new Personne(0,"Dupont", "Jean", "jean.dupont@example.com", "0612345678",
+                        new Adresse(0,123 ,"rue du Faubourg Saint-Honoré", "75008", "Paris")),
                 "01/01/1980",
-                new Medecin("Martin", "Martin","martin.martin@mail.com","0123456789",
-                        new Adresse(13 ,"rue Saint-Honoré", "75008", "Paris"),
+                new Medecin(0,new Personne(1,"Martin", "Martin","martin.martin@mail.com",
+                        "0123456789",new Adresse(0,13 ,"rue Saint-Honoré", "75008", "Paris")),
                         "M123456789"),
-                new Mutuelle(new Adresse(75,"rue Saint-Honoré", "75008", "Paris"),
+                new Mutuelle(0,new Adresse(0,75,"rue Saint-Honoré", "75008", "Paris"),
                         "Mutuelle Nationale", "0123456789","mutuelle.nationale@mut.com",2),
                 "2012345678");
 

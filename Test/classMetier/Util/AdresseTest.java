@@ -10,7 +10,7 @@ class AdresseTest {
 
         @Test
         public void testSetNumero() {
-            Adresse adresse = new Adresse(123 ,"Rue du Faubourg Saint-Honoré",
+            Adresse adresse = new Adresse(0,123 ,"Rue du Faubourg Saint-Honoré",
                     "75008", "Paris");
             assertEquals(123, adresse.getNumero());
 

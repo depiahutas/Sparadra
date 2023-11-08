@@ -1,8 +1,8 @@
 package Frame;
 
-import DAO.Util.AchatDAO;
-import DAO.Util.AdresseDAO;
-import DAO.Util.PanierDAO;
+import DAO.gestion.AchatDAO;
+import DAO.gestion.AdresseDAO;
+import DAO.gestion.PanierDAO;
 import DAO.personne.ClientDAO;
 import DAO.personne.MedecinDAO;
 import DAO.personne.personneDAO;
@@ -11,6 +11,9 @@ import DAO.sante.MedicamentDAO;
 import DAO.sante.MutuelleDAO;
 import DAO.sante.OrdonnanceDAO;
 import classMetier.Util.*;
+import classMetier.gestion.Achat;
+import classMetier.gestion.Adresse;
+import classMetier.gestion.Panier;
 import classMetier.personne.Client;
 import classMetier.personne.Medecin;
 import classMetier.personne.Personne;
@@ -193,7 +196,6 @@ public class Principale extends JFrame {
 
     AchatDAO achatDAO = new AchatDAO();
 
-    PanierDAO panierDAO = new PanierDAO();
 
     AdresseDAO adresseDAO = new AdresseDAO();
 
@@ -374,6 +376,7 @@ public class Principale extends JFrame {
             lblRecherche.setVisible(true);
             historiqueOrdonnanceButton.setVisible(false);
             CBBoxMutuelle.setVisible(false);
+            historiqueMutuelleButton.setVisible(false);
 
             DefaultTableModel x = (DefaultTableModel) labelTable.getModel();
             x.setRowCount(0);
@@ -455,8 +458,19 @@ public class Principale extends JFrame {
             codePostalTextField.setEditable(false);
             villeTextField.setEditable(false);
 
-            medecinTraitantTextField.setEditable(false);
-            mutuelleTextField.setEditable(false);
+            for(Mutuelle mutuelle : mutuelleDAO.findAll()){
+                cbBoxMutuelle.addItem(mutuelle.getNom());
+            }
+            cbBoxMutuelle.setSelectedIndex(-1);
+
+            for(Medecin medecin : medecinDAO.findAll()){
+                cbBoxMedecin.addItem("Dr. "+medecin.getPersonne().getNom());
+            }
+
+            cbBoxMedecin.setSelectedIndex(-1);
+
+            cbBoxMutuelle.setEnabled(false);
+            cbBoxMedecin.setEnabled(false);
 
             dateDeNaissanceTextField.setEditable(false);
             numeroDeSecuriteSocialeTextField.setEditable(false);
@@ -627,8 +641,23 @@ public class Principale extends JFrame {
                 codePostalTextField.setEditable(false);
                 villeTextField.setEditable(false);
 
-                medecinTraitantTextField.setEditable(false);
-                mutuelleTextField.setEditable(false);
+                cbBoxMedecin.removeAllItems();
+                cbBoxMutuelle.removeAllItems();
+
+
+                for(Mutuelle mutuelle : mutuelleDAO.findAll()){
+                    cbBoxMutuelle.addItem(mutuelle.getNom());
+                }
+                cbBoxMutuelle.setSelectedIndex(-1);
+
+                for(Medecin medecin : medecinDAO.findAll()){
+                    cbBoxMedecin.addItem("Dr. "+medecin.getPersonne().getNom());
+                }
+
+                cbBoxMedecin.setSelectedIndex(-1);
+
+                cbBoxMutuelle.setEnabled(false);
+                cbBoxMedecin.setEnabled(false);
 
                 nomComboBox.setVisible(true);
                 nomComboBox.removeAllItems();
@@ -1283,7 +1312,7 @@ public class Principale extends JFrame {
 
                     if (recherche.equals("all")) {
 
-                        for (classMetier.Util.Achat achat : achatDAO.findAll()) {
+                        for (Achat achat : achatDAO.findAll()) {
                                 String a = achat.getClient().getPersonne().getNom() + " " + achat.getClient().getPersonne().getPrenom();
                                 if (achat.getOrdonnance() != null) {
                                     model.addRow(new Object[]{achat.getDate(), a, achat.getOrdonnance().getId(), achat.getPrix()});
@@ -1293,7 +1322,7 @@ public class Principale extends JFrame {
                         }
 
                     } else {
-                        for (classMetier.Util.Achat achat : achatDAO.findAll()) {
+                        for (Achat achat : achatDAO.findAll()) {
                             if (recherche.equals(achat.getDate())) {
                                 String a = achat.getClient().getPersonne().getNom() + " " + achat.getClient().getPersonne().getPrenom();
                                 if (achat.getOrdonnance() != null) {
@@ -1507,6 +1536,7 @@ public class Principale extends JFrame {
         nomComboBox.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
                 Client c = null;
                 prenomComboBox.removeAllItems();
 
@@ -1518,8 +1548,8 @@ public class Principale extends JFrame {
                 codePostalTextField.setEditable(false);
                 villeTextField.setEditable(false);
 
-                medecinTraitantTextField.setEditable(false);
-                mutuelleTextField.setEditable(false);
+                cbBoxMedecin.setEnabled(false);
+                cbBoxMutuelle.setEnabled(false);
 
                 telTextField.setEditable(false);
                 mailTextField.setEditable(false);
@@ -1541,9 +1571,11 @@ public class Principale extends JFrame {
                     codePostalTextField.setText("");
                     villeTextField.setText("");
                     dateDeNaissanceTextField.setText("");
-                    mutuelleTextField.setText("");
                     numeroDeSecuriteSocialeTextField.setText("");
-                    medecinTraitantTextField.setText("");
+
+                    cbBoxMutuelle.setSelectedIndex(-1);
+                    cbBoxMedecin.setSelectedIndex(-1);
+
                 } else {
                     for (Client client : clientDAO.findAll()) {
                         if (client.getPersonne().getNom().equals(nomComboBox.getSelectedItem())) {
@@ -1568,9 +1600,25 @@ public class Principale extends JFrame {
                         codePostalTextField.setText(c.getPersonne().getAdresse().getCodePostal());
                         villeTextField.setText(c.getPersonne().getAdresse().getVille());
                         dateDeNaissanceTextField.setText(c.getDateNaiss());
-                        mutuelleTextField.setText(c.getMutuelle().getNom());
                         numeroDeSecuriteSocialeTextField.setText(c.getNumSecu());
-                        medecinTraitantTextField.setText(c.getMedecin().getPersonne().getNom());
+
+
+                        int i=0;
+                        for (Mutuelle mutuelle : mutuelleDAO.findAll()){
+                            if (c.getMutuelle().getNom().equals(mutuelle.getNom())){
+                                cbBoxMutuelle.setSelectedIndex(i);
+                            }
+                            i++;
+                        }
+
+                        int j=0;
+                        for (Medecin medecin : medecinDAO.findAll()){
+                            if (c.getMedecin().getPersonne().getNom().equals(medecin.getPersonne().getNom())){
+                                cbBoxMedecin.setSelectedIndex(j);
+                            }
+                            j++;
+                        }
+
                     }
                 }
             }
@@ -1590,8 +1638,8 @@ public class Principale extends JFrame {
                 codePostalTextField.setEditable(false);
                 villeTextField.setEditable(false);
 
-                medecinTraitantTextField.setEditable(false);
-                mutuelleTextField.setEditable(false);
+                cbBoxMedecin.setEnabled(false);
+                cbBoxMutuelle.setEnabled(false);
 
                 telTextField.setEditable(false);
                 mailTextField.setEditable(false);
@@ -1611,9 +1659,25 @@ public class Principale extends JFrame {
                         codePostalTextField.setText(client.getPersonne().getAdresse().getCodePostal());
                         villeTextField.setText(client.getPersonne().getAdresse().getVille());
                         dateDeNaissanceTextField.setText(client.getDateNaiss());
-                        mutuelleTextField.setText(client.getMutuelle().getNom());
                         numeroDeSecuriteSocialeTextField.setText(client.getNumSecu());
-                        medecinTraitantTextField.setText(client.getMedecin().getPersonne().getNom());
+
+                        int i=0;
+                        for (Mutuelle mutuelle : mutuelleDAO.findAll()){
+                            if (client.getMutuelle().getNom().equals(mutuelle.getNom())){
+                                cbBoxMutuelle.setSelectedIndex(i);
+                            }
+                            i++;
+                        }
+
+                        int j=0;
+                        for (Medecin medecin : medecinDAO.findAll()){
+                            if (client.getMedecin().getPersonne().getNom().equals(medecin.getPersonne().getNom())){
+                                cbBoxMedecin.setSelectedIndex(j);
+                            }
+                            j++;
+                        }
+
+
                     }
                 }
             }
@@ -1634,8 +1698,9 @@ public class Principale extends JFrame {
                 codePostalTextField.setEditable(true);
                 villeTextField.setEditable(true);
 
-                medecinTraitantTextField.setEditable(true);
-                mutuelleTextField.setEditable(true);
+                cbBoxMedecin.setEnabled(true);
+                cbBoxMutuelle.setEnabled(true);
+
                 modifierButton.setVisible(false);
                 validerInfoButton.setVisible(true);
 
@@ -1685,6 +1750,19 @@ public class Principale extends JFrame {
                             String rue = null;
                             String ville = null;
                             String cp = null;
+
+                            try {
+                                String med =cbBoxMedecin.getSelectedItem().toString();
+                                med = med.substring(4,med.length());
+
+                                String mut = cbBoxMutuelle.getSelectedItem().toString();
+
+                                System.out.println(cbBoxMedecin.getSelectedItem().toString());
+                                c.setMedecin(medecinDAO.findMed(med));
+                                c.setMutuelle(mutuelleDAO.findMut(mut));
+                            }catch (Exception exception){
+                                exception.printStackTrace();
+                            }
 
 
                             
@@ -1775,8 +1853,8 @@ public class Principale extends JFrame {
                                     codePostalTextField.setEditable(false);
                                     villeTextField.setEditable(false);
 
-                                    medecinTraitantTextField.setEditable(false);
-                                    mutuelleTextField.setEditable(false);
+                                    cbBoxMutuelle.setEnabled(false);
+                                    cbBoxMedecin.setEnabled(false);
 
                                     modifierButton.setVisible(true);
                                     validerInfoButton.setVisible(false);

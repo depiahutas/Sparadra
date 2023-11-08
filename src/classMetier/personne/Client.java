@@ -1,11 +1,8 @@
 package classMetier.personne;
 
-import classMetier.Util.Adresse;
 import classMetier.Util.Regex;
 import classMetier.sante.Mutuelle;
-import org.junit.platform.commons.function.Try;
 
-import java.util.ArrayList;
 import java.util.regex.Pattern;
 
 public class Client{

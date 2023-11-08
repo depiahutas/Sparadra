@@ -1,15 +1,14 @@
-package DAO.Util;
+package DAO.gestion;
 
 import DAO.DAO;
-import classMetier.Util.Adresse;
-import classMetier.sante.Mutuelle;
+import classMetier.gestion.Adresse;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-public class AdresseDAO  extends DAO<classMetier.Util.Adresse> {
+public class AdresseDAO  extends DAO<Adresse> {
     @Override
     public boolean create(Adresse obj) {
 

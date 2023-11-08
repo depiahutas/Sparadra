@@ -1,6 +1,6 @@
 package classMetier.personne;
 
-import classMetier.Util.Adresse;
+import classMetier.gestion.Adresse;
 import classMetier.Util.Regex;
 
 import java.util.regex.Pattern;

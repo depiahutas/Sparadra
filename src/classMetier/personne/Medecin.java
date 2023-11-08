@@ -1,6 +1,5 @@
 package classMetier.personne;
 
-import classMetier.Util.Adresse;
 import classMetier.Util.Regex;
 
 import java.util.ArrayList;

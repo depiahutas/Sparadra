@@ -1,7 +1,7 @@
 package DAO.sante;
 
 import DAO.DAO;
-import DAO.Util.AdresseDAO;
+import DAO.gestion.AdresseDAO;
 import classMetier.sante.Mutuelle;
 
 import java.sql.PreparedStatement;

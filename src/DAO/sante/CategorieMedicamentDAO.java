@@ -1,7 +1,6 @@
 package DAO.sante;
 
 import DAO.DAO;
-import classMetier.Util.Adresse;
 import classMetier.sante.CategorieMedicament;
 
 import java.sql.PreparedStatement;

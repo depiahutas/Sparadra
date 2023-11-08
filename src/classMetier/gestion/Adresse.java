@@ -1,4 +1,6 @@
-package classMetier.Util;
+package classMetier.gestion;
+
+import classMetier.Util.Regex;
 
 import java.util.regex.Pattern;
 

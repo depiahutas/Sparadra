@@ -1,5 +1,6 @@
-package classMetier.Util;
+package classMetier.gestion;
 
+import classMetier.Util.Regex;
 import classMetier.personne.Client;
 import classMetier.sante.Ordonnance;
 

@@ -1,10 +1,8 @@
 package classMetier.sante;
 
-import classMetier.Util.Compose;
+import classMetier.gestion.Compose;
 import classMetier.personne.Client;
 import classMetier.personne.Medecin;
-
-import java.util.ArrayList;
 
 public class Ordonnance {
     private int id;

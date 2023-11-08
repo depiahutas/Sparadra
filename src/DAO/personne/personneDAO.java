@@ -1,14 +1,13 @@
 package DAO.personne;
 
 import DAO.DAO;
-import DAO.Util.AdresseDAO;
+import DAO.gestion.AdresseDAO;
 import classMetier.personne.Personne;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class personneDAO extends DAO<Personne> {
 

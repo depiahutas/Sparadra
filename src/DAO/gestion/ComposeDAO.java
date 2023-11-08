@@ -1,10 +1,9 @@
-package DAO.Util;
+package DAO.gestion;
 
 import DAO.DAO;
 import DAO.sante.MedicamentDAO;
 import DAO.sante.OrdonnanceDAO;
-import classMetier.Util.Compose;
-import classMetier.Util.Panier;
+import classMetier.gestion.Compose;
 import classMetier.sante.Medicament;
 import classMetier.sante.Ordonnance;
 

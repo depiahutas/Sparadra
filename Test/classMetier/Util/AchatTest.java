@@ -1,10 +1,7 @@
 package classMetier.Util;
 
-import classMetier.personne.Client;
-import classMetier.personne.Medecin;
-import classMetier.sante.Mutuelle;
+import classMetier.gestion.Achat;
 import org.junit.jupiter.api.Test;
-import classMetier.Util.*;
 
 import java.util.ArrayList;
 

@@ -1,11 +1,9 @@
 package DAO.sante;
 
 import DAO.DAO;
-import DAO.Util.ComposeDAO;
+import DAO.gestion.ComposeDAO;
 import DAO.personne.ClientDAO;
 import DAO.personne.MedecinDAO;
-import classMetier.personne.Client;
-import classMetier.personne.Medecin;
 import classMetier.sante.Ordonnance;
 
 import java.sql.PreparedStatement;

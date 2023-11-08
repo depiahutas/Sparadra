@@ -1,6 +1,6 @@
 package classMetier.sante;
 
-import classMetier.Util.Adresse;
+import classMetier.gestion.Adresse;
 
 public class Mutuelle {
     private Adresse adresse;

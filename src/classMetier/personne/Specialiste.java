@@ -1,7 +1,6 @@
 package classMetier.personne;
 
-import classMetier.Util.Adresse;
-import classMetier.Util.Specialite;
+import classMetier.gestion.Specialite;
 
 public class Specialiste extends Medecin{
     private Specialite specialite;

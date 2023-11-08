@@ -1,4 +1,4 @@
-package classMetier.Util;
+package classMetier.gestion;
 
 import classMetier.sante.Medicament;
 import classMetier.sante.Ordonnance;

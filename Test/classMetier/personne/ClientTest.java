@@ -1,8 +1,6 @@
 package classMetier.personne;
 
-import classMetier.Util.Adresse;
-import classMetier.personne.Client;
-import classMetier.personne.Medecin;
+import classMetier.gestion.Adresse;
 import classMetier.sante.Mutuelle;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

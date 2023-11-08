@@ -1,8 +1,8 @@
-package DAO.Util;
+package DAO.gestion;
 
 import DAO.DAO;
 import DAO.sante.MedicamentDAO;
-import classMetier.Util.Panier;
+import classMetier.gestion.Panier;
 import classMetier.sante.Medicament;
 
 import java.sql.PreparedStatement;

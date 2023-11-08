@@ -25,7 +25,7 @@ class AdresseTest {
 
     @Test
     public void testSetRue() {
-        Adresse adresse = new Adresse(123 ,"Rue du Faubourg Saint-Honoré",
+        Adresse adresse = new Adresse(0,123 ,"Rue du Faubourg Saint-Honoré",
                 "75008", "Paris");
 
         adresse.setRue("Rue de la Paix");
@@ -38,7 +38,7 @@ class AdresseTest {
 
     @Test
     public void testSetCodePostal() throws Exception {
-        Adresse adresse = new Adresse(123 ,"Rue du Faubourg Saint-Honoré",
+        Adresse adresse = new Adresse(0,123 ,"Rue du Faubourg Saint-Honoré",
                 "75008", "Paris");
 
         try {
@@ -51,7 +51,7 @@ class AdresseTest {
 
     @Test
     public void testSetVille() throws Exception {
-        Adresse adresse = new Adresse(123 ,"Rue du Faubourg Saint-Honoré",
+        Adresse adresse = new Adresse(0,123 ,"Rue du Faubourg Saint-Honoré",
                 "75008", "Paris");
         try {
             adresse.setVille("123 Paris");
